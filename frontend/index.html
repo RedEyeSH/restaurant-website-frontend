@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/2ed076f63b.js" crossorigin="anonymous"></script>
+    <script src="script.js" defer></script>
+    <title>Restaurant</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <img src="logo2.png" alt="logo">
+            <h1>Burgers.</h1>
+        </div>
+        <div class="navbar-link">
+            <a href="#home">Home</a>
+            <a href="">About Us</a>
+            <a href="#restaurant">Menu</a>
+            <a href="">Contact</a>
+        </div>
+        <div class="navbar-actions">
+            <div class="navbar-icons">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+            <div class="navbar-login" id="navbar-login">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                <p>Login</p>
+            </div>
+        </div>
+    </nav>
+
+    <!--  -->
+    <section class="account" id="account">
+        <div class="account-container" id="account-container">
+            <div class="login-form" id="login-form">
+                <div class="login-title">
+                    <h1>Sign in to your account</h1>
+                    <i class="fa-solid fa-xmark" id="x-close-form"></i>
+                </div>
+                <form action="#">
+                    <div class="login-email">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="Email" required>
+                    </div>
+                    <div class="login-password">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter password" required>
+                    </div>
+                    <div class="login-options">
+                        <label for="remember-me">
+                            <input type="checkbox" id="remember-me"> Remember me
+                        </label>
+                        <a id="forgot-password">Forgot password?</a>
+                    </div>
+                    <div class="login-submit">
+                        <input type="submit" value="Sign in">
+                    </div>
+                </form>
+                <div class="login-other-options">
+                    <p>Don't have an account?</p>
+                    <a id="signup">Sign up now</a>
+                </div>
+            </div>
+            <div class="signup-form" id="signup-form">
+                <div class="signup-title">
+                    <h1>Get Started</h1>
+                    <i class="fa-solid fa-xmark" id="x-close-form"></i>
+                </div>
+                <form action="#">
+                    <div class="signup-email">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" placeholder="Enter email" required>
+                    </div>
+                    <div class="signup-password">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="Enter password" required>
+                    </div>
+                    <div class="signup-password-confirmation">
+                        <label for="signup-password-confirmation">Confirm password</label>
+                        <input type="password" id="signup-password-confirmation" placeholder="Confirm your password" required>
+                    </div>
+                    <div class="signup-submit">
+                        <input type="submit" value="Sign up">
+                    </div>
+                </form>
+                <div class="signup-other-options">
+                    <p>Have an account?</p>
+                    <a id="login">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="box-overlay" id="box-overlay"></div>
+    <!--  -->
+
+    <!-- Home section starts here -->
+    <section class="home" id="home">
+        <div class="home-container">
+            <div class="left-section">
+                <div class="left-section-header">
+                    <h1>Grab Big Deals</h1>
+                    <h1>On <span>Yummy Meals!</span></h1>
+                </div>
+                <div class="left-section-description">
+                    <p>Lorem ipsum dolor sit amet consectetur. Aenean maurisnam tortor curabitur phasellus.</p>
+                </div>
+                <div class="left-section-button">
+                    <h4>Get Started</h4>
+                </div>
+            <div class="left-section-reviews">
+                <div class="left-section-reviews-img">
+                    <div class="left-section-reviews-box1"></div>
+                    <div class="left-section-reviews-box2"></div>
+                    <div class="left-section-reviews-box3"></div>
+                </div>
+                <div class="left-section-reviews-description">
+                     <p>Our Happy Customers</p>
+                </div>
+            </div>
+            </div>
+            <div class="right-section">
+                <div class="right-section-image">
+                    <!-- <img src="food img.png" alt="food-image"> -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Home section ends here -->
+
+    <!-- About section starts here -->
+    <section class="about">
+
+    </section>
+    <!-- About section ends here -->
+
+    <!-- Restaurant section starts here -->
+    <section class="restaurant" id="restaurant">
+        <div class="restaurant-container">
+            <div class="restaurant-container-header">
+                <h1>Our Best & Delicous Menu</h1>
+            </div>
+            <div class="restaurant-category-menu">
+                <div class="restaurant-category-item menu-active">
+                  <p>All</p>
+                </div>
+                <div class="restaurant-category-item">
+                  <p>Bread</p>
+                </div>
+                <div class="restaurant-category-item">
+                  <p>Chiffon & Rolls</p>
+                </div>
+                <div class="restaurant-category-item">
+                  <p>Donut</p>
+                </div>
+                <div class="restaurant-category-item">
+                  <p>Pastry & Danish</p>
+                </div>
+                <div class="restaurant-category-item">
+                  <p>Cakes</p>
+                </div>
+                <div class="restaurant-category-item">
+                  <p>Cookies</p>
+                </div>
+            </div>
+            <div class="restaurant-menu" id="restaurant-menu">
+                <!-- Maybe in future 3 item per section seperated -->
+                <div class="restaurant-menu-section">
+                    <div class="restaurant-card">
+                        <div class="restaurant-card-image">
+                            <img src="burgerfrommenu.png" alt="burger-menu1">
+                        </div>
+                        <div class="restaurant-card-header">
+                            <h2>Chicken Burger</h2>
+                        </div>
+                        <div class="restaurant-card-content">
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        </div>
+                        <div class="restaurant-card-price">
+                            <h2>$2.20</h2>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                    </div>
+                    <div class="restaurant-card">
+                        <div class="restaurant-card-image">
+                            <img src="burgerfrommenu.png" alt="burger-menu1">
+                        </div>
+                        <div class="restaurant-card-header">
+                            <h2>Chicken Burger</h2>
+                        </div>
+                        <div class="restaurant-card-content">
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        </div>
+                        <div class="restaurant-card-price">
+                            <h2>$2.20</h2>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                    </div>
+                    <div class="restaurant-card">
+                        <div class="restaurant-card-image">
+                            <img src="burgerfrommenu.png" alt="burger-menu1">
+                        </div>
+                        <div class="restaurant-card-header">
+                            <h2>Chicken Burger</h2>
+                        </div>
+                        <div class="restaurant-card-content">
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        </div>
+                        <div class="restaurant-card-price">
+                            <h2>$2.20</h2>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="restaurant-menu-section">
+                    <div class="restaurant-card">
+                        <div class="restaurant-card-image">
+                            <img src="burgerfrommenu.png" alt="burger-menu1">
+                        </div>
+                        <div class="restaurant-card-header">
+                            <h2>Chicken Burger</h2>
+                        </div>
+                        <div class="restaurant-card-content">
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        </div>
+                        <div class="restaurant-card-price">
+                            <h2>$2.20</h2>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                    </div>
+                    <div class="restaurant-card">
+                        <div class="restaurant-card-image">
+                            <img src="burgerfrommenu.png" alt="burger-menu1">
+                        </div>
+                        <div class="restaurant-card-header">
+                            <h2>Chicken Burger</h2>
+                        </div>
+                        <div class="restaurant-card-content">
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        </div>
+                        <div class="restaurant-card-price">
+                            <h2>$2.20</h2>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                    </div>
+                    <div class="restaurant-card">
+                        <div class="restaurant-card-image">
+                            <img src="burgerfrommenu.png" alt="burger-menu1">
+                        </div>
+                        <div class="restaurant-card-header">
+                            <h2>Chicken Burger</h2>
+                        </div>
+                        <div class="restaurant-card-content">
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+                        </div>
+                        <div class="restaurant-card-price">
+                            <h2>$2.20</h2>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="restaurant-option">
+                    <div class="restaurant-option-button">
+                        <p>See All</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Restaurant section ends here -->
+
+    <!-- Map section starts here -->
+    <section class="map">
+
+    </section>
+    <!-- Map section ends here -->
+
+
+    <!-- Footer starts here -->
+    <footer class="footer" id="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <div class="footer-column">
+                    <div class="footer-title">
+                        <h3>Our products</h3>
+                    </div>
+                    <div class="footer-content">
+                        <p>Our menus</p>
+                        <p>Our burgers</p>
+                        <p>Our times sides</p>
+                        <p>Our sandwiches</p>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <div class="footer-title">
+                        <h3>legal information</h3>
+                    </div>
+                    <div class="footer-content">
+                        <p>Legal Notice</p>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <div class="footer-title">
+                        <h3>Contact us</h3>
+                    </div>
+                    <div class="footer-content">
+                        <p>Contacts</p>
+                        <p>Our addresses</p>
+                        <p>Become a Times Square franchisee</p>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>We accept</h3>
+                </div>
+            </div>
+            <hr>
+            <div class="footer-link-section">
+                <i class="fa-brands fa-facebook"></i>
+                <i class="fa-brands fa-x-twitter"></i>
+                <i class="fa-brands fa-discord"></i>
+                <i class="fa-brands fa-linkedin"></i>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer starts here -->
+
+    <!-- <section style="height: 1000px;"></section> -->
+
+</body>
+</html>

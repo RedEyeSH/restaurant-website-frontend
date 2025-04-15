@@ -1,0 +1,583 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Contrail+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/*
+    default background color - #0D0D0D
+    yellow default color - #F7B41A
+    yellow light color - #FFC94B
+    card color - #191919
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    color: white;
+}
+
+body {
+    background-color: #0D0D0D;
+    /* margin: 30px 25px 0; */
+}
+
+.navbar {
+    height: 100px;
+    padding: 20px;
+    /* margin: 0 30px; */
+    background-color: #0D0D0D;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 4;
+}
+
+.navbar a {
+    text-decoration: none;
+    position: relative;
+}
+
+.navbar a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s;
+    background-color: white;
+}
+
+.navbar a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;  
+}
+
+.navbar-logo {
+    /* width: fit-content; */
+    /* height: 150px; */
+    display: flex;
+    align-items: center;
+    /* justify-content: left; */
+    position: relative;
+    /* animation: logo 1s; */
+}
+
+.navbar-logo img {
+    height: 100px;
+    object-fit: contain;
+}
+
+.navbar-link {
+    gap: 50px;
+    display: flex;
+    align-items: center;
+} 
+
+.navbar-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 40px;
+}
+
+.navbar-icons {
+    display: flex;
+    gap: 25px;
+}
+
+.navbar-icons i {
+    cursor: pointer;
+    font-size: 25px;
+}
+
+.navbar-login {
+    padding: 10px 25px;
+    border-radius: 30px;
+    border: 2.5px solid #F7B41A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.25s;
+}
+
+.navbar-login:hover {
+    background-color: #E0A92B;
+}
+/* Navbar ends here */
+
+/* Account's form sections starts here */
+.account {
+    width: 30%;
+    height: 0;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    visibility: hidden;
+    transition: 0.5s;
+}
+
+.account a {
+    /* text-decoration: none; */
+}
+
+.open-account-section {
+    height: 500px;
+    visibility: visible;
+}
+
+.account-container {
+    transform: translateY(-150vh);
+    perspective: 800px;
+    position: relative;
+    transition: 0.5s;
+    /* background-color: #E0A92B; */
+}
+
+.account-container-login {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    transform: translate(0);
+    transition: 0.25s;
+}
+
+.login-form {
+    width: 100%;
+    /* height: 100%; */
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #E0A92B;
+    transition: 0.5s ease;
+}
+
+.login-form input {
+    padding: 10px;
+    border-radius: 5px;
+    color: black;
+}
+
+.close-login-form {
+    transform: rotateY(-180deg);
+}
+
+.login-form form, .login-email, .login-password {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.login-title i {
+    cursor: pointer;
+}
+
+
+.login-email input, .login-password input {
+    border: 2px solid yellow;
+}
+
+.login-email input:focus, .login-password input:focus {
+    border: 2px solid #0D0D0D;
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.login-submit input {
+    width: 100%;
+    cursor: pointer;
+    background-color: #0D0D0D;
+    color: white;
+    font-weight: 800;
+}
+
+.login-other-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.signup-form {
+    width: 100%;
+    /* height: 100%; */
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #0D0D0D;
+    padding: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+    transition: 0.5s ease;
+}
+
+.show-signup-form {
+    transform: rotateY(0);
+}
+
+.signup-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.signup-title i {
+    cursor: pointer;
+}
+
+.signup-email input, .signup-password input {
+    border: 2px solid black;
+}
+
+.signup-form form, .signup-email, .signup-password, .signup-password-confirmation {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.signup-form input {
+    padding: 10px;
+    border-radius: 5px;
+    color: black;
+}
+
+.signup-email input, .signup-password input, .signup-password-confirmation input {
+    border: 2px solid black;
+}
+
+.signup-email input:focus, .signup-password input:focus, .signup-password-confirmation input:focus {
+    border: 2px solid #FFC94B;
+}
+
+.signup-submit input {
+    width: 100%;
+    cursor: pointer;
+    background-color: #ffc94b;
+    color: white;
+    font-weight: 800;
+}
+
+.signup-other-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.show-box-overlay {
+    background-color: black;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    top: 0;
+    z-index: 4;
+}
+/* Account's form sections ends here */
+
+/* Home section starts here */
+.home {
+    position: relative;
+    height: 100vh;
+    background: url('burger.png') no-repeat center center;
+    background-color: #000;
+    background-size: 100% 100%;
+    overflow: hidden;
+}
+
+.home::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 40%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 1), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.home-container {
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 100px;
+
+}
+
+.left-section {
+    width: 652px;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    flex-direction: column;
+    gap: 25px;
+    padding: 10px;
+    z-index: 2;
+}
+
+.left-section h1, span {
+    font-size: 72px;
+    font-family: "Contrail One", sans-serif;
+}
+
+.left-section span {
+    color: #F7B41A;
+}
+
+.left-section-button {
+    width: fit-content;
+    padding: 15px;
+    border-radius: 30px;
+    background-color: #F7B41A;
+}
+
+.left-section-reviews {
+    margin-top: 75px;
+    display: flex;
+    gap: 20px;
+}
+
+.left-section-reviews-img {
+    display: flex;
+
+}
+
+.left-section-reviews-img div {
+    width: 75px;
+    height: 75px;
+    background-color: #E0A92B;
+    border-radius: 50px;
+    border: 5px solid blue;
+    position: absolute;
+    left: 0;
+}
+
+.left-section-reviews-box1 {
+    right: 20px;
+}
+
+.left-section-reviews-box2 {
+
+}
+
+.left-section-reviews-box3 {
+
+}
+
+/* Right section starts here */
+.right-section {
+    width: 50%;
+    padding: 10px;
+}
+
+.right-section-image {
+    /* width: 100%; */
+    display: flex;
+    justify-content: center;
+}
+
+.right-section-image img {
+    width: 75%;
+    height: auto;
+    object-fit: cover;
+}
+/* Right section ends here */
+/* Home section ends here */
+
+/* Restaurant starts here */
+.restaurant {
+    /* padding: 75px 100px; */
+    /* height: 600px; */
+    padding: 4rem 0;
+}
+
+.restaurant-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.restaurant-container-header {
+    font-size: 24px;
+}
+
+.restaurant-category-menu {
+    padding: 10px;
+    display: flex;
+    gap: 75px;
+}
+
+.restaurant-category-item {
+    padding: 5px 15px;
+    border-bottom: 4px solid #0D0D0D;
+    border-radius: 10px;
+}
+
+.restaurant-category-item p {
+    color: grey;
+    cursor: pointer;
+}
+
+.menu-active {
+    border-bottom: 4px solid white;
+}
+
+.menu-active p {
+    color: white;
+}
+
+.category-menu-active {
+    border-bottom: 2.5px solid red;
+}
+
+.restaurant-category-menu {
+    /* border-bottom: 2.5px solid white; */
+    /* border-radius: 5px; */
+}
+
+.restaurant-menu {
+    display: flex;
+    gap: 25px;
+    flex-direction: column;
+}
+
+.restaurant-menu-section {
+    display: flex;
+    gap: 25px;
+}
+
+.restaurant-card {
+    /* width: fit-content; */
+    width: 370px;
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+    flex-direction: column;
+    padding: 30px;
+    background-color: #191919;
+    border-radius: 10px;
+    gap: 20px;
+}
+
+.restaurant-card-image {
+    margin: auto;
+}
+
+.restaurant-card-content {
+    /* width: 50%; */
+}
+
+.restaurant-card-price {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.restaurant-card-price i {
+    cursor: pointer;
+}
+
+.restaurant-option {
+    display: flex;
+    justify-content: center;
+}
+
+.restaurant-option-button {
+    padding: 15px 40px;
+    background-color: white;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.restaurant-option-button p {
+    color: black;
+    font-weight: bold;
+}
+/* Restaurant ends here */
+
+
+/* Footer starts here */
+.footer {
+    padding: 40px 0;
+    background-color: #191919;
+}
+
+.footer-container {
+    display: flex;
+    /* justify-content: center; */
+    flex-direction: column;
+    /* align-items: center; */
+    margin: auto 50px;
+    padding: 0 32px;
+}
+
+.footer-box {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    margin: 24px 0;
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+}
+
+.footer-content p {
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.footer hr {
+    text-align: center;
+    width: 100%;
+    opacity: 0.2;
+}
+
+.footer-link-section {
+    margin: 24px 0;
+    display: flex;
+    gap: 24px;
+}
+
+.footer-link-section i {
+    font-size: 24px;
+}
+
+/* Footer ends here */
+
+/* Responsive design starts here */
+@media only screen and (max-width: 1080px) {
+
+}
+/* Responsive design ends here */
