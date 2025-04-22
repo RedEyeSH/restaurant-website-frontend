@@ -49,3 +49,5 @@ restaurantItems.forEach((item) => {
     item.classList.add("menu-active");
   });
 });
+
+
