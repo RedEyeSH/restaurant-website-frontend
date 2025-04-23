@@ -406,9 +406,7 @@ async function fetchItemsForMeals() {
                             <p><strong>Breakfast Name:</strong> ${names[5]} (ID: ${meal.breakfast_id})</p>
                             <p><strong>Dessert Name:</strong> ${names[6]} (ID: ${meal.dessert_id})</p>
                             <p><strong>Drink Name:</strong> ${names[7]} (ID: ${meal.drink_id})</p>
-        
-                            <p><strong>Stock:</strong> ${meal.stock}</p>
-                            <p><strong>Visible:</strong> ${meal.visible}</p>
+    
         
                             <!-- Date on the bottom right -->
                             <div class="text-end mt-3">
