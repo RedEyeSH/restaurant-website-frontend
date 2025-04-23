@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/2ed076f63b.js" crossorigin="anonymous"></script>
-    <script src="script.js" defer></script>
+    <script src="script.js" type="module" defer></script>
     <title>Restaurant</title>
 </head>
 <body>
@@ -22,8 +22,13 @@
         </div>
         <div class="navbar-actions">
             <div class="navbar-icons">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <i class="fa-solid fa-cart-shopping"></i>
+                <div class="navbar-search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <div class="navbar-shopping-cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <p>4.40 $</p>
+                </div>
             </div>
             <div class="navbar-login" id="navbar-login">
                 <i class="fa-solid fa-arrow-right-to-bracket"></i>
@@ -53,7 +58,7 @@
                         <label for="remember-me">
                             <input type="checkbox" id="remember-me"> Remember me
                         </label>
-                        <a id="forgot-password">Forgot password?</a>
+                        <p id="login-forgot-password">Forgot password?</p>
                     </div>
                     <div class="login-submit">
                         <input type="submit" value="Sign in">
@@ -64,6 +69,22 @@
                     <a href="#" id="signup">Sign up now</a>
                 </div>
             </div>
+            <div class="forgot-password-form" id="forgot-password-form">
+                <form action="#">
+                    <div class="forgot-back-to-login">
+                        <p id="forgot-back-to-login">Back to Login</p>
+                    </div>
+                    <h2>Forgot password</h2>
+                    <div class="forgot-password-email">
+                        <label for="forgot-password-email">Email</label>
+                        <input type="email" id="forgot-password-email" placeholder="Enter your email">
+                        <p id="forgot-password-message"></p>
+                    </div>
+                    <div class="forgot-password-submit">
+                        <input type="submit" value="Send Reset Link">
+                    </div>
+                </form>
+            </div>
             <div class="signup-form" id="signup-form">
                 <div class="signup-title">
                     <h1>Get Started</h1>
@@ -73,6 +94,10 @@
                     <div class="signup-email">
                         <label for="signup-email">Email</label>
                         <input type="email" id="signup-email" placeholder="Enter email" required>
+                    </div>
+                    <div class="signup-name">
+                        <label for="signup-name">Name</label>
+                        <input type="text" id="signup-name" placeholder="Enter name" required>
                     </div>
                     <div class="signup-password">
                         <label for="signup-password">Password</label>
@@ -96,6 +121,14 @@
     <div class="box-overlay" id="box-overlay"></div>
     <!-- Account setup ends here -->
 
+    <!-- Shopping cart side bar starts here -->
+    <section class="shopping-cart">
+        <div class="shopping-cart-container">
+
+        </div>
+    </section>
+    <!-- Shopping cart side bar ends here -->
+    
     <!-- Home section starts here -->
     <section class="home" id="home">
         <div class="home-container">
@@ -110,7 +143,7 @@
                 <div class="left-section-button">
                     <h4>Get Started</h4>
                 </div>
-            <div class="left-section-reviews">
+            <!-- <div class="left-section-reviews">
                 <div class="left-section-reviews-img">
                     <div class="left-section-reviews-box1"></div>
                     <div class="left-section-reviews-box2"></div>
@@ -119,7 +152,7 @@
                 <div class="left-section-reviews-description">
                      <p>Our Happy Customers</p>
                 </div>
-            </div>
+            </div> -->
             </div>
             <div class="right-section">
                 <div class="right-section-image">
