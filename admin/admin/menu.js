@@ -153,13 +153,13 @@ async function fetchItemsForMeals() {
     const items = await response.json();
 
     const selects = {
-        hamburgers: document.getElementById('hamburgerSelect'),
-        wraps: document.getElementById('wrapSelect'),
-        chicken_burgers: document.getElementById('chicken_burgerSelect'),
+        hamburger: document.getElementById('hamburgerSelect'),
+        wrap: document.getElementById('wrapSelect'),
+        chicken_burger: document.getElementById('chicken_burgerSelect'),
         vegan: document.getElementById('veganSelect'),
-        sides: document.getElementById('sideSelect'),
+        side: document.getElementById('sideSelect'),
         breakfast: document.getElementById('breakfastSelect'),
-        desserts: document.getElementById('dessertSelect'),
+        dessert: document.getElementById('dessertSelect'),
         drinks: document.getElementById('drinkSelect')
     };
 
@@ -429,7 +429,9 @@ async function fetchItemsForMeals() {
         
         // Open the Edit Modal with Item Data
         function editItem(id) {
-            fetch(`http://localhost:3000/api/v1/items/${id}`)
+            const editForm = document.getElementById('editItemForm');
+            editForm.reset();
+             fetch(`http://localhost:3000/api/v1/items/${id}`)
                 .then(response => response.json())
                 .then(item => {
                     const editForm = document.getElementById('editItemForm');
@@ -585,6 +587,8 @@ async function fetchItemsForMeals() {
         
         
         async function editMeal(id) {
+            const editForm = document.getElementById('editMealForm');
+            editForm.reset();
             try {
                 const response = await fetch(`http://localhost:3000/api/v1/meals/${id}`);
                 const meal = await response.json();
@@ -728,14 +732,14 @@ async function fetchItemsForMeals() {
             const drinkSelect = document.getElementById('editDrinkSelect');
         
             const categories = {
-                hamburgers: { select: hamburgerSelect, key: 'hamburger_id' },
-                wraps: { select: wrapSelect, key: 'wrap_id' },
-                chicken_burgers: { select: chickenBurgerSelect, key: 'chicken_burger_id' },
+                hamburger: { select: hamburgerSelect, key: 'hamburger_id' },
+                wrap: { select: wrapSelect, key: 'wrap_id' },
+                chicken_burger: { select: chickenBurgerSelect, key: 'chicken_burger_id' },
                 vegan: { select: veganSelect, key: 'vegan_id' },
-                sides: { select: sideSelect, key: 'side_id' },
+                side: { select: sideSelect, key: 'side_id' },
                 breakfast: { select: breakfastSelect, key: 'breakfast_id' },
-                desserts: { select: dessertSelect, key: 'dessert_id' },
-                drinks: { select: drinkSelect, key: 'drink_id' },
+                dessert: { select: dessertSelect, key: 'dessert_id' },
+                drink: { select: drinkSelect, key: 'drink_id' },
             };
         
             Object.values(categories).forEach(({ select }) => {
