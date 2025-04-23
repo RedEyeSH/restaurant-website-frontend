@@ -59,16 +59,18 @@ body {
 
 .navbar-logo {
     /* width: fit-content; */
-    /* height: 150px; */
+    height: 80px;
     display: flex;
     align-items: center;
+    gap: 10px;
     /* justify-content: left; */
     position: relative;
     /* animation: logo 1s; */
 }
 
 .navbar-logo img {
-    height: 100px;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
 }
 
@@ -82,17 +84,50 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 40px;
+    gap: 20px;
 }
 
 .navbar-icons {
     display: flex;
+    align-items: center;
     gap: 25px;
 }
 
 .navbar-icons i {
     cursor: pointer;
     font-size: 25px;
+}
+
+.navbar-shopping-cart {
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    border-radius: 5px;
+    border: 2.5px solid #E0A92B;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+.navbar-shopping-cart::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    border: 2.5px solid #E0A92B;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s;
+    background-color: #E0A92B;
+    z-index: -1;
+}
+
+.navbar-shopping-cart:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
 }
 
 .navbar-login {
@@ -130,6 +165,7 @@ body {
 
 .open-account-section {
     height: 500px;
+    /* height: 50%; */
     visibility: visible;
 }
 
@@ -141,12 +177,14 @@ body {
     /* background-color: #E0A92B; */
 }
 
-.account-container-login {
+.account-container-form {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     height: 100%;
     transform: translate(0);
     transition: 0.25s;
+    position: relative;
 }
 
 .login-form {
@@ -178,7 +216,7 @@ body {
 .login-form form, .login-email, .login-password {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
 }
 
 .login-title {
@@ -217,6 +255,104 @@ body {
     justify-content: space-between;
 }
 
+.login-options p {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.forgot-password-form {
+    width: 100%;
+    height: fit-content;
+    background-color: #FFC94B;
+    transform: rotateY(-180deg);
+    backface-visibility: hidden;
+    padding: 20px;
+    border-radius: 10px;
+    transition: 0.5s;
+    z-index: 2;
+    visibility: hidden;
+}
+
+.show-forgot-password-form {
+    transform: rotateY(0);
+    visibility: visible;
+    transition: 0.5s;
+}
+
+.forgot-password-form form input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.forgot-password-email input {
+    color: #191919;
+}
+
+.forgot-back-to-login p {
+    width: fit-content;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.forgot-password-submit input {
+    background-color: #191919;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.forgot-password-submit input:hover {
+    background-color: #100f0f;
+}
+
+.forgot-password-form form, .forgot-password-form form div {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.close-login-form-forgot {
+    transform: rotateY(180deg);
+}
+
+/* .open-forgot-password-form {
+    transform: translateX(55%);
+    visibility: visible;
+    opacity: 1;
+}
+
+.slide-left {
+    transform: translateX(-50%);
+    transition: 0.5s;
+}
+
+.slide-up {
+    transform: translate(-50%, -100vh);
+    transition: 0.5s;
+    opacity: 1
+}
+
+.slide-left-password-form {
+    transform: translateX(0);
+} */
+
+/* .slide-login-form {
+    transform: translateX(-50%);
+    transition: 0.5s;
+}
+
+.slide-up-login-form {
+    transform: translateX(-50%);
+    transform: translateY(-150vh);
+    transition: 4s;
+} */
+/* .slide-login-form .login-other-options {
+} */
+
+/* .slide-signup-form {
+    transform: translateX(-25%);
+} */
+
 .signup-form {
     width: 100%;
     /* height: 100%; */
@@ -247,14 +383,10 @@ body {
     cursor: pointer;
 }
 
-.signup-email input, .signup-password input {
-    border: 2px solid black;
-}
-
-.signup-form form, .signup-email, .signup-password, .signup-password-confirmation {
+.signup-form form, .signup-form form div {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
 }
 
 .signup-form input {
@@ -263,11 +395,11 @@ body {
     color: black;
 }
 
-.signup-email input, .signup-password input, .signup-password-confirmation input {
+.signup-email input, .signup-name input, .signup-password input, .signup-password-confirmation input {
     border: 2px solid black;
 }
 
-.signup-email input:focus, .signup-password input:focus, .signup-password-confirmation input:focus {
+.signup-email input:focus, .signup-name input:focus, .signup-password input:focus, .signup-password-confirmation input:focus {
     border: 2px solid #FFC94B;
 }
 
@@ -295,6 +427,21 @@ body {
     z-index: 4;
 }
 /* Account's form sections ends here */
+
+/* Shopping cart section starts here */
+.shopping-cart {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: aqua;
+}
+
+.shopping-cart-container {
+    width: 40%;
+}
+/* Shopping cart section ends here */
 
 /* Home section starts here */
 .home {
