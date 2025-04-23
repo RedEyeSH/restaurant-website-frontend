@@ -17,51 +17,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             tbody.innerHTML = '';
 
             orders.forEach(order => {
+                // Format items array into a readable string (e.g., 2 x Item 7 (€10.00))
+                const itemsList = order.items.map(item => `${item.quantity} x Item (${item.id}) (€${item.price.toFixed(2)})`).join(', ');
+
+                // Conditionally format address based on method
+                const address = order.method === "pickup" ? "N/A" : `${order.address.street}, ${order.address.postalCode}, ${order.address.city}`;
+
                 const row = document.createElement('tr');
-                const statusBadge = `<span class="badge bg-${getStatusColor(order.status)}">${order.status}</span>`;
                 row.innerHTML = `
                     <td>${order.order_id}</td>
                     <td>${order.customer_name}</td>
                     <td>${order.customer_phone}</td>
+                    <td>${order.customer_email}</td>
+                    <td>${itemsList}</td>
                     <td>${order.method}</td>
-                    <td>${new Date(order.scheduled_time).toLocaleString()}</td>
+                    <td>${address}</td>
+                    <td>${order.scheduled_time}</td>
+                    <td>${order.notes}</td>
                     <td>${order.total_price}€</td>
                     <td>${order.status}</td>
                 `;
                 tbody.appendChild(row);
             });
 
-            // Helper function to determine badge color based on status
-            function getStatusColor(status) {
-                switch (status.toLowerCase()) {
-                    case 'processing':
-                        return 'primary';
-                    case 'preparing':
-                        return 'info';
-                    case 'ready':
-                        return 'warning';
-                    case 'completed':
-                        return 'success';
-                    default:
-                        return 'secondary';
-                }
-            }
-
-            // Refresh the Bootstrap Table after data is loaded
-            $('#OrdersTable').bootstrapTable('load', orders);
+         initializeTable('#OrdersTable', 5);
         } catch (error) {
             console.error('Error fetching orders:', error);
         }
     };
 
-    // Initialize the table with Bootstrap Table plugin
-    $('#OrdersTable').bootstrapTable({
-        search: true,       // Enable search
-        pagination: true,   // Enable pagination
-        pageSize: 5, // Set number of items per page
-        sortable: true,     // Enable sorting
-        filterControl: true, // Enable filter control
-    });
 
     // Fetch and load orders
     fetchOrders();

@@ -161,7 +161,7 @@ async function fetchItemsForMeals() {
             side: document.getElementById('sideSelect'),
             breakfast: document.getElementById('breakfastSelect'),
             dessert: document.getElementById('dessertSelect'),
-            drinks: document.getElementById('drinkSelect')
+            drink: document.getElementById('drinkSelect')
         };
 
         Object.values(selects).forEach(select => select.innerHTML = '<option value="">None</option>');
@@ -270,61 +270,66 @@ async function fetchItemsForMeals() {
                     const response = await fetch(`http://localhost:3000/api/v1/items/${id}`);
                     const item = await response.json();
                     const viewItemDetailsDiv = document.getElementById('viewItemDetails');
-        
+            
                     viewItemDetailsDiv.innerHTML = `
-                    <div class="text-center mb-3">
-                        <h3>${item.name}</h3>
-                    </div>
-                    <div class="row">
-                        <!-- ID on the top left -->
-                        <div class="col-6">
-                            <p><strong>ID:</strong> ${item.id}</p>
+                        <div class="modal-header">
+                            <h5 class="modal-title text-center w-100">${item.name}</h5>
                         </div>
-                        <!-- Price on the top right -->
-                        <div class="col-6 text-end">
-                            <p><strong>Price:</strong> ${item.price}€</p>
+                        <div class="modal-body">
+                            <div class="row mb-4">
+                                <!-- Left side with ID and Category -->
+                                <div class="col-md-6">
+                                    <div class="d-flex flex-column">
+                                        <p><strong>ID:</strong> ${item.id}</p>
+                                        <p><strong>Category:</strong> ${item.category}</p>
+                                    </div>
+                                </div>
+                                <!-- Right side with Price and Stock/Visible Status -->
+                                <div class="col-md-6 text-end">
+                                    <p style="font-size: 1.5rem; font-weight: bold;"><strong>Price:</strong> ${item.price}€</p>
+                                    <div>
+                                        <span class="badge ${item.stock.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">
+                                            ${item.stock.toLowerCase() === 'yes' ? 'In Stock' : 'Out of Stock'}
+                                        </span>
+                                        <span class="badge ${item.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'} ms-2">
+                                            ${item.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <div class="row mb-4">
+                                <!-- Image in the center -->
+                                <div class="col-md-12 text-center mb-3">
+                                    <img src="http://localhost:3000${item.image_url}" alt="${item.name}" class="img-fluid rounded" style="max-height: 300px;">
+                                    <p class="mt-5"><strong>Description:</strong> ${item.description}</p>
+                                </div>
+                            </div>
+            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <p><strong>Ingredients:</strong> ${item.ingredients}</p>
+                                    <p><strong>Allergens:</strong> ${item.allergens || 'None'}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Created At moved to bottom-right section -->
+                                    <div class="text-end mt-6">
+                                        <p><strong>Created At:</strong> ${new Date(item.created_at).toLocaleString()}</p>
+                                        <p><strong>Updated At:</strong> ${new Date(item.updated_at).toLocaleString()}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                            <div class="text-end">
-                            <!-- Stock Badge -->
-                            <span class="badge ${item.stock.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">
-                                ${item.stock.toLowerCase() === 'yes' ? 'In Stock' : 'Out of Stock'}
-                            </span>
-                        </div>
-                        <div class="text-end">
-                            <!-- Visible Badge -->
-                            <span class="badge ${item.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">
-                                ${item.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}
-                            </span>
-                        </div>
-                    </div>
-                    
-
-                    
-                    <!-- Image in the center at the top -->
-                    <div class="text-center mb-3">
-                        <img src="http://localhost:3000${item.image_url}" alt="${item.name}" class="img-fluid" style="max-height: 300px;">
-                    </div>
-
-                    <!-- Category and Description in the center -->
-                    <p><strong>Category:</strong> ${item.category}</p>
-                    <p><strong>Description:</strong> ${item.description}</p>
-                    <p><strong>Ingredients:</strong> ${item.ingredients}</p>
-                    <p><strong>Allergens:</strong> ${item.allergens || 'None'}</p>
-                    
-                    <!-- Date on the bottom right -->
-                    <div class="text-end mt-3">
-                        <p><strong>Created At:</strong> ${new Date(item.created_at).toLocaleString()}</p>
-                    </div>
-                `;
-
+                    `;
+            
                     // Open the modal
                     const viewItemModal = new bootstrap.Modal(document.getElementById('viewItemModal'));
                     viewItemModal.show();
                 } catch (error) {
                     console.error('Error fetching item details:', error);
                 }
-        }
-        
+            }
+            
         
         
         async function fetchItemName(itemId) {
@@ -360,53 +365,63 @@ async function fetchItemsForMeals() {
                 ]);
         
                 viewMealDetailsDiv.innerHTML = `
-                    <div class="text-center mb-3">
-                        <h3>${meal.name}</h3>
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center w-100">${meal.name}</h5>
                     </div>
-                    <div class="row">
-                        <!-- ID on the top left -->
-                        <div class="col-6">
-                            <p><strong>ID:</strong> ${meal.id}</p>
+                    <div class="modal-body">
+                        <div class="row mb-4">
+                            <!-- Left side with ID and Description -->
+                            <div class="col-md-6">
+                                <div class="d-flex flex-column">
+                                    <p><strong>ID:</strong> ${meal.id}</p>
+                                </div>
+                            </div>
+                            <!-- Right side with Price and Stock/Visible Status -->
+                            <div class="col-md-6 text-end">
+                                <p style="font-size: 1.5rem; font-weight: bold;"><strong>Price:</strong> ${meal.price}€</p>
+                                <div>
+                                    <span class="badge ${meal.stock.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">
+                                        ${meal.stock.toLowerCase() === 'yes' ? 'In Stock' : 'Out of Stock'}
+                                    </span>
+                                    <span class="badge ${meal.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'} ms-2">
+                                        ${meal.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <!-- Price on the top right -->
-                        <div class="col-6 text-end">
-                            <p><strong>Price:</strong> ${meal.price}€</p>
+        
+                        <div class="row mb-4">
+                            <!-- Image in the center -->
+                            <div class="col-md-12 text-center mb-3">
+                                <img src="http://localhost:3000${meal.image_url}" alt="${meal.name}" class="img-fluid rounded" style="max-height: 300px;">
+                                <p class="mb-5"><strong>Description:</strong> ${meal.description}</p>
+                            </div>
                         </div>
-                         <div class="text-end">
-                        <!-- Stock Badge -->
-                        <span class="badge ${meal.stock.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">
-                            ${meal.stock.toLowerCase() === 'yes' ? 'In Stock' : 'Out of Stock'}
-                        </span>
-                    </div>
-                    <div class="text-end">
-                        <!-- Visible Badge -->
-                        <span class="badge ${meal.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">
-                            ${meal.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}
-                        </span>
-                    </div>
-                    </div>
-                    
-                    <!-- Image in the center at the top -->
-                    <div class="text-center mb-3">
-                        <img src="http://localhost:3000${meal.image_url}" alt="${meal.name}" class="img-fluid" style="max-height: 300px;">
-                    </div>
         
-                    <!-- Category and Description in the center -->
-                    <p><strong>Description:</strong> ${meal.description}</p>
-                   
-                    <p><strong>Hamburger Name:</strong> ${names[0]} (ID: ${meal.hamburger_id})</p>
-                    <p><strong>Wrap Name:</strong> ${names[1]} (ID: ${meal.wrap_id})</p>
-                    <p><strong>Chicken Burger Name:</strong> ${names[2]} (ID: ${meal.chicken_burger_id})</p>
-                    <p><strong>Vegan Name:</strong> ${names[3]} (ID: ${meal.vegan_id})</p>
-                    <p><strong>Side Name:</strong> ${names[4]} (ID: ${meal.side_id})</p>
-                    <p><strong>Breakfast Name:</strong> ${names[5]} (ID: ${meal.breakfast_id})</p>
-                    <p><strong>Dessert Name:</strong> ${names[6]} (ID: ${meal.dessert_id})</p>
-                    <p><strong>Drink Name:</strong> ${names[7]} (ID: ${meal.drink_id})</p>
-    
+                        <div class="row mb-4">
+                            <!-- Left side with item names -->
+                            <div class="col-md-6">
+                                <p><strong>Hamburger:</strong> ${names[0]} (ID: ${meal.hamburger_id})</p>
+                                <p><strong>Wrap:</strong> ${names[1]} (ID: ${meal.wrap_id})</p>
+                                <p><strong>Chicken Burger:</strong> ${names[2]} (ID: ${meal.chicken_burger_id})</p>
+                            </div>
+                            <!-- Right side with Vegan, Side, Breakfast, Dessert, Drink -->
+                            <div class="col-md-6">
+                                <p><strong>Vegan:</strong> ${names[3]} (ID: ${meal.vegan_id})</p>
+                                <p><strong>Side:</strong> ${names[4]} (ID: ${meal.side_id})</p>
+                                <p><strong>Breakfast:</strong> ${names[5]} (ID: ${meal.breakfast_id})</p>
+                                <p><strong>Dessert:</strong> ${names[6]} (ID: ${meal.dessert_id})</p>
+                                <p><strong>Drink:</strong> ${names[7]} (ID: ${meal.drink_id})</p>
+                            </div>
+                        </div>
         
-                    <!-- Date on the bottom right -->
-                    <div class="text-end mt-3">
-                        <p><strong>Created At:</strong> ${new Date(meal.created_at).toLocaleString()}</p>
+                        <div class="row mt-4">
+                            <!-- Created At in bottom-right section -->
+                            <div class="col-md-12 text-end">
+                                <p><strong>Created At:</strong> ${new Date(meal.created_at).toLocaleString()}</p>
+                                <p><strong>Updated At:</strong> ${new Date(meal.updated_at).toLocaleString()}</p>
+                            </div>
+                        </div>
                     </div>
                 `;
         
@@ -417,6 +432,7 @@ async function fetchItemsForMeals() {
                 console.error('Error fetching meal details:', error);
             }
         }
+        
         
         
         
@@ -561,7 +577,6 @@ async function fetchItemsForMeals() {
                             editItemAlert.textContent = 'Item updated successfully';
                             editItemAlert.style.display = 'block';
                             editForm.reset();  // Reset the form after successful update
-                            $('#ItemsTable').bootstrapTable('refresh');
                             window.location.reload(); // Reload the page to see updated data
                         } else {
                             editItemAlert.className = "alert alert-danger mt-3";
