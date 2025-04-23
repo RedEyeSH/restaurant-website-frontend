@@ -111,16 +111,15 @@
     
     
     <script>
-        function initializeTable(tableId, pageSize) {
-    $(tableId).bootstrapTable({
-        search: true,       // Enable search
-        pagination: true,   // Enable pagination
-        pageSize: pageSize, // Set number of items per page
-        sortable: true,     // Enable sorting
-        filterControl: true, // Enable filter control
-    });
-}
-
+        async function initializeTable(tableId, pageSize) {
+            $(tableId).bootstrapTable({
+                search: true,       // Enable search
+                pagination: true,   // Enable pagination
+                pageSize: pageSize, // Set number of items per page
+                sortable: true,     // Enable sorting
+                filterControl: true // Enable filter control
+            });
+        }
     </script>
 
 
