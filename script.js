@@ -1,6 +1,25 @@
+"use strict";
+import { fetchData } from './lib/fetchData.js';
+
+// Smooth scrolling for navbar links
+document.querySelectorAll('.navbar a').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const targetId = link.getAttribute('href').substring(1); // Get the target section ID
+        const targetSection = document.getElementById(targetId);
+
+        if (targetSection) {
+            targetSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
 // Login
 const navbar_login = document.getElementById("navbar-login");
-
 navbar_login.addEventListener('click', () => {
     document.getElementById("account").classList.toggle("open-account-section");
     document.getElementById("account-container").classList.toggle("account-container-form");
@@ -9,24 +28,6 @@ navbar_login.addEventListener('click', () => {
 });
 
 const loginForgotPassword = document.getElementById("login-forgot-password");
-// loginForgotPassword.addEventListener("click", () => {
-//     const loginForm = document.getElementById("login-form");
-//     const signupForm = document.getElementById("signup-form");
-//     const forgotPasswordForm = document.getElementById("forgot-password-form");
-
-//     loginForm.addEventListener("transitionend", function onLoginTransitionEnd() {
-//         loginForm.removeEventListener("transitionend", onLoginTransitionEnd);
-//         signupForm.removeEventListener("transitionend", onLoginTransitionEnd);
-
-//         forgotPasswordForm.classList.toggle("open-forgot-password-form");
-//         document.querySelector(".open-forgot-password-form").addEventListener("transitionend", function onForgotPasswordTransitionEnd() {
-//             loginForm.classList.toggle("slide-up");
-//             forgotPasswordForm.removeEventListener("transitionend", onForgotPasswordTransitionEnd);
-//             forgotPasswordForm.classList.toggle("slide-left-password-form");
-//         });
-//     });
-// });
-
 loginForgotPassword.addEventListener("click", () => {
     const loginForm = document.getElementById("login-form");
     const forgotPasswordForm = document.getElementById("forgot-password-form");
@@ -44,41 +45,38 @@ loginForgotBack.addEventListener("click", () => {
     forgotPasswordForm.classList.remove("show-forgot-password-form");
 });
 
-// const loginForgotPassword = document.getElementById("login-forgot-password");
-// loginForgotPassword.addEventListener("click", () => {
-//     const loginForm = document.getElementById("login-form");
-//     const signupForm = document.getElementById("signup-form");
-//     const forgotPasswordForm = document.getElementById("forgot-password-form");
-
-//     loginForm.classList.toggle("slide-left");
-//     signupForm.classList.toggle("slide-left");
-
-//     loginForm.addEventListener("transitionend", function onLoginTransitionEnd() {
-//         loginForm.removeEventListener("transitionend", onLoginTransitionEnd);
-//         signupForm.removeEventListener("transitionend", onLoginTransitionEnd);
-
-//         // loginForm.classList.toggle();
-//         forgotPasswordForm.classList.toggle("open-forgot-password-form");
-        
-//         document.querySelector(".open-forgot-password-form").addEventListener("transitionend", function onForgotPasswordTransitionEnd() {
-//             loginForm.classList.toggle("slide-up");
-//             forgotPasswordForm.removeEventListener("transitionend", onForgotPasswordTransitionEnd);
-//             forgotPasswordForm.classList.toggle("slide-left-password-form");
-//         });
-//     });
-// });
-
 const signupLink = document.getElementById("signup");
 signupLink.addEventListener('click', () => {
     document.getElementById("login-form").classList.toggle("close-login-form");
     document.getElementById("signup-form").classList.toggle("show-signup-form");
 });
 
-const login_link = document.getElementById("login")
-login_link.addEventListener('click', () => {
+const loginLink = document.getElementById("login")
+loginLink.addEventListener('click', () => {
     document.getElementById("login-form").classList.remove("close-login-form");
     document.getElementById("signup-form").classList.remove("show-signup-form");
 });
+
+// Shopping cart side bar
+const shoppingCartLink = document.getElementById("navbar-shopping-cart");
+shoppingCartLink.addEventListener("click", () => {
+    const shoppingCart = document.getElementById("shopping-cart");
+    shoppingCart.classList.toggle("show-shopping-cart");
+
+    const shoppingCartOverlay = document.querySelector(".shopping-cart-overlay");
+    shoppingCartOverlay.classList.toggle("show-shopping-cart-overlay");
+});
+
+function closeShoppingCart() {
+    const shoppingCart = document.getElementById("shopping-cart");
+    shoppingCart.classList.remove("show-shopping-cart");
+
+    const shoppingCartOverlay = document.querySelector(".shopping-cart-overlay");
+    shoppingCartOverlay.classList.remove("show-shopping-cart-overlay");
+}
+
+const shoppingCartOverlay = document.querySelector(".shopping-cart-overlay");
+shoppingCartOverlay.addEventListener("click", closeShoppingCart);
 
 // Handling for closing forms
 function closeForms() {
@@ -113,6 +111,14 @@ restaurantItems.forEach((item) => {
 
 // Fetch datas
 const apiUrl = "https://10.120.32.59/app/api/v1";
+
+// const getUserByToken = async () => {
+//     const data = fetchData(`${apiUrl}/items`)
+//     console.log(data);
+// }
+
+// getUserByToken();
+
 console.log(apiUrl);
 
 // Login form handling
@@ -251,3 +257,45 @@ forgotPasswordForm.addEventListener("submit", async function(event) {
         message.style.color = 'red';
     }
 });
+
+const getMenuItems = async () => {
+    const data = await fetchData(`${apiUrl}/items`);
+    return data;
+}
+
+console.log(getMenuItems());
+
+const createRestaurantCard = async () => {
+    const data = await getMenuItems();
+    // console.log(data);
+
+    const restaurantMenuSection = document.querySelector(".restaurant-menu-section");
+
+    data.forEach((item) => {
+        const restaurantCard = document.createElement("div");
+        restaurantCard.className = "restaurant-card";
+        
+        restaurantCard.innerHTML = `
+            <div class="restaurant-card-image">
+                <img src="${item.image_url}" alt="${item.name}">
+            </div>
+            <div class="restaurant-card-header">
+                <h2>${item.name}</h2>
+            </div>
+            <div class="restaurant-card-description">
+                <p>${item.description}</p>
+            </div>
+            <div class="restaurant-card-price">
+                <h2>$${item.price}</h2>
+                <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+        `;
+        // console.log(item.image_url);
+        restaurantMenuSection.appendChild(restaurantCard);
+    });
+
+}
+
+createRestaurantCard();
+
+// displayMenuItems();
