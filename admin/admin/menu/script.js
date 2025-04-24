@@ -109,6 +109,7 @@ document.getElementById('itemForm').addEventListener('submit', async function (e
         submitButton.disabled = true;
         loadingSpinner.style.display = 'inline-block';
     
+
         const response = await fetch('http://localhost:3000/api/v1/meals', {
             method: 'POST',
             headers: {
@@ -267,7 +268,12 @@ async function fetchItemsForMeals() {
             // Function to show item details in a modal
             async function viewItemDetails(id) {
                 try {
-                    const response = await fetch(`http://localhost:3000/api/v1/items/${id}`);
+                    const response = await fetch(`http://localhost:3000/api/v1/items/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Replace with real JWT
+                        }
+                    });
                     const item = await response.json();
                     const viewItemDetailsDiv = document.getElementById('viewItemDetails');
             
@@ -334,7 +340,12 @@ async function fetchItemsForMeals() {
         
         async function fetchItemName(itemId) {
             try {
-                const response = await fetch(`http://localhost:3000/api/v1/items/${itemId}`);
+                const response = await fetch(`http://localhost:3000/api/v1/items/${itemId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Replace with real JWT
+                    }
+                });
                 if (!response.ok) {
                     return 'Not available';
                 }
@@ -348,7 +359,12 @@ async function fetchItemsForMeals() {
         
         async function viewMealDetails(id) {
             try {
-                const response = await fetch(`http://localhost:3000/api/v1/meals/${id}`);
+                const response = await fetch(`http://localhost:3000/api/v1/meals/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Replace with real JWT
+                    }
+                });
                 const meal = await response.json();
                 const viewMealDetailsDiv = document.getElementById('viewMealDetails');
         
@@ -444,7 +460,12 @@ async function fetchItemsForMeals() {
             const editForm = document.getElementById('editItemForm');
             editForm.reset();
             try {
-                const response = await fetch(`http://localhost:3000/api/v1/items/${id}`);
+                const response = await fetch(`http://localhost:3000/api/v1/items/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Replace with real JWT
+                    }
+                });
                 const item = await response.json();
                 const allergens = item.allergens ? item.allergens.split(',') : [];
                 const originalImageUrl = item.image_url;
@@ -597,7 +618,12 @@ async function fetchItemsForMeals() {
             const editForm = document.getElementById('editMealForm');
             editForm.reset();
             try {
-                const response = await fetch(`http://localhost:3000/api/v1/meals/${id}`);
+                const response = await fetch(`http://localhost:3000/api/v1/meals/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Replace with real JWT
+                    }
+                });
                 const meal = await response.json();
         
                 const originalImageUrl = meal.image_url;
@@ -765,7 +791,12 @@ async function fetchItemsForMeals() {
         // Function to handle delete button click
         async function deleteItem(id) {
             try {
-                const response = await fetch(`http://localhost:3000/api/v1/items/${id}/checkMeal`);
+                const response = await fetch(`http://localhost:3000/api/v1/items/${id}/checkMeal`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Replace with real JWT
+                    }
+                });
                 const data = await response.json();
                 if (data.isAssociatedWithMeal) {
                     showModal("This item is part of a meal. Deleting it will also delete the meal. Are you sure?", "Confirm Meal Deletion", "deleteMeal", id);
