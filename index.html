@@ -124,65 +124,71 @@
     <!-- Shopping cart side bar starts here -->
     <section class="shopping-cart" id="shopping-cart">
         <div class="shopping-cart-container">
-            <h1>Shopping cart</h1>
-            <div class="shopping-cart-item">
-                <div class="shopping-cart-item-header">
-                    <div class="shopping-cart-item-img">
-                        <img src="./images/burgerfrommenu.png" alt="Chicken">
-                    </div>
-                    <div class="shopping-cart-item-info">
-                        <h4>Chicken Burger</h4>
-                        <p>$4.40</p>
-                    </div>
+            <div class="shopping-cart-box">
+                <div class="shopping-cart-title">
+                    <h1>Shopping cart</h1>
                 </div>
-                <div class="shopping-cart-item-options">
-                    <div class="shopping-cart-item-minus">
-                        <i class="fa-solid fa-minus"></i>
-                    </div>
-                    <div class="shopping-cart-item-amount">
-                        <p>1</p>
-                    </div>
-                    <div class="shopping-cart-item-plus">
-                        <i class="fa-solid fa-plus"></i>
-                    </div>
-                    <div class="shopping-cart-item-trash">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="shopping-cart-item">
-                <div class="shopping-cart-item-header">
-                    <div class="shopping-cart-item-img">
-                        <img src="./images/burgerfrommenu.png" alt="Chicken">
-                    </div>
-                    <div class="shopping-cart-item-info">
-                        <h4>Chicken Burger</h4>
-                        <div class="shopping-cart-item-description">
-                            <p>Chicken Burger: </p>
-                            <p>Choose Side Dish: French Fries, L</p>
-                            <p>Choose a Drink: Coca Cola Zero 0.5 l</p>
+                <div class="shopping-cart-list">
+                    <div class="shopping-cart-item">
+                        <div class="shopping-cart-header">
+                            <div class="shopping-cart-img">
+                                <img src="./images/burgerfrommenu.png" alt="Chicken">
+                            </div>
+                            <div class="shopping-cart-info">
+                                <h4>Chicken Burger</h4>
+                                <p>$4.40</p>
+                            </div>
                         </div>
-                        <p>$4.40</p>
+                        <div class="shopping-cart-options">
+                            <button id="cart-btn-increase">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <p>1</p> <!-- idk amount of depending menu item -->
+                            <button id="cart-btn-decrease">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button id="cart-btn-trash">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="shopping-cart-item">
+                        <div class="shopping-cart-header">
+                            <div class="shopping-cart-img">
+                                <img src="./images/burgerfrommenu.png" alt="Chicken">
+                            </div>
+                            <div class="shopping-cart-info">
+                                <h4>Chicken Burger</h4>
+                                <div class="shopping-cart-description">
+                                    <p>Chicken Burger: </p>
+                                    <p>Choose Side Dish: French Fries, L</p>
+                                    <p>Choose a Drink: Coca Cola Zero 0.5 l</p>
+                                </div>
+                                <p>$4.40</p>
+                            </div>
+                        </div>
+                        <div class="shopping-cart-options">
+                            <button id="cart-btn-increase">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <p>1</p> <!-- idk amount of depending menu item -->
+                            <button id="cart-btn-decrease">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button id="cart-btn-trash">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="shopping-cart-item-options">
-                    <div class="shopping-cart-item-minus">
-                        <i class="fa-solid fa-minus"></i>
-                    </div>
-                    <div class="shopping-cart-item-amount">
-                        <p>1</p>
-                    </div>
-                    <div class="shopping-cart-item-plus">
-                        <i class="fa-solid fa-plus"></i>
-                    </div>
-                    <div class="shopping-cart-item-trash">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </div>
+                <div class="shopping-cart-proceed">
+                    <a href="#">
+                        <button id="shopping-cart-order">
+                            <p>Proceed to checkout</p>
+                            <h2>$8.80</h2>
+                        </button>
+                    </a>
                 </div>
-            </div>
-            <div class="shopping-cart-proceed">
-                <p>Proceed to checkout</p>
-                <h2>$8.80</h2>
             </div>
         </div>
     </section>
@@ -412,6 +418,42 @@
     </section>
     <!-- Restaurant section ends here -->
 
+    <!-- Restaurant's item menu information starts here -->
+    <section class="information" id="information">
+        <!-- <div class="information-container">
+            <div class="information-image">
+                <img src="./images/burgerfrommenu.png" alt="name" draggable="false">
+            </div>
+            <div class="information-content">
+                <div class="information-content-top">
+                    <h1>Item name</h1>
+                    <p>$2.20</p>
+                </div>
+                <div class="information-content-description">
+                    <p>Description</p>
+                </div>
+            </div>
+            <hr style="border-color: #949494">
+            <div class="information-footer">
+                <div class="information-footer-amount">
+                    <button id="information-amount-btn-decrease">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <p id="information-amount-display">1</p>
+                    <button id="information-amount-btn-increase">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <div class="information-footer-add">
+                    <p>Add to Cart</p>
+                </div>
+            </div>
+        </div> -->
+    </section>
+
+    <div class="information-overlay" id="information-overlay"></div>
+    <!-- Restaurant's item menu information ends here -->
+    
     <!-- Map section starts here -->
     <section class="map">
 

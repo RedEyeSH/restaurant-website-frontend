@@ -89,13 +89,21 @@ function closeForms() {
     // document.getElementById("signup-form").classList.remove("show-signup-form");
 }
 
+function removeInformationClasses() {
+    const information = document.getElementById("information");
+    information.classList.remove("open-information-section");
+
+    const informationOverlay = document.getElementById("information-overlay");
+    informationOverlay.classList.remove("show-information-overlay");
+}
+
 const close_form = document.querySelectorAll("#x-close-form");
 close_form.forEach((button) => {
-    button.addEventListener('click', closeForms);
+    button.addEventListener("click", closeForms);
 });
 
-const close_form_ = document.getElementById("box-overlay");
-close_form_.addEventListener('click', closeForms)
+const close_form_overlay = document.getElementById("box-overlay");
+close_form_overlay.addEventListener("click", closeForms)
 
 // Restaurant menu cards
 const restaurant_container = document.getElementById("");
@@ -258,15 +266,15 @@ forgotPasswordForm.addEventListener("submit", async function(event) {
     }
 });
 
-const getMenuItems = async () => {
+const fetchMenuItems = async () => {
     const data = await fetchData(`${apiUrl}/items`);
     return data;
 }
 
-console.log(getMenuItems());
+// console.log(fetchMenuItems());
 
-const createRestaurantCard = async () => {
-    const data = await getMenuItems();
+const renderRestaurantCard = async () => {
+    const data = await fetchMenuItems();
     // console.log(data);
 
     const restaurantMenuSection = document.querySelector(".restaurant-menu-section");
@@ -277,7 +285,7 @@ const createRestaurantCard = async () => {
         
         restaurantCard.innerHTML = `
             <div class="restaurant-card-image">
-                <img src="${item.image_url}" alt="${item.name}">
+                <img src="" alt="${item.name}" draggable="false">
             </div>
             <div class="restaurant-card-header">
                 <h2>${item.name}</h2>
@@ -292,10 +300,128 @@ const createRestaurantCard = async () => {
         `;
         // console.log(item.image_url);
         restaurantMenuSection.appendChild(restaurantCard);
+
+        restaurantCard.addEventListener("click", () => {
+            console.log(`Clicked on ${item.name}`);
+            
+            const information = document.getElementById("information");
+            information.classList.toggle("open-information-section");
+            information.innerHTML = "";
+
+            // change this line if the html information also changes. (not updated)
+            const informationContainer = document.createElement("div");
+            informationContainer.className = "information-container";
+            informationContainer.innerHTML = `
+                <div class="information-container">
+                    <div class="information-image">
+                        <img src="./images/burgerfrommenu.png" alt="${item.name}" draggable="false">
+                    </div>
+                    <div class="information-content">
+                        <div class="information-content-top">
+                            <h1>${item.name}</h1>
+                            <p>$${item.price}</p>
+                        </div>
+                        <div class="information-content-description">
+                            <p>${item.description}</p>
+                        </div>
+                    </div>
+                    <hr style="border-color: #949494">
+                    <div class="information-footer">
+                        <div class="information-footer-amount">
+                            <button id="information-amount-btn-decrease" disabled>
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <p id="information-amount-display">1</p>
+                            <button id="information-amount-btn-increase">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="information-footer-add">
+                            <p>Add to Cart</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            information.appendChild(informationContainer);
+
+            const decreaseButton = informationContainer.querySelector("#information-amount-btn-decrease");
+            const increaseButton = informationContainer.querySelector("#information-amount-btn-increase");
+            const amountDisplay = informationContainer.querySelector("#information-amount-display");
+
+            let amount = 1;
+
+            increaseButton.addEventListener("click", () => {
+                amount++;
+                amountDisplay.textContent = amount;
+
+                if (amount > 1) {
+                    decreaseButton.disabled = false;
+                    decreaseButton.style.cursor = "pointer";
+                }
+            });
+
+            decreaseButton.addEventListener("click", () => {
+                if (amount > 1) {
+                    amount--;
+                    amountDisplay.textContent = amount;
+                }
+
+                if (amount === 1) {
+                    decreaseButton.disabled = true;
+                    decreaseButton.style.cursor = "not-allowed";
+                }
+            });
+
+            const buttonAddToCart = document.querySelector(".information-footer-add");
+            buttonAddToCart.addEventListener("click", () => {
+                const navbarCartPrice = document.querySelector("#navbar-shopping-cart p");
+
+                const shoppingCartList = document.querySelector(".shopping-cart-list");
+
+                const shoppingCartItem = document.createElement("div");
+                shoppingCartItem.className = "shopping-cart-item";
+                shoppingCartItem.innerHTML = `
+                    <div class="shopping-cart-header">
+                        <div class="shopping-cart-img">
+                            <img src="" alt=${item.name}>
+                        </div>
+                        <div class="shopping-cart-info">
+                            <h4>${item.name}</h4>
+                            <p>$${item.price}</p>
+                        </div>
+                    </div>
+                    <div class="shopping-cart-options">
+                        <button id="cart-btn-increase">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <p>1</p>
+                        <button id="cart-btn-decrease">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button id="cart-btn-trash">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+
+                shoppingCartList.appendChild(shoppingCartItem);
+
+                removeInformationClasses();
+            });
+
+            const informationOverlay = document.getElementById("information-overlay");
+            informationOverlay.classList.toggle("show-information-overlay");
+        });
     });
+}
+
+renderRestaurantCard();
+
+const displayInformation = async () => {
 
 }
 
-createRestaurantCard();
-
+const informationOverlay = document.getElementById("information-overlay");
+informationOverlay.addEventListener("click",  removeInformationClasses);
 // displayMenuItems();
