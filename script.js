@@ -65,6 +65,12 @@ shoppingCartLink.addEventListener("click", () => {
 
     const shoppingCartOverlay = document.querySelector(".shopping-cart-overlay");
     shoppingCartOverlay.classList.toggle("show-shopping-cart-overlay");
+
+    if (shoppingCart.classList.contains("show-shopping-cart")) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "";
+    }
 });
 
 function closeShoppingCart() {
@@ -73,6 +79,8 @@ function closeShoppingCart() {
 
     const shoppingCartOverlay = document.querySelector(".shopping-cart-overlay");
     shoppingCartOverlay.classList.remove("show-shopping-cart-overlay");
+
+    document.body.style.overflow = "";
 }
 
 const shoppingCartOverlay = document.querySelector(".shopping-cart-overlay");
@@ -95,6 +103,8 @@ function removeInformationClasses() {
 
     const informationOverlay = document.getElementById("information-overlay");
     informationOverlay.classList.remove("show-information-overlay");
+
+    document.body.style.overflow = "";
 }
 
 const close_form = document.querySelectorAll("#x-close-form");
@@ -111,10 +121,10 @@ const restaurant_container = document.getElementById("");
 // Restaurant menu link
 const restaurantItems = document.querySelectorAll(".restaurant-category-item");
 restaurantItems.forEach((item) => {
-  item.querySelector("p").addEventListener("click", () => {
-    restaurantItems.forEach(div => div.classList.remove("menu-active"));
-    item.classList.add("menu-active");
-  });
+    item.addEventListener("click", () => {
+        restaurantItems.forEach(button => button.classList.remove("menu-active"));
+        item.classList.add("menu-active");
+    });
 });
 
 // Fetch datas
@@ -285,7 +295,7 @@ const renderRestaurantCard = async () => {
         
         restaurantCard.innerHTML = `
             <div class="restaurant-card-image">
-                <img src="" alt="${item.name}" draggable="false">
+                <img src="./images/burgerfrommenu.png" alt="${item.name}" draggable="false">
             </div>
             <div class="restaurant-card-header">
                 <h2>${item.name}</h2>
@@ -308,6 +318,16 @@ const renderRestaurantCard = async () => {
             information.classList.toggle("open-information-section");
             information.innerHTML = "";
 
+            if (information.classList.contains("open-information-section")) {
+                document.body.style.overflow = "hidden";
+            } else {
+                document.body.style.overflow = "";
+            }            
+
+            let amount = 1;
+
+            console.log(amount)
+
             // change this line if the html information also changes. (not updated)
             const informationContainer = document.createElement("div");
             informationContainer.className = "information-container";
@@ -328,16 +348,17 @@ const renderRestaurantCard = async () => {
                     <hr style="border-color: #949494">
                     <div class="information-footer">
                         <div class="information-footer-amount">
-                            <button id="information-amount-btn-decrease" disabled>
+                            <button id="information-amount-btn-decrease" ${amount == 1 ? "disabled" : ""}>
                                 <i class="fa-solid fa-minus"></i>
                             </button>
-                            <p id="information-amount-display">1</p>
+                            <p id="information-amount-display">${amount}</p>
                             <button id="information-amount-btn-increase">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
                         <div class="information-footer-add">
                             <p>Add to Cart</p>
+                            <p id="information-total-price">$${(item.price * amount).toFixed(2)}</p>
                         </div>
                     </div>
                 </div>
@@ -348,8 +369,7 @@ const renderRestaurantCard = async () => {
             const decreaseButton = informationContainer.querySelector("#information-amount-btn-decrease");
             const increaseButton = informationContainer.querySelector("#information-amount-btn-increase");
             const amountDisplay = informationContainer.querySelector("#information-amount-display");
-
-            let amount = 1;
+            const totalPriceDisplay = informationContainer.querySelector("#information-total-price");
 
             increaseButton.addEventListener("click", () => {
                 amount++;
@@ -359,6 +379,8 @@ const renderRestaurantCard = async () => {
                     decreaseButton.disabled = false;
                     decreaseButton.style.cursor = "pointer";
                 }
+
+                totalPriceDisplay.textContent = `$${(item.price * amount).toFixed(2)}`;
             });
 
             decreaseButton.addEventListener("click", () => {
@@ -371,42 +393,58 @@ const renderRestaurantCard = async () => {
                     decreaseButton.disabled = true;
                     decreaseButton.style.cursor = "not-allowed";
                 }
+
+                totalPriceDisplay.textContent = `$${(item.price * amount).toFixed(2)}`;
             });
 
+            //
             const buttonAddToCart = document.querySelector(".information-footer-add");
             buttonAddToCart.addEventListener("click", () => {
-                const navbarCartPrice = document.querySelector("#navbar-shopping-cart p");
-
                 const shoppingCartList = document.querySelector(".shopping-cart-list");
-
-                const shoppingCartItem = document.createElement("div");
-                shoppingCartItem.className = "shopping-cart-item";
-                shoppingCartItem.innerHTML = `
-                    <div class="shopping-cart-header">
-                        <div class="shopping-cart-img">
-                            <img src="" alt=${item.name}>
+            
+                let existingCartItem = shoppingCartList.querySelector(`[data-item-id="${item.id}"]`);
+                if (existingCartItem) {
+                    const cartAmountDisplay = existingCartItem.querySelector("#shopping-cart-amount");
+                    const cartPriceDisplay = existingCartItem.querySelector("#shopping-cart-price");
+                    let currentAmount = parseInt(cartAmountDisplay.textContent, 10);
+                    currentAmount += amount;
+                    cartAmountDisplay.textContent = currentAmount;
+            
+                    // Update the price for this specific item
+                    cartPriceDisplay.textContent = `$${(currentAmount * item.price).toFixed(2)}`;
+                } else {
+                    let shoppingCartItem;
+                    shoppingCartItem = document.createElement("div");
+                    shoppingCartItem.className = "shopping-cart-item";
+                    shoppingCartItem.setAttribute("data-item-id", item.id);
+                    shoppingCartItem.innerHTML = `
+                        <div class="shopping-cart-header">
+                            <div class="shopping-cart-img">
+                                <img src="./images/burgerfrommenu.png" alt="${item.name}">
+                            </div>
+                            <div class="shopping-cart-info">
+                                <h4>${item.name}</h4>
+                                <p id="shopping-cart-price">$${(amount * item.price).toFixed(2)}</p>
+                            </div>
                         </div>
-                        <div class="shopping-cart-info">
-                            <h4>${item.name}</h4>
-                            <p>$${item.price}</p>
+                        <div class="shopping-cart-options">
+                            <button id="cart-btn-decrease">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <p id="shopping-cart-amount">${amount}</p>
+                            <button id="cart-btn-increase">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button id="cart-btn-trash">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
                         </div>
-                    </div>
-                    <div class="shopping-cart-options">
-                        <button id="cart-btn-increase">
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <p>1</p>
-                        <button id="cart-btn-decrease">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                        <button id="cart-btn-trash">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                `;
-
-                shoppingCartList.appendChild(shoppingCartItem);
-
+                    `;
+            
+                    shoppingCartList.appendChild(shoppingCartItem);
+                    setupCartItemButtons(shoppingCartItem, item);
+                }
+                updateCartTotal();
                 removeInformationClasses();
             });
 
@@ -414,6 +452,69 @@ const renderRestaurantCard = async () => {
             informationOverlay.classList.toggle("show-information-overlay");
         });
     });
+}
+
+function setupCartItemButtons(cartItem, item) {
+    const decreaseButton = cartItem.querySelector("#cart-btn-decrease");
+    const increaseButton = cartItem.querySelector("#cart-btn-increase");
+    const trashButton = cartItem.querySelector("#cart-btn-trash");
+    const amountDisplay = cartItem.querySelector("#shopping-cart-amount");
+    const priceDisplay = cartItem.querySelector("#shopping-cart-price");
+
+    // Increase button logic
+    increaseButton.addEventListener("click", () => {
+        let amount = parseInt(amountDisplay.textContent, 10);
+        amount++;
+        amountDisplay.textContent = amount;
+
+        priceDisplay.textContent = `$${(amount * item.price).toFixed(2)}`;
+        updateCartTotal();
+    });
+
+    // Decrease button logic
+    decreaseButton.addEventListener("click", () => {
+        let amount = parseInt(amountDisplay.textContent, 10);
+        if (amount > 1) {
+            amount--;
+            amountDisplay.textContent = amount;
+
+            priceDisplay.textContent = `$${(amount * item.price).toFixed(2)}`;
+            updateCartTotal();
+        } else {
+            cartItem.remove();
+            updateCartTotal();
+        }
+    });
+
+    // Trash button logic
+    trashButton.addEventListener("click", () => {
+        cartItem.remove();
+        updateCartTotal();
+    });
+}
+
+function updateCartTotal() {
+    const shoppingCartList = document.querySelector(".shopping-cart-list");
+    const cartItems = shoppingCartList.querySelectorAll(".shopping-cart-item");
+    let totalPrice = 0;
+
+    cartItems.forEach((item) => {
+        // Extract the total price for this item directly from the #shopping-cart-price element
+        const itemTotalPrice = parseFloat(item.querySelector("#shopping-cart-price").textContent.replace("$", ""));
+        totalPrice += itemTotalPrice;
+    });
+
+    // Update the shopping cart total
+    const shoppingCartOrderTotal = document.querySelector("#shopping-cart-total");
+    if (shoppingCartOrderTotal) {
+        shoppingCartOrderTotal.textContent = `$${totalPrice.toFixed(2)}`;
+    }
+
+    // Update the navbar shopping cart total
+    const navbarCartPrice = document.getElementById("navbar-cart-price");
+    if (navbarCartPrice) {
+        navbarCartPrice.textContent = `$${totalPrice.toFixed(2)}`;
+    }
 }
 
 renderRestaurantCard();

@@ -27,7 +27,7 @@
                 </div>
                 <div class="navbar-shopping-cart" id="navbar-shopping-cart">
                     <i class="fa-solid fa-cart-shopping"></i>
-                    <p>$4.40</p>
+                    <p id="navbar-cart-price">$0.00</p>
                 </div>
             </div>
             <div class="navbar-login" id="navbar-login">
@@ -129,22 +129,22 @@
                     <h1>Shopping cart</h1>
                 </div>
                 <div class="shopping-cart-list">
-                    <div class="shopping-cart-item">
+                    <!-- <div class="shopping-cart-item">
                         <div class="shopping-cart-header">
                             <div class="shopping-cart-img">
                                 <img src="./images/burgerfrommenu.png" alt="Chicken">
                             </div>
                             <div class="shopping-cart-info">
                                 <h4>Chicken Burger</h4>
-                                <p>$4.40</p>
+                                <p id="shopping-cart-price">$4.40</p>
                             </div>
                         </div>
                         <div class="shopping-cart-options">
-                            <button id="cart-btn-increase">
+                            <button id="cart-btn-decrease">
                                 <i class="fa-solid fa-minus"></i>
                             </button>
-                            <p>1</p> <!-- idk amount of depending menu item -->
-                            <button id="cart-btn-decrease">
+                            <p id="shopping-cart-amount">1</p>
+                            <button id="cart-btn-increase">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                             <button id="cart-btn-trash">
@@ -171,7 +171,7 @@
                             <button id="cart-btn-increase">
                                 <i class="fa-solid fa-minus"></i>
                             </button>
-                            <p>1</p> <!-- idk amount of depending menu item -->
+                            <p id="shopping-cart-amount">1</p>
                             <button id="cart-btn-decrease">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
@@ -179,13 +179,13 @@
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="shopping-cart-proceed">
                     <a href="#">
                         <button id="shopping-cart-order">
                             <p>Proceed to checkout</p>
-                            <h2>$8.80</h2>
+                            <h2 id="shopping-cart-total">$0.00</h2>
                         </button>
                     </a>
                 </div>
@@ -198,36 +198,30 @@
     
     <!-- Home section starts here -->
     <section class="home" id="home">
+        <div class="home-background"></div>
         <div class="home-container">
-            <div class="left-section">
-                <div class="left-section-header">
-                    <h1>Grab Big Deals</h1>
-                    <h1>On <span>Yummy Meals!</span></h1>
+            <div class="content-section">
+                <div class="content-section-header">
+                    <!-- <h1>Grab Big Deals</h1>
+                    <h1>On <span>Yummy Meals!</span></h1> -->
+                    <h1>
+                        Welcome!<br>
+                        We Made <span>Delicious</span><br>
+                        <span>Food</span> for You
+                    </h1>
                 </div>
-                <div class="left-section-description">
-                    <p>Lorem ipsum dolor sit amet consectetur. Aenean maurisnam tortor curabitur phasellus.</p>
+                <div class="content-section-description">
+                    <p>At our restaurant, we believe every meal should be a celebration. We craft delicious dishes with fresh ingredients and plenty of love. Whether you're craving something savory, sweet, or a bit of both, we've got something special waiting for you.</p>
+                    <!-- <p>Lorem ipsum dolor sit amet consectetur. Aenean maurisnam tortor curabitur phasellus.</p> -->
                 </div>
-                <div class="left-section-button">
-                    <h4>Get Started</h4>
-                </div>
-            <!-- <div class="left-section-reviews">
-                <div class="left-section-reviews-img">
-                    <div class="left-section-reviews-box1"></div>
-                    <div class="left-section-reviews-box2"></div>
-                    <div class="left-section-reviews-box3"></div>
-                </div>
-                <div class="left-section-reviews-description">
-                     <p>Our Happy Customers</p>
-                </div>
-            </div> -->
-            </div>
-            <div class="right-section">
-                <div class="right-section-image">
-                    <!-- <img src="food img.png" alt="food-image"> -->
+                <div class="content-section-button">
+                    <button>Start Ordering</button>
+                    <!-- <h4>Get Started</h4> -->
                 </div>
             </div>
         </div>
     </section>
+    
     <!-- Home section ends here -->
 
     <!-- About section starts here -->
@@ -243,27 +237,27 @@
                 <h1>Our Best & Delicous Menu</h1>
             </div>
             <div class="restaurant-category-menu">
-                <div class="restaurant-category-item menu-active">
-                  <p>All</p>
-                </div>
-                <div class="restaurant-category-item">
-                  <p>Bread</p>
-                </div>
-                <div class="restaurant-category-item">
-                  <p>Chiffon & Rolls</p>
-                </div>
-                <div class="restaurant-category-item">
-                  <p>Donut</p>
-                </div>
-                <div class="restaurant-category-item">
-                  <p>Pastry & Danish</p>
-                </div>
-                <div class="restaurant-category-item">
-                  <p>Cakes</p>
-                </div>
-                <div class="restaurant-category-item">
-                  <p>Cookies</p>
-                </div>
+                <button class="restaurant-category-item menu-active">
+                    All
+                </button>
+                <button class="restaurant-category-item">
+                    Meals
+                </button>
+                <button class="restaurant-category-item">
+                    Burgers
+                </button>
+                <button class="restaurant-category-item">
+                    Drinks
+                </button>
+                <button class="restaurant-category-item">
+                    Ice cream
+                </button>
+                <button class="restaurant-category-item">
+                    Cakes
+                </button>
+                <button class="restaurant-category-item">
+                    Cookies
+                </button>
             </div>
             <!-- Maybe in future 3 item per section seperated -->
             <div class="restaurant-menu" id="restaurant-menu">
@@ -409,9 +403,7 @@
                     </div>
                 </div> -->
                 <div class="restaurant-option">
-                    <div class="restaurant-option-button">
-                        <p>See All</p>
-                    </div>
+                    <button id="restaurant-option-button">See All</button>
                 </div>
             </div>
         </div>
@@ -446,6 +438,7 @@
                 </div>
                 <div class="information-footer-add">
                     <p>Add to Cart</p>
+
                 </div>
             </div>
         </div> -->
