@@ -1,9 +1,11 @@
 "use strict";
 import { fetchData } from './lib/fetchData.js';
-import { fetchRoutes } from './lib/hslReittiopas.js';
+import { fetchRoutes, directionsTo } from './lib/hslReittiopas.js';
+
 
 // Simple call to fetchRoutes
 fetchRoutes().then(data => console.log('Fetched routes:', data));
+directionsTo().then(data => console.log('Directions:', data));
 
 // Smooth scrolling for navbar links
 document.querySelectorAll('.navbar a').forEach(link => {
@@ -527,25 +529,93 @@ const displayInformation = async () => {
 
 }
 // Initialize the Leaflet map
+let map; // Declare map in a higher scope
+
 function initMap() {
-    const location = [60.22487539389367, 25.07793846566476]; // Latitude, Longitude
+    const location = [60.22487539389367, 25.07793846566476];
+    map = L.map('map-container').setView(location, 14);
 
-    // Create the map and set its view to the specified location and zoom level
-    const map = L.map('map-container').setView(location, 14);
-
-    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
-    // Add a marker at the specified location
-    L.marker(location).addTo(map)
-        .bindPopup('Your Location')
-        .openPopup();
+    drawStopsOnMap(map)
 }
 
-// Call the function to initialize the map
+async function drawStopsOnMap(map) {
+    try {
+        const stops = await fetchRoutes(); // Get stops from hslReittiopas.js
+
+        stops.forEach(({ lat, lon, name }) => {
+            const circle = L.circle([lat, lon], {
+                color: 'green',
+                fillColor: '#32CD32',
+                fillOpacity: 0.5,
+                radius: 50,
+            }).addTo(map);
+
+            circle.bindPopup(`<b>${name}</b>`);
+
+            // Add click event to get directions
+            circle.on('click', () => {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const fromLat = position.coords.latitude;
+                    const fromLon = position.coords.longitude;
+                    const toLat = lat;
+                    const toLon = lon;
+
+                    try {
+                        const itineraries = await directionsTo(fromLat, fromLon, toLat, toLon);
+                        console.log('Itineraries:', itineraries);
+                        console.log(decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon));
+                    } catch (error) {
+                        console.error('Error fetching directions:', error);
+                    }
+                });
+            });
+        });
+    } catch (error) {
+        console.error('Error drawing stops on map:', error);
+    }
+}
+
 initMap();
+console.log(map)
+// Users current location
+navigator.geolocation.getCurrentPosition((position) => {
+    const { latitude, longitude } = position.coords;
+});
+
+async function decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon) {
+    try {
+        const data = await directionsTo(fromLat, fromLon, toLat, toLon);
+        const itineraries = data?.data?.plan?.itineraries;
+
+        if (itineraries) {
+            itineraries.forEach((itinerary, index) => {
+                console.log(`Itinerary ${index + 1}:`);
+
+                itinerary.legs.forEach((leg, legIndex) => {
+                    if (leg.legGeometry && leg.legGeometry.points) {
+                        const decodedPoints = polyline.decode(leg.legGeometry.points);
+                        console.log(`  Leg ${legIndex + 1} Decoded Points:`, decodedPoints);
+                        const polylineLayer = L.polyline(decodedPoints, {
+                            color: 'blue', // Set the color of the line
+                            weight: 4,     // Set the thickness of the line
+                            opacity: 0.7   // Set the opacity of the line
+                        }).addTo(map);
+                    } else {
+                        console.log(`  Leg ${legIndex + 1} has no geometry.`);
+                    }
+                });
+            });
+        } else {
+            console.error('No itineraries found in the response.');
+        }
+    } catch (error) {
+        console.error('Error decoding polyline:', error);
+    }
+}
 
 const informationOverlay = document.getElementById("information-overlay");
 informationOverlay.addEventListener("click",  removeInformationClasses);
