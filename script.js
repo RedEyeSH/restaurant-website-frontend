@@ -1,5 +1,9 @@
 "use strict";
 import { fetchData } from './lib/fetchData.js';
+import { fetchRoutes } from './lib/hslReittiopas.js';
+
+// Simple call to fetchRoutes
+fetchRoutes().then(data => console.log('Fetched routes:', data));
 
 // Smooth scrolling for navbar links
 document.querySelectorAll('.navbar a').forEach(link => {
@@ -522,6 +526,26 @@ renderRestaurantCard();
 const displayInformation = async () => {
 
 }
+// Initialize the Leaflet map
+function initMap() {
+    const location = [60.22487539389367, 25.07793846566476]; // Latitude, Longitude
+
+    // Create the map and set its view to the specified location and zoom level
+    const map = L.map('map-container').setView(location, 14);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Add a marker at the specified location
+    L.marker(location).addTo(map)
+        .bindPopup('Your Location')
+        .openPopup();
+}
+
+// Call the function to initialize the map
+initMap();
 
 const informationOverlay = document.getElementById("information-overlay");
 informationOverlay.addEventListener("click",  removeInformationClasses);
