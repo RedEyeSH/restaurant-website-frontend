@@ -1,5 +1,11 @@
 "use strict";
 import { fetchData } from './lib/fetchData.js';
+import {fetchRoutes, directionsTo, getRouteSummaries} from './lib/hslReittiopas.js';
+
+
+// Simple call to fetchRoutes
+fetchRoutes().then(data => console.log('Fetched routes:', data));
+directionsTo().then(data => console.log('Directions:', data));
 
 // Smooth scrolling for navbar links
 document.querySelectorAll('.navbar a').forEach(link => {
@@ -597,6 +603,10 @@ function updateCartTotal() {
 }
 
 renderRestaurantCard();
+
+const displayInformation = async () => {
+
+}
 
 const informationOverlay = document.getElementById("information-overlay");
 informationOverlay.addEventListener("click",  removeInformationClasses);

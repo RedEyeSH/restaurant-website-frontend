@@ -1,0 +1,22 @@
+{
+  "name": "restaurant-website-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RedEyeSH/restaurant-website-frontend.git"
+  },
+  "private": true,
+  "dependencies": {
+    "@mapbox/polyline": "^1.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "leaflet": "^1.9.4",
+    "node-fetch": "^3.3.2"
+  }
+}
