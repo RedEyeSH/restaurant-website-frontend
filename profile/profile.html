@@ -9,32 +9,142 @@
     <title>Profile</title>
 </head>
 <body>
-    <nav class="navbar">
+    <!-- <nav class="navbar">
         <div class="navbar-logo">
             <img src="../images/logo_trimmed.png" alt="logo">
             <h1>Burgers.</h1>
         </div>
+    </nav> -->
+
+    <nav class="navbar">
+        <a href="/index.html" class="navbar-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            <p>Back to home</p>
+        </a>
     </nav>
 
-    <main class="main">
-        <section class="navigation">
+    <section class="container" id="container">
+        <div class="navigation">
+            <div class="navigation-links">
+                <div class="navigation-group">
+                    <a href="#" class="navigation-link link-active" id="profile-link">
+                        <i class="fa-solid fa-circle-user"></i>
+                        <p>My account</p>
+                    </a>
+                    <a href="#" class="navigation-link" id="favourite-link">
+                        <i class="fa-solid fa-heart"></i>
+                        <p>My favourite item</p>
+                    </a>
+                    <a href="#" class="navigation-link" id="order-link">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <p>Order history</p>
+                    </a>
+                    <a href="#" class="navigation-link">
+                        <i class="fa-solid fa-message"></i>
+                        <p>Customer service</p>
+                    </a>
+                </div>
+                <hr>
+                <div class="navigation-logout">
+                    <a href="#">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <p>Log out</p>
+                    </a>
+                </div>
+            </div>
+        </div>
 
-        </section>
-        <section class="profile">
+        <!-- Profile starts here-->
+        <section class="profile" id="profile">
             <div class="profile-container">
-                <h1>Welcome Back!</h1>
+                <h1>Welcome Back, username!</h1>
                 <p class="profile-description">Manage your profile details</p>
                 <div class="profile-form">
                     <label for="username">Username</label>
-                    <input type="text" id="username" placeholder="Enter your username">
+                    <input type="text" id="username" placeholder="Change your username">
     
                     <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter your email">
+                    <input type="email" id="email" placeholder="Change your email">
     
                     <button class="save-btn">Save Changes</button>
                 </div>
             </div>
         </section>
-    </main>
+        <!-- Profile ends here -->
+
+        <!-- Favourite starts here -->
+        <section class="favourite" id="favourite">
+            <div class="favourite-container">
+                <h1 style="padding: 10px">Your favourites</h1>
+                <hr>
+                <div class="favourite-list">
+                    <div class="favourite-item">
+                        <div class="favourite-item-box">
+                            <div class="favourite-header">
+                                <div class="favourite-image">
+                                    <img src="../images/burgerfrommenu.png" alt="name">
+                                </div>
+                                <div class="favourite-info">
+                                    <p>Chicken Burger</p>
+                                </div>
+                            </div>
+                            <div class="favourite-price">
+                                <p>$2.99</p>
+                            </div>
+                        </div>
+                        <button class="favourite-delete">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Favourite ends here -->
+
+        <!-- Order starts -->
+        <section class="order" id="order">
+            <div class="order-container" id="order-container">
+                <h1 style="padding: 10px">Order history</h1>
+                <hr>
+                <div class="order-history">
+                    <div class="order-item">
+                        <button class="order-info">
+                            <p>OrderedId</p>
+                            <p>TotalPrice</p>
+                        </button>
+                        <div class="order-date">
+                            <p>OrderedDate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Order ends here -->
+
+        <!-- Customer service starts here -->
+        <section class="service">
+            <div class="service-container">
+                <h1 style="padding: 10px">Customer Service</h1>
+                <hr>
+                <!-- <div class="service-info">
+                    <p>1232941947</p>
+                    <p>Burgerhelsinki@gmail.com</p>
+                </div> -->
+                <form action="#" class="service-form">
+                    <div class="service-title">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" placeholder="Enter title" required>
+                    </div>
+                    <div class="service-description">
+                        <label for="description">Description</label>
+                        <textarea type="description" id="description" placeholder="Enter description" required></textarea>
+                    </div>
+                    <button type="submit" class="send-btn">Submit</button>
+                </form>
+            </div>
+        </section>
+        <!-- Customer service ends here -->
+         
+    </section>
 </body>
 </html>

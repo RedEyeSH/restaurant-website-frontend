@@ -269,6 +269,8 @@ section {
     padding: 10px;
     border-radius: 5px;
     color: black;
+    background-color: #ae8626;
+    transition: 0.25s;
 }
 
 .close-login-form {
@@ -292,11 +294,11 @@ section {
 
 
 .login-email input, .login-password input {
-    border: 2px solid yellow;
+    border: 2px solid #0D0D0D;
 }
 
 .login-email input:focus, .login-password input:focus {
-    border: 2px solid #0D0D0D;
+    border: 2px solid white;
 }
 
 .login-options {
@@ -310,6 +312,7 @@ section {
     background-color: #0D0D0D;
     color: white;
     font-weight: 800;
+    border: none;
 }
 
 .login-other-options {
@@ -417,6 +420,9 @@ section {
     padding: 10px;
     border-radius: 5px;
     color: black;
+    border: none;
+    background-color: #333333;
+    transition: 0.25s;
 }
 
 .signup-email input, .signup-name input, .signup-password input, .signup-password-confirmation input {

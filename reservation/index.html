@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Reservation Calendar</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <div class="info-container">
+      <h1>Reservation Calendar</h1>
+      <p>Welcome to our reservation system! We are thrilled to assist you in booking your table.</p>
+      <p>To ensure a smooth experience, please select the number of guests and the date you wish to reserve.</p>
+      <p><strong>Note:</strong> The last reservation can be made 1 hour before closing time. Please plan accordingly.</p>
+      <p><strong>Maximum Guests:</strong> The maximum number of guests per reservation is 10. If you need to book for more than 10 guests, please <a href="mailto:burgersinhelsinki@gmail.com">contact us via email</a>.</p>
+    </div>
+    <!-- Calendar Wrapper -->
+    <div class="wrapper" id="calendar-section">
+      <div class="input-container" id="date-input">
+        <label for="guest">Guests:</label>
+        <select id="guest">
+          <option value="">Select</option>
+        </select>
+      </div>
+      <header>
+        <p class="current-date"></p>
+        <div class="icons">
+          <span id="prev">&#10094;</span>
+          <span id="next">&#10095;</span>
+        </div>
+      </header>
+      <div class="calendar">
+        <ul class="weeks">
+          <li>Sun</li>
+          <li>Mon</li>
+          <li>Tue</li>
+          <li>Wed</li>
+          <li>Thu</li>
+          <li>Fri</li>
+          <li>Sat</li>
+        </ul>
+        <ul class="days"></ul>
+      </div>
+      <div class="message-container" id="message-container">
+        <p id="message"></p>
+        <div id="time-input" style="display: none;">
+          <label for="time">Select Time:</label>
+          <input type="time" id="time" />
+          <p id="time-error"></p>
+          <button id="process-btn" style="display: none;">Proceed to Form</button>
+        </div>
+      </div>
+    </div>
+    <!-- Reservation Form Section -->
+    <div class="wrapper" id="form-section" style="display: none;">
+      <div id="form-hide">
+        <button id="back-btn">← Back to Calendar</button>
+        <h2>Complete Your Reservation</h2>
+        <p id="summary"></p>
+        <form id="reservation-form">
+          <input type="text" id="name" placeholder="Your Name" required><br>
+          <input type="tel" id="phone" placeholder="Phone Number" required><br>
+          <input type="email" id="email" placeholder="Email Address" required><br>
+          <textarea id="notes" placeholder="Additional Notes"></textarea><br>
+          <button type="submit" class="submit-btn" id="submit-btn">
+          <span class="btn-text">Submit Reservation</span>
+          <span class="spinner" id="spinner" style="display: none;"></span>
+          </button>
+        </form>
+      </div>
+      <p id="form-message" class="hidden"></p>
+      <!-- Message box -->
+    </div>
+
+  </body>
+</html>
