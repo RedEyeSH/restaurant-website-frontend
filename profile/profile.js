@@ -1,6 +1,6 @@
 "use strict";
 
-import { fetchData } from "../lib/fetchData";
+// import { fetchData } from "../lib/fetchData";
 
 const sections = document.querySelectorAll(".container section");
 const navigationLinks = document.querySelectorAll(".navigation-link");
@@ -30,14 +30,14 @@ navigationLinks.forEach(link => {
 
 const apiUrl = "https://10.120.32.59/app/api/v1/";
 
-const getUserByToken = async () => {
-    const token = localStorage.getItem("authtoken");
-    const options = {
-        method: "GET",
-        headers: {
-            "Authorization": token
-        }
-    }
-    const data = fetchData(`${apiUrl}/users`, options);
+// const getUserByToken = async () => {
+//     const token = localStorage.getItem("authtoken");
+//     const options = {
+//         method: "GET",
+//         headers: {
+//             "Authorization": token
+//         }
+//     }
+//     // const data = fetchData(`${apiUrl}/users`, options);
     
-}
+// }
