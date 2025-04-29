@@ -1,6 +1,6 @@
 "use strict";
 import { fetchData } from './lib/fetchData.js';
-import { fetchRoutes, directionsTo } from './lib/hslReittiopas.js';
+import {fetchRoutes, directionsTo, getRouteSummaries} from './lib/hslReittiopas.js';
 
 
 // Simple call to fetchRoutes
@@ -528,6 +528,7 @@ renderRestaurantCard();
 const displayInformation = async () => {
 
 }
+
 // Initialize the Leaflet map
 let map; // Declare map in a higher scope
 
@@ -554,7 +555,11 @@ async function drawStopsOnMap(map) {
                 radius: 50,
             }).addTo(map);
 
-            circle.bindPopup(`<b>${name}</b>`);
+            circle.bindTooltip(`<b>${name}</b>`, {
+                permanent: false, // Tooltip only shows on hover
+                direction: 'top', // Tooltip appears above the circle
+                offset: [0, -10], // Adjust the position of the tooltip
+            });
 
             // Add click event to get directions
             circle.on('click', () => {
@@ -573,6 +578,21 @@ async function drawStopsOnMap(map) {
                     }
                 });
             });
+            circle.on("click", async () => {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const fromLat = position.coords.latitude;
+                    const fromLon = position.coords.longitude;
+                    const toLat = lat;
+                    const toLon = lon;
+
+                    try {
+                        const summaries = await getRouteSummaries(fromLat, fromLon, toLat, toLon);
+                        console.log(summaries.join("\n\n")); // Display the summaries in the console or UI
+                    } catch (error) {
+                        console.error("Error displaying route summaries:", error);
+                    }
+                });
+            });
         });
     } catch (error) {
         console.error('Error drawing stops on map:', error);
@@ -586,31 +606,44 @@ navigator.geolocation.getCurrentPosition((position) => {
     const { latitude, longitude } = position.coords;
 });
 
+let currentPolyline = null; // Store the currently drawn polyline
+
 async function decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon) {
     try {
         const data = await directionsTo(fromLat, fromLon, toLat, toLon);
-        const itineraries = data?.data?.plan?.itineraries;
+        const edges = data?.data?.planConnection?.edges;
 
-        if (itineraries) {
-            itineraries.forEach((itinerary, index) => {
-                console.log(`Itinerary ${index + 1}:`);
-
-                itinerary.legs.forEach((leg, legIndex) => {
-                    if (leg.legGeometry && leg.legGeometry.points) {
-                        const decodedPoints = polyline.decode(leg.legGeometry.points);
-                        console.log(`  Leg ${legIndex + 1} Decoded Points:`, decodedPoints);
-                        const polylineLayer = L.polyline(decodedPoints, {
-                            color: 'blue', // Set the color of the line
-                            weight: 4,     // Set the thickness of the line
-                            opacity: 0.7   // Set the opacity of the line
-                        }).addTo(map);
-                    } else {
-                        console.log(`  Leg ${legIndex + 1} has no geometry.`);
-                    }
-                });
+        if (edges && edges.length > 0) {
+            // Find the shortest connection based on duration
+            const shortestConnection = edges.reduce((shortest, current) => {
+                return current.node.duration < shortest.node.duration ? current : shortest;
             });
+
+            console.log('Shortest Connection:', shortestConnection);
+
+            // Remove the previously drawn polyline if it exists
+            if (currentPolyline) {
+                map.removeLayer(currentPolyline);
+            }
+
+            // Decode and draw the polyline for the shortest connection
+            const decodedPoints = shortestConnection.node.legs.flatMap((leg) => {
+                return leg.legGeometry && leg.legGeometry.points
+                    ? polyline.decode(leg.legGeometry.points)
+                    : [];
+            });
+
+            if (decodedPoints.length > 0) {
+                currentPolyline = L.polyline(decodedPoints, {
+                    color: 'blue', // Set the color of the line
+                    weight: 4,     // Set the thickness of the line
+                    opacity: 0.7   // Set the opacity of the line
+                }).addTo(map);
+            } else {
+                console.log('No valid geometry found for the shortest connection.');
+            }
         } else {
-            console.error('No itineraries found in the response.');
+            console.error('No connections found in the response.');
         }
     } catch (error) {
         console.error('Error decoding polyline:', error);
