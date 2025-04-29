@@ -10,15 +10,15 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="navbar-logo">
+        <a href="#home" class="navbar-logo">
             <img src="./images/logo_trimmed.png" alt="logo">
             <h1>Burgers.</h1>
-        </div>
+        </a>
         <div class="navbar-link">
             <a href="#home">Home</a>
             <a href="">About Us</a>
-            <a href="#restaurant">Menu</a>
-            <a href="">Contact</a>
+            <a href="#menu">Menu</a>
+            <a href="#">Contact</a>
         </div>
         <div class="navbar-actions">
             <div class="navbar-icons">
@@ -128,62 +128,10 @@
                 <div class="shopping-cart-title">
                     <h1>Shopping cart</h1>
                 </div>
-                <div class="shopping-cart-list">
-                    <!-- <div class="shopping-cart-item">
-                        <div class="shopping-cart-header">
-                            <div class="shopping-cart-img">
-                                <img src="./images/burgerfrommenu.png" alt="Chicken">
-                            </div>
-                            <div class="shopping-cart-info">
-                                <h4>Chicken Burger</h4>
-                                <p id="shopping-cart-price">$4.40</p>
-                            </div>
-                        </div>
-                        <div class="shopping-cart-options">
-                            <button id="cart-btn-decrease">
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-                            <p id="shopping-cart-amount">1</p>
-                            <button id="cart-btn-increase">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                            <button id="cart-btn-trash">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="shopping-cart-item">
-                        <div class="shopping-cart-header">
-                            <div class="shopping-cart-img">
-                                <img src="./images/burgerfrommenu.png" alt="Chicken">
-                            </div>
-                            <div class="shopping-cart-info">
-                                <h4>Chicken Burger</h4>
-                                <div class="shopping-cart-description">
-                                    <p>Chicken Burger: </p>
-                                    <p>Choose Side Dish: French Fries, L</p>
-                                    <p>Choose a Drink: Coca Cola Zero 0.5 l</p>
-                                </div>
-                                <p>$4.40</p>
-                            </div>
-                        </div>
-                        <div class="shopping-cart-options">
-                            <button id="cart-btn-increase">
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-                            <p id="shopping-cart-amount">1</p>
-                            <button id="cart-btn-decrease">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                            <button id="cart-btn-trash">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    </div> -->
-                </div>
+                <div class="shopping-cart-list"> <!-- Shopping cart item goes in here --> </div>
                 <div class="shopping-cart-proceed">
-                    <a href="#">
-                        <button id="shopping-cart-order">
+                    <a href="/order/order.html">
+                        <button id="shopping-cart-order" disabled>
                             <p>Proceed to checkout</p>
                             <h2 id="shopping-cart-total">$0.00</h2>
                         </button>
@@ -231,7 +179,7 @@
     <!-- About section ends here -->
 
     <!-- Restaurant section starts here -->
-    <section class="restaurant" id="restaurant">
+    <section class="restaurant" id="menu">
         <div class="restaurant-container">
             <div class="restaurant-container-header">
                 <h1>Our Best & Delicous Menu</h1>
@@ -250,7 +198,7 @@
                     Drinks
                 </button>
                 <button class="restaurant-category-item">
-                    Ice cream
+                    Desserts
                 </button>
                 <button class="restaurant-category-item">
                     Cakes
@@ -262,7 +210,7 @@
             <!-- Maybe in future 3 item per section seperated -->
             <div class="restaurant-menu" id="restaurant-menu">
                 <div class="restaurant-menu-section">
-                    <div class="restaurant-card">
+                    <!-- <div class="restaurant-card">
                         <div class="restaurant-card-image">
                             <img src="./images/burgerfrommenu.png" alt="burger-menu1">
                         </div>
@@ -338,70 +286,8 @@
                                 <i class="fa-solid fa-cart-shopping"></i>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
-                <!-- <div class="restaurant-menu-section">
-                    <div class="restaurant-card">
-                        <div class="restaurant-card-image">
-                            <img src="./images/burgerfrommenu.png" alt="burger-menu1">
-                        </div>
-                        <div class="restaurant-card-header">
-                            <h2>Chicken Burger</h2>
-                        </div>
-                        <div class="restaurant-card-content">
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                        </div>
-                        <div class="restaurant-card-price">
-                            <h2>$2.20</h2>
-                            <i class="fa-solid fa-cart-shopping"></i>
-                        </div>
-                    </div>
-                    <div class="restaurant-card">
-                        <div class="restaurant-card-image">
-                            <img src="./images/burgerfrommenu.png" alt="burger-menu1">
-                        </div>
-                        <div class="restaurant-card-header">
-                            <h2>Chicken Burger</h2>
-                        </div>
-                        <div class="restaurant-card-content">
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                        </div>
-                        <div class="restaurant-card-price">
-                            <h2>$2.20</h2>
-                            <i class="fa-solid fa-cart-shopping"></i>
-                        </div>
-                    </div>
-                    <div class="restaurant-card">
-                        <div class="restaurant-card-image">
-                            <img src="./images/burgerfrommenu.png" alt="burger-menu1">
-                        </div>
-                        <div class="restaurant-card-header">
-                            <h2>Chicken Burger</h2>
-                        </div>
-                        <div class="restaurant-card-content">
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                        </div>
-                        <div class="restaurant-card-price">
-                            <h2>$2.20</h2>
-                            <i class="fa-solid fa-cart-shopping"></i>
-                        </div>
-                    </div>
-                    <div class="restaurant-card">
-                        <div class="restaurant-card-image">
-                            <img src="./images/burgerfrommenu.png" alt="burger-menu1">
-                        </div>
-                        <div class="restaurant-card-header">
-                            <h2>Chicken Burger</h2>
-                        </div>
-                        <div class="restaurant-card-content">
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-                        </div>
-                        <div class="restaurant-card-price">
-                            <h2>$2.20</h2>
-                            <i class="fa-solid fa-cart-shopping"></i>
-                        </div>
-                    </div>
-                </div> -->
                 <div class="restaurant-option">
                     <button id="restaurant-option-button">See All</button>
                 </div>

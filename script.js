@@ -98,6 +98,7 @@ function closeForms() {
 }
 
 function removeInformationClasses() {
+    removeItemIdFromURL();
     const information = document.getElementById("information");
     information.classList.remove("open-information-section");
 
@@ -129,14 +130,6 @@ restaurantItems.forEach((item) => {
 
 // Fetch datas
 const apiUrl = "https://10.120.32.59/app/api/v1";
-
-// const getUserByToken = async () => {
-//     const data = fetchData(`${apiUrl}/items`)
-//     console.log(data);
-// }
-
-// getUserByToken();
-
 console.log(apiUrl);
 
 // Login form handling
@@ -176,11 +169,13 @@ loginForm.addEventListener('submit', async function(event) {
 
             if (role !== 'admin') {
                 // If the role is not 'admin', redirect to a general page or login
-                window.location.href = 'login-required.html';
+                // window.location.href = 'login-required.html';
             } else {
                 // Redirect to the admin dashboard or another page
-                window.location.href = 'admin/menu.html';
+                // window.location.href = 'admin/menu.html';
             }
+            loggedIn();
+            window.location.reload();
         } else {
             alert(data.message || 'An error occurred during login.');
         }
@@ -281,8 +276,52 @@ const fetchMenuItems = async () => {
     return data;
 }
 
+const fetchMenuItemsById = async (id) => {
+    const data = await fetchData(`${apiUrl}/items/${id}`);
+    return data;
+}
+
 // console.log(fetchMenuItems());
 
+async function handleItemIdFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const itemId = urlParams.get('itemId');
+  
+    if (itemId) {
+      try {
+        // Fetch item details
+        const res = await fetch(`${apiUrl}/items/${itemId}`);
+        const item = await res.json();
+  
+        if (res.ok) {
+            console.log(item);
+            displayRestaurantModal(item.id);
+        } else {
+          console.warn('Failed to fetch restaurant by ID from URL.');
+        }
+      } catch (error) {
+        console.error('Error fetching restaurant from URL param:', error);
+      }
+    }
+  }
+
+function updateItemIdInURL(itemId) {
+    const url = new URL(window.location);
+    url.searchParams.set('itemId', itemId);
+    url.hash = '#menu';
+    window.history.pushState({}, '', url); 
+    console.log('Item ID updated in URL with hash:', url);
+}
+
+
+function removeItemIdFromURL() {
+    const url = new URL(window.location);
+    url.searchParams.delete('itemId');
+    window.history.pushState({}, '', url);
+    console.log('Item ID parameter removed from URL');
+}
+
+  
 const renderRestaurantCard = async () => {
     const data = await fetchMenuItems();
     // console.log(data);
@@ -290,6 +329,7 @@ const renderRestaurantCard = async () => {
     const restaurantMenuSection = document.querySelector(".restaurant-menu-section");
 
     data.forEach((item) => {
+        // console.log(item)
         const restaurantCard = document.createElement("div");
         restaurantCard.className = "restaurant-card";
         
@@ -312,145 +352,171 @@ const renderRestaurantCard = async () => {
         restaurantMenuSection.appendChild(restaurantCard);
 
         restaurantCard.addEventListener("click", () => {
-            console.log(`Clicked on ${item.name}`);
-            
-            const information = document.getElementById("information");
-            information.classList.toggle("open-information-section");
-            information.innerHTML = "";
+            displayRestaurantModal(item.id)
+        });
+    });
+}
 
-            if (information.classList.contains("open-information-section")) {
-                document.body.style.overflow = "hidden";
-            } else {
-                document.body.style.overflow = "";
-            }            
+const displayRestaurantModal = async (id) => {
+    const data = await fetchMenuItemsById(id);
+    updateItemIdInURL(data.id);
+    // console.log(`Clicked on ${item.name}`);
+    
+    const information = document.getElementById("information");
+    information.classList.toggle("open-information-section");
+    information.innerHTML = "";
 
-            let amount = 1;
+    if (information.classList.contains("open-information-section")) {
+        document.body.style.overflow = "hidden";
+    } else {
+        document.body.style.overflow = "";
+    }            
 
-            console.log(amount)
+    let amount = 1;
 
-            // change this line if the html information also changes. (not updated)
-            const informationContainer = document.createElement("div");
-            informationContainer.className = "information-container";
-            informationContainer.innerHTML = `
-                <div class="information-container">
-                    <div class="information-image">
-                        <img src="./images/burgerfrommenu.png" alt="${item.name}" draggable="false">
+    // change this line if the html information also changes. (not updated)
+    const informationContainer = document.createElement("div");
+    informationContainer.className = "information-container";
+    informationContainer.innerHTML = `
+        <div class="information-container">
+            <div class="information-image">
+                <img src="./images/burgerfrommenu.png" alt="${data.name}" draggable="false">
+            </div>
+            <div class="information-content">
+                <div class="information-content-top">
+                    <h1>${data.name}</h1>
+                    <p>$${data.price}</p>
+                </div>
+                <div class="information-content-description">
+                    <p>${data.description}</p>
+                </div>
+                <hr style="border-color: #949494">
+                <div class="information-content-ingredients">
+                    <p>Ingredients -<span>${data.ingredients}</span></p>
+                </div>
+                <div class="information-content-allergens">
+                    <p>Allergens -<span style="background-color: #FFC94B">${data.allergens}</span></p>
+                </div>
+                <div class="information-content-size">
+                    <p>Size -<span style="background-color: #FFC94B">${data.size}</span></p>
+                </div>
+            </div>
+            <div class="information-footer">
+                <div class="information-footer-amount">
+                    <button id="information-amount-btn-decrease" ${amount == 1 ? "disabled" : ""}>
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <p id="information-amount-display">${amount}</p>
+                    <button id="information-amount-btn-increase">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <div class="information-footer-add">
+                    <p>Add to Cart</p>
+                    <p id="information-total-price">$${(data.price * amount).toFixed(2)}</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    information.appendChild(informationContainer);
+
+    const decreaseButton = informationContainer.querySelector("#information-amount-btn-decrease");
+    const increaseButton = informationContainer.querySelector("#information-amount-btn-increase");
+    const amountDisplay = informationContainer.querySelector("#information-amount-display");
+    const totalPriceDisplay = informationContainer.querySelector("#information-total-price");
+
+    increaseButton.addEventListener("click", () => {
+        amount++;
+        amountDisplay.textContent = amount;
+
+        if (amount > 1) {
+            decreaseButton.disabled = false;
+            decreaseButton.style.cursor = "pointer";
+        }
+
+        totalPriceDisplay.textContent = `$${(data.price * amount).toFixed(2)}`;
+    });
+
+    decreaseButton.addEventListener("click", () => {
+        if (amount > 1) {
+            amount--;
+            amountDisplay.textContent = amount;
+        }
+
+        if (amount === 1) {
+            decreaseButton.disabled = true;
+            decreaseButton.style.cursor = "not-allowed";
+        }
+
+        totalPriceDisplay.textContent = `$${(data.price * amount).toFixed(2)}`;
+    });
+
+    const buttonAddToCart = document.querySelector(".information-footer-add");
+    buttonAddToCart.addEventListener("click", () => {
+        const shoppingCartList = document.querySelector(".shopping-cart-list");
+    
+        let existingCartItem = shoppingCartList.querySelector(`[data-item-id="${data.id}"]`);
+        if (existingCartItem) {
+            const cartAmountDisplay = existingCartItem.querySelector("#shopping-cart-amount");
+            const cartPriceDisplay = existingCartItem.querySelector("#shopping-cart-price");
+            let currentAmount = parseInt(cartAmountDisplay.textContent, 10);
+            currentAmount += amount;
+            cartAmountDisplay.textContent = currentAmount;
+    
+            // Update the price for this specific item
+            cartPriceDisplay.textContent = `$${(currentAmount * data.price).toFixed(2)}`;
+        } else {
+            let shoppingCartItem;
+            shoppingCartItem = document.createElement("div");
+            shoppingCartItem.className = "shopping-cart-item";
+            shoppingCartItem.setAttribute("data-item-id", data.id);
+            shoppingCartItem.innerHTML = `
+                <div class="shopping-cart-header">
+                    <div class="shopping-cart-img">
+                        <img src="./images/burgerfrommenu.png" alt="${data.name}">
                     </div>
-                    <div class="information-content">
-                        <div class="information-content-top">
-                            <h1>${item.name}</h1>
-                            <p>$${item.price}</p>
-                        </div>
-                        <div class="information-content-description">
-                            <p>${item.description}</p>
-                        </div>
+                    <div class="shopping-cart-info">
+                        <h4>${data.name}</h4>
+                        <p id="shopping-cart-price">$${(amount * data.price).toFixed(2)}</p>
                     </div>
-                    <hr style="border-color: #949494">
-                    <div class="information-footer">
-                        <div class="information-footer-amount">
-                            <button id="information-amount-btn-decrease" ${amount == 1 ? "disabled" : ""}>
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-                            <p id="information-amount-display">${amount}</p>
-                            <button id="information-amount-btn-increase">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </div>
-                        <div class="information-footer-add">
-                            <p>Add to Cart</p>
-                            <p id="information-total-price">$${(item.price * amount).toFixed(2)}</p>
-                        </div>
-                    </div>
+                </div>
+                <div class="shopping-cart-options">
+                    <button id="cart-btn-decrease">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <p id="shopping-cart-amount">${amount}</p>
+                    <button id="cart-btn-increase">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button id="cart-btn-trash">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
                 </div>
             `;
 
-            information.appendChild(informationContainer);
+            openShoppingCartItem(shoppingCartItem);
+    
+            shoppingCartList.appendChild(shoppingCartItem);
+            setupCartItemButtons(shoppingCartItem, data);
+        }
+        updateCartTotal();
+        removeInformationClasses();
+    });
 
-            const decreaseButton = informationContainer.querySelector("#information-amount-btn-decrease");
-            const increaseButton = informationContainer.querySelector("#information-amount-btn-increase");
-            const amountDisplay = informationContainer.querySelector("#information-amount-display");
-            const totalPriceDisplay = informationContainer.querySelector("#information-total-price");
+    const informationOverlay = document.getElementById("information-overlay");
+    informationOverlay.classList.toggle("show-information-overlay");
+} 
 
-            increaseButton.addEventListener("click", () => {
-                amount++;
-                amountDisplay.textContent = amount;
-
-                if (amount > 1) {
-                    decreaseButton.disabled = false;
-                    decreaseButton.style.cursor = "pointer";
-                }
-
-                totalPriceDisplay.textContent = `$${(item.price * amount).toFixed(2)}`;
-            });
-
-            decreaseButton.addEventListener("click", () => {
-                if (amount > 1) {
-                    amount--;
-                    amountDisplay.textContent = amount;
-                }
-
-                if (amount === 1) {
-                    decreaseButton.disabled = true;
-                    decreaseButton.style.cursor = "not-allowed";
-                }
-
-                totalPriceDisplay.textContent = `$${(item.price * amount).toFixed(2)}`;
-            });
-
-            //
-            const buttonAddToCart = document.querySelector(".information-footer-add");
-            buttonAddToCart.addEventListener("click", () => {
-                const shoppingCartList = document.querySelector(".shopping-cart-list");
-            
-                let existingCartItem = shoppingCartList.querySelector(`[data-item-id="${item.id}"]`);
-                if (existingCartItem) {
-                    const cartAmountDisplay = existingCartItem.querySelector("#shopping-cart-amount");
-                    const cartPriceDisplay = existingCartItem.querySelector("#shopping-cart-price");
-                    let currentAmount = parseInt(cartAmountDisplay.textContent, 10);
-                    currentAmount += amount;
-                    cartAmountDisplay.textContent = currentAmount;
-            
-                    // Update the price for this specific item
-                    cartPriceDisplay.textContent = `$${(currentAmount * item.price).toFixed(2)}`;
-                } else {
-                    let shoppingCartItem;
-                    shoppingCartItem = document.createElement("div");
-                    shoppingCartItem.className = "shopping-cart-item";
-                    shoppingCartItem.setAttribute("data-item-id", item.id);
-                    shoppingCartItem.innerHTML = `
-                        <div class="shopping-cart-header">
-                            <div class="shopping-cart-img">
-                                <img src="./images/burgerfrommenu.png" alt="${item.name}">
-                            </div>
-                            <div class="shopping-cart-info">
-                                <h4>${item.name}</h4>
-                                <p id="shopping-cart-price">$${(amount * item.price).toFixed(2)}</p>
-                            </div>
-                        </div>
-                        <div class="shopping-cart-options">
-                            <button id="cart-btn-decrease">
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-                            <p id="shopping-cart-amount">${amount}</p>
-                            <button id="cart-btn-increase">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                            <button id="cart-btn-trash">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                    `;
-            
-                    shoppingCartList.appendChild(shoppingCartItem);
-                    setupCartItemButtons(shoppingCartItem, item);
-                }
-                updateCartTotal();
-                removeInformationClasses();
-            });
-
-            const informationOverlay = document.getElementById("information-overlay");
-            informationOverlay.classList.toggle("show-information-overlay");
-        });
+const openShoppingCartItem = (item) => {
+    console.log(item);
+    item.addEventListener("click", async () => {
+        // const urlParams = new URLSearchParams(window.location.search);
+        // const itemId = urlParams.get('itemId');
+        handleItemIdFromURL();
+        // const data = await fetchData(`${apiUrl}/items/${itemId}`);
+        // console.log(data);
+        // displayRestaurantModal(data.id);
     });
 }
 
@@ -493,6 +559,18 @@ function setupCartItemButtons(cartItem, item) {
     });
 }
 
+function toggleProceedButton() {
+    const shoppingCartList = document.querySelector(".shopping-cart-list");
+    const proceedButton = document.getElementById("shopping-cart-order");
+
+    // Check if the shopping cart is empty
+    if (shoppingCartList.children.length === 0) {
+        proceedButton.disabled = true; // Disable the button
+    } else {
+        proceedButton.disabled = false; // Enable the button
+    }
+}
+
 function updateCartTotal() {
     const shoppingCartList = document.querySelector(".shopping-cart-list");
     const cartItems = shoppingCartList.querySelectorAll(".shopping-cart-item");
@@ -515,14 +593,43 @@ function updateCartTotal() {
     if (navbarCartPrice) {
         navbarCartPrice.textContent = `$${totalPrice.toFixed(2)}`;
     }
+    toggleProceedButton();
 }
 
 renderRestaurantCard();
 
-const displayInformation = async () => {
-
-}
-
 const informationOverlay = document.getElementById("information-overlay");
 informationOverlay.addEventListener("click",  removeInformationClasses);
-// displayMenuItems();
+
+document.addEventListener("DOMContentLoaded", () => {
+    handleItemIdFromURL();
+    loggedIn();
+});
+
+// Logged in setup
+// const getUserByToken = async () => {
+//     const data = fetchData(`${apiUrl}/items`)
+//     console.log(data);
+// }
+
+// getUserByToken();
+
+const loggedIn = () => {
+    const navbarActions = document.querySelector(".navbar-actions");
+    const navbarLogin = document.getElementById("navbar-login");
+
+    const token = localStorage.getItem("authToken");
+
+    if (token) {
+        const navbarLoggedIn = document.createElement("div");
+        navbarLoggedIn.className = "navbar-logged-in";
+        navbarLoggedIn.setAttribute("id", "navbar-logged-in");
+
+        navbarLoggedIn.innerHTML = `
+            <a href="/profile/profile.html">${"username"}</a>
+        `;
+
+        navbarLogin.remove();
+        navbarActions.appendChild(navbarLoggedIn);
+    }
+}

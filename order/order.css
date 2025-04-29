@@ -1,0 +1,218 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Contrail+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/*
+    default background color - #0D0D0D
+    yellow default color - #F7B41A
+    yellow light color - #FFC94B
+    card color - #191919
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    color: white;
+}
+
+body {
+    background-color: #0D0D0D;
+}
+
+button {
+    cursor: pointer;
+}
+
+section {
+    scroll-margin-top: 100px;
+}
+
+.navbar {
+    height: 100px;
+    padding: 20px;
+    /* margin: 0 30px; */
+    background-color: #0D0D0D;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 2999;
+}
+
+.navbar a {
+    text-decoration: none;
+    position: relative;
+}
+
+.navbar-link a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s;
+    background-color: white;
+}
+
+.navbar-link a:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;  
+}
+
+.navbar-logo {
+    /* width: fit-content; */
+    height: 80px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* justify-content: left; */
+    position: relative;
+    /* animation: logo 1s; */
+}
+
+.navbar-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.navbar-link {
+    gap: 50px;
+    display: flex;
+    align-items: center;
+} 
+
+.navbar-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.navbar-icons i {
+    cursor: pointer;
+    font-size: 25px;
+}
+
+.navbar-shopping-cart {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    border-radius: 5px;
+    border: 2.5px solid #E0A92B;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    max-width: 200px;
+}
+
+.navbar-shopping-cart::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    border: 2.5px solid #E0A92B;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s;
+    background-color: #E0A92B;
+    z-index: -1;
+}
+
+.navbar-shopping-cart:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.navbar-login {
+    padding: 10px 25px;
+    border-radius: 30px;
+    border: 2.5px solid #F7B41A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 10px;
+    overflow: hidden;
+    transition: 0.25s;
+}
+
+.navbar-login::before {
+    content: '';
+    border-radius: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s;
+    background-color: #E0A92B;
+}
+
+.navbar-login:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.navbar-logged-in a {
+    padding: 10px 25px;
+    border-radius: 30px;
+    border: 2.5px solid #F7B41A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 10px;
+    overflow: hidden;
+    transition: 0.25s;
+}
+
+.navbar-logged-in a::before {
+    content: '';
+    border-radius: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.25s;
+    background-color: #E0A92B;
+}
+
+.navbar-logged-in a:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+/* Order design starts here */
+.order {
+    margin: 20px;
+}
+
+.order-container {
+    
+}
+/* Order design ends here */
