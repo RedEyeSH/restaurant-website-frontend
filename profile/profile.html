@@ -21,7 +21,15 @@
             <i class="fa-solid fa-arrow-left"></i>
             <p>Back to home</p>
         </a>
+        <div class="navbar-menu">
+            <button class="menu-toggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
     </nav>
+
+    <div class="navbar-overlay"></div>
+
 
     <section class="container" id="container">
         <div class="navigation">
@@ -46,7 +54,7 @@
                 </div>
                 <hr>
                 <div class="navigation-logout">
-                    <a href="#">
+                    <a href="#" id="logout">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i>
                         <p>Log out</p>
                     </a>
@@ -57,7 +65,7 @@
         <!-- Profile starts here-->
         <section class="profile" id="profile">
             <div class="profile-container">
-                <h1>Welcome Back, username!</h1>
+                <h1 id="profile-username">Welcome Back!</h1>
                 <p class="profile-description">Manage your profile details</p>
                 <div class="profile-form">
                     <label for="username">Username</label>
@@ -107,7 +115,7 @@
                 <h1 style="padding: 10px">Order history</h1>
                 <hr>
                 <div class="order-history">
-                    <div class="order-item">
+                    <!-- <div class="order-item">
                         <button class="order-info">
                             <p>OrderedId</p>
                             <p>TotalPrice</p>
@@ -115,10 +123,21 @@
                         <div class="order-date">
                             <p>OrderedDate</p>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </section>
+        
+        <div class="order-popup">
+            <!-- <div class="order-popup-item">
+                <div class="order-popup-header">
+                    <h1>OrderID</h1>
+                    <i class="fa-solid fa-xmark" id="x-order"></i>
+                </div>
+            </div> -->
+        </div>
+
+        <div class="order-popup-overlay"></div>
         <!-- Order ends here -->
 
         <!-- Customer service starts here -->
@@ -139,7 +158,7 @@
                         <label for="description">Description</label>
                         <textarea type="description" id="description" placeholder="Enter description" required></textarea>
                     </div>
-                    <button type="submit" class="send-btn">Submit</button>
+                    <button type="submit" class="service-btn" disabled>Submit</button>
                 </form>
             </div>
         </section>

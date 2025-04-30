@@ -12,11 +12,29 @@
     color: white;
 }
 
-html {
-    overflow-x: hidden;
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #444444;
+    border-radius: 5px;
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #666;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #2A2A2A;
+    border-radius: 5px;
 }
 
 body {
+    overflow-y: hidden;
     overflow-x: hidden;
     background-color: #0D0D0D;
 }
@@ -52,14 +70,16 @@ body {
     width: 100%;
     padding: 15px 20px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 20px;
     /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); */
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 2000;
 }
 
 .navbar-link {
+    width: fit-content;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -79,13 +99,28 @@ body {
     transform: translateY(-2px);
 }
 
+.navbar-menu {
+    width: fit-content;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
 .container {
+    overflow-x: hidden;
     overflow-y: auto;
     height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 20px;
+    /* position: relative; */
 }
 
 .navigation {
@@ -161,6 +196,8 @@ body {
 .profile {
     width: 50%;
     height: 90%;
+    display: flex;
+    justify-content: center;
     transform: translateX(0);
 }
 
@@ -180,7 +217,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
     position: fixed;
 }
 
@@ -240,6 +277,13 @@ body {
 
 .save-btn:hover {
     background-color: #FFC94B;
+}
+
+.save-btn:disabled {
+    background-color: #ce981b;;
+    color: #666;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 /* Favourite design starts here */
@@ -385,7 +429,8 @@ body {
 
 .order-item {
     display: flex;
-    gap: 20px;
+    gap: 10px;
+    width: 100%;
     justify-content: space-between;
     border-radius: 10px;
     transition: 0.25s;
@@ -397,6 +442,7 @@ body {
 }
 
 .order-info {
+    flex: 3;
     cursor: pointer;
     border: none;
     border-radius: 10px;
@@ -419,10 +465,51 @@ body {
 }
 
 .order-date {
+    flex: 1;
     cursor: pointer;
     border-radius: 10px;;
     padding: 10px;
     background-color: #F7B41A;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.order-popup {
+    padding: 20px;
+    position: absolute;
+    top: 50px;
+    width: 70%;
+    height: 90%;
+    border-radius: 10px;
+    background-color: #191919;
+    z-index: 2020;
+    transform: translateY(100vh);
+    transition: 0.25s;
+}
+
+.order-popup.open {
+    transform: translateY(0);
+}
+
+.order-popup-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.order-popup-header i {
+    height: fit-content;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.order-popup-overlay.open {
+    background-color: black;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    top: 0;
+    z-index: 2019;
 }
 /* Order design ends here */
 
@@ -517,7 +604,7 @@ body {
     background-color: #444444;
 }
 
-.send-btn {
+.service-btn {
     background-color: #F7B41A;
     color: white;
     padding: 12px 20px;
@@ -528,46 +615,92 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.send-btn:hover {
+.service-btn:hover {
     background-color: #FFC94B;
+}
+
+.service-btn:disabled {
+    background-color: #ce981b;;
+    color: #666;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 /* Service design ends here */
 
-.slide-out {
-    transform: translateX(100%);
-    transition: 2.25s;
-    /* animation: slideOut 2.5s forwards; */
-}
-
-.slide-in {
-    animation: slideIn 2.5s forwards;
-}
-
-@keyframes slideOut {
+/* Animation for fading in */
+@keyframes fadeIn {
     from {
-        transform: translateX(0);
-        opacity: 1;
+        opacity: 0;
+        transform: translateX(-200px);
     }
     to {
-        transform: translateX(100%);
-        opacity: 0;
+        opacity: 1;
+        transform: translateX(0);
     }
 }
 
-@keyframes slideIn {
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Animation for fading out */
+@keyframes fadeOut {
     from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-200px);
+    }
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease forwards;
+}
+
+/* Responsive design starts here */
+@media screen and (max-width: 1280px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .navigation {
+        position: fixed;
+        left: 0;
         transform: translateX(-100%);
-        opacity: 0;
+        transition: 0.25s;
     }
-    to {
+
+    .navigation.open {
+        width: 50%;
         transform: translateX(0);
-        opacity: 1;
+    }
+
+    .navbar-overlay.open {
+        background-color: black;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        opacity: 0.9;
+        top: 0;
+        z-index: 1999;
+    }
+
+    .profile, .favourite, .order, .service {
+        width: 90%;
     }
 }
 
+@media screen and (max-width: 1024px) {
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
+}
+
+@media only screen and (max-width: 768px) {
     .profile-container {
         width: 90%;
         padding: 20px;
@@ -595,3 +728,12 @@ body {
         padding: 10px 18px;
     }
 }
+
+@media only screen and (max-width: 480px) {
+    /* .restaurant-card {
+        flex: 1 1 100%;
+    } */
+}
+/* Responsive design ends here */
+
+

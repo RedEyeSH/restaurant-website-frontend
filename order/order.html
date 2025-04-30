@@ -39,16 +39,102 @@
 
     <!-- Order section starts here -->
     <section class="order">
-        <div class="order-container">
-            <div class="order-address">
-                <i class="fa-solid fa-location-dot"></i>
-                <h3>Shipping address</h3>
-            </div>
-            <div class="">
-            </div>
+        <div class="order-table">
+
         </div>
+
+        <div class="order-container">
+            <form id="order-form">
+                <div class="form-group">
+                    <label for="customer-name">Name:</label>
+                    <input type="text" id="customer-name" name="customer_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-phone">Phone:</label>
+                    <input type="tel" id="customer-phone" name="customer_phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-email">Email:</label>
+                    <input type="email" id="customer-email" name="customer_email" required>
+                </div>
+                <div class="form-group">
+                    <label for="method">Delivery Method:</label>
+                    <select id="method" name="method" required>
+                        <option value="delivery">Delivery</option>
+                        <option value="pickup">Pickup</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="street">Street:</label>
+                    <input type="text" id="street" name="street" required>
+                </div>
+                <div class="form-group">
+                    <label for="postal-code">Postal Code:</label>
+                    <input type="text" id="postal-code" name="postalCode" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div class="form-group">
+                    <label for="scheduled-time">Scheduled Time:</label>
+                    <select id="scheduled-time" name="scheduled_time" required>
+                        <option value="now">Now</option>
+                        <option value="custom">Select Date and Time</option>
+                    </select>
+                </div>
+                <div class="form-group" id="custom-time-group" style="display: none;">
+                    <label for="custom-time">Select Date and Time:</label>
+                    <input type="datetime-local" id="custom-time" name="custom_time">
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes"></textarea>
+                </div>
+                <button type="submit" id="order-button">
+                    <span class="btn-text">Place Order</span>
+                    <span class="spinner" style="display: none;"></span>
+                  </button>
+            </div>
+            </form>
+        </div>
+
+
     </section>
     <!-- Order section ends here -->
     
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const scheduledTimeSelect = document.getElementById("scheduled-time");
+            const customTimeGroup = document.getElementById("custom-time-group");
+            const customTimeInput = document.getElementById("custom-time");
+
+            scheduledTimeSelect.addEventListener("change", () => {
+                if (scheduledTimeSelect.value === "custom") {
+                    customTimeGroup.style.display = "block";
+                    customTimeInput.required = true;
+                } else {
+                    customTimeGroup.style.display = "none";
+                    customTimeInput.required = false;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const shoppingCart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+            const orderForm = document.getElementById("order-form");
+            const orderContainer = document.querySelector(".order-container");
+
+            if (shoppingCart.length === 0) {
+                orderForm.style.display = "none";
+                
+                const emptyCartMessage = document.createElement("p");
+                emptyCartMessage.textContent = "Your shopping cart is empty. Please add items to your cart before placing an order.";
+                orderContainer.appendChild(emptyCartMessage);
+            }
+        });
+    </script>
 </body>
 </html>

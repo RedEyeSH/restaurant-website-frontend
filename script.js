@@ -2,7 +2,6 @@
 import { fetchData } from './lib/fetchData.js';
 import {fetchRoutes, directionsTo, getRouteSummaries} from './lib/hslReittiopas.js';
 
-
 // Simple call to fetchRoutes
 fetchRoutes().then(data => console.log('Fetched routes:', data));
 directionsTo().then(data => console.log('Directions:', data));
@@ -65,7 +64,7 @@ loginLink.addEventListener('click', () => {
 
 // Shopping cart side bar
 const shoppingCartLink = document.getElementById("navbar-shopping-cart");
-shoppingCartLink.addEventListener("click", () => {
+shoppingCartLink.addEventListener("click", async () => {
     const shoppingCart = document.getElementById("shopping-cart");
     shoppingCart.classList.toggle("show-shopping-cart");
 
@@ -74,9 +73,76 @@ shoppingCartLink.addEventListener("click", () => {
 
     if (shoppingCart.classList.contains("show-shopping-cart")) {
         document.body.style.overflow = "hidden";
+
+        // Fetch items from localStorage
+        const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+        const shoppingCartList = document.querySelector(".shopping-cart-list");
+        shoppingCartList.innerHTML = ""; // Clear existing items
+
+        let totalPrice = 0;
+
+        for (const cartItem of cart) {
+            try {
+
+                const endpoint = cartItem.type === "meal" ? `${apiUrl}/meals/${cartItem.id}` : `${apiUrl}/items/${cartItem.id}`;
+                const response = await fetch(endpoint);
+                const item = await response.json();
+
+                if (response.ok) {
+                    const shoppingCartItem = document.createElement("div");
+                    shoppingCartItem.className = "shopping-cart-item";
+                    shoppingCartItem.setAttribute("data-item-id", item.id);
+                    shoppingCartItem.innerHTML = `
+                        <div class="shopping-cart-header">
+                            <div class="shopping-cart-img">
+                                <img src="${item.image_url}" alt="${item.name}">
+                            </div>
+                            <div class="shopping-cart-info">
+                                <h4>${item.name}</h4>
+                                <p id="shopping-cart-price">${(cartItem.quantity * item.price).toFixed(2)}€</p>
+                            </div>
+                        </div>
+                        <div class="shopping-cart-options">
+                            <button id="cart-btn-decrease">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <p id="shopping-cart-amount">${cartItem.quantity}</p>
+                            <button id="cart-btn-increase">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button id="cart-btn-trash">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    shoppingCartList.appendChild(shoppingCartItem);
+                    setupCartItemButtons(shoppingCartItem, item);
+
+                    totalPrice += cartItem.quantity * item.price;
+                } else {
+                    console.warn(`Failed to fetch item with ID ${cartItem.id}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching item with ID ${cartItem.id}:`, error);
+            }
+        }
+
+        // Update the total price
+        const shoppingCartOrderTotal = document.querySelector("#shopping-cart-total");
+        if (shoppingCartOrderTotal) {
+            shoppingCartOrderTotal.textContent = `$${totalPrice.toFixed(2)}`;
+        }
+
+        // Update the navbar shopping cart total
+        const navbarCartPrice = document.getElementById("navbar-cart-price");
+        if (navbarCartPrice) {
+            navbarCartPrice.textContent = `${totalPrice.toFixed(2)}€`;
+        }
     } else {
         document.body.style.overflow = "";
     }
+    toggleProceedButton();
 });
 
 function closeShoppingCart() {
@@ -125,13 +191,130 @@ close_form_overlay.addEventListener("click", closeForms)
 // Restaurant menu cards
 const restaurant_container = document.getElementById("");
 
-// Restaurant menu link
-const restaurantItems = document.querySelectorAll(".restaurant-category-item");
-restaurantItems.forEach((item) => {
-    item.addEventListener("click", () => {
-        restaurantItems.forEach(button => button.classList.remove("menu-active"));
-        item.classList.add("menu-active");
+// Modify category button text to start with a capital letter and replace underscores with spaces
+function formatCategoryText(text) {
+    return text.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+}
+
+// Fetch categories dynamically and populate buttons
+async function populateCategories() {
+    const data = await fetchData(`${apiUrl}/items`);
+
+    // Extract unique categories from the data
+    const categories = [...new Set(data.map(item => item.category))];
+
+    // Get the category menu container
+    const categoryMenu = document.querySelector('.restaurant-category-menu');
+
+    // Clear existing buttons
+    categoryMenu.innerHTML = '';
+
+    // Add 'All' button
+    const allButton = document.createElement('button');
+    allButton.className = 'restaurant-category-item menu-active';
+    allButton.textContent = 'All';
+    allButton.addEventListener('click', () => filterMenuItems('All'));
+    categoryMenu.appendChild(allButton);
+
+    // Add buttons for each category
+    categories.forEach(category => {
+        const button = document.createElement('button');
+        button.className = 'restaurant-category-item';
+        button.textContent = formatCategoryText(category);
+        button.addEventListener('click', () => filterMenuItems(category));
+        categoryMenu.appendChild(button);
     });
+}
+
+// Filter menu items based on category
+function filterMenuItems(category) {
+    const restaurantMenuSection = document.querySelector('.restaurant-menu-section');
+    restaurantMenuSection.innerHTML = ""; // Clear existing items
+
+    fetchMenuItems().then(data => {
+        const filteredItems = category === 'All' ? data : data.filter(item => item.category === category);
+
+        filteredItems.forEach(item => {
+            const restaurantCard = document.createElement('div');
+            restaurantCard.className = 'restaurant-card';
+
+            restaurantCard.innerHTML = `
+                <div class="restaurant-card-image">
+                    <img src="./images/burgerfrommenu.png" alt="${item.name}" draggable="false">
+                </div>
+                <div class="restaurant-card-header">
+                    <h2>${item.name}</h2>
+                </div>
+                <div class="restaurant-card-description">
+                    <p>${item.description}</p>
+                </div>
+                <div class="restaurant-card-price">
+                    <h2>${item.price}€</h2>
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+            `;
+
+            restaurantMenuSection.appendChild(restaurantCard);
+
+            restaurantCard.addEventListener('click', () => {
+                displayRestaurantModal(item.id, item.type);
+            });
+        });
+    });
+}
+
+// Add a new function to fetch and render meals from the API
+async function renderMeals() {
+    const data = await fetchData(`${apiUrl}/meals`);
+
+    const restaurantMenuSection = document.querySelector(".restaurant-meals-section");
+
+    // Create a new section for meals
+    const mealsSection = document.createElement("div");
+    mealsSection.className = "restaurant-meals-section";
+
+
+
+
+    data.forEach((meal) => {
+        const mealCard = document.createElement("div");
+        mealCard.className = "restaurant-card";
+        // Check localStorage for the quantity of this item
+        const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+        const cartItem = cart.find(cartItem => cartItem.id === meal.id);
+        const quantity = cartItem ? cartItem.quantity : 0;
+
+        mealCard.innerHTML = `
+            <div class="restaurant-card-image">
+                <img src="./images/burgerfrommenu.png" alt="${meal.name}" draggable="false">
+            </div>
+            <div class="restaurant-card-header">
+                <h2>${meal.name}</h2>
+            </div>
+            <div class="restaurant-card-description">
+                <p>${meal.description}</p>
+            </div>
+            <div class="restaurant-card-price">
+                <h2>${meal.price}€</h2>
+                <i class="fa-solid fa-cart-shopping"></i>
+                ${quantity > 0 ? `<span class="item-quantity">Quantity: ${quantity}</span>` : ""}
+            </div>
+        `;
+
+        mealsSection.appendChild(mealCard);
+
+        mealCard.addEventListener("click", () => {
+            displayRestaurantModal(meal.id, "meal");
+        });
+    });
+
+    restaurantMenuSection.appendChild(mealsSection);
+}
+
+// Call populateCategories and renderMeals on page load
+document.addEventListener('DOMContentLoaded', () => {
+    populateCategories();
+    renderMeals();
 });
 
 // Fetch datas
@@ -287,58 +470,84 @@ const fetchMenuItemsById = async (id) => {
     return data;
 }
 
+const fetchMenuMealsById = async (id) => {
+    const data = await fetchData(`${apiUrl}/meals/${id}`);
+    return data;
+}
+
 // console.log(fetchMenuItems());
 
 async function handleItemIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const itemId = urlParams.get('itemId');
+    const mealId = urlParams.get('mealId');
   
-    if (itemId) {
-      try {
-        // Fetch item details
+    try {
+      if (itemId) {
+        // Fetch item details from items API
         const res = await fetch(`${apiUrl}/items/${itemId}`);
         const item = await res.json();
   
         if (res.ok) {
-            console.log(item);
-            displayRestaurantModal(item.id);
+          console.log(item);
+          displayRestaurantModal(item.id, item.type);
         } else {
-          console.warn('Failed to fetch restaurant by ID from URL.');
+          console.warn('Failed to fetch item by ID from URL.');
         }
-      } catch (error) {
-        console.error('Error fetching restaurant from URL param:', error);
+      } else if (mealId) {
+        // Fetch meal details from meals API
+        const res = await fetch(`${apiUrl}/meals/${mealId}`);
+        const meal = await res.json();
+  
+        if (res.ok) {
+          console.log(meal);
+          displayRestaurantModal(meal.id, meal.type); // Adjust type as needed
+        } else {
+          console.warn('Failed to fetch meal by ID from URL.');
+        }
       }
+    } catch (error) {
+      console.error('Error fetching data from URL param:', error);
     }
   }
-
-function updateItemIdInURL(itemId) {
+  
+function updateItemIdInURL(itemId, type) {
     const url = new URL(window.location);
-    url.searchParams.set('itemId', itemId);
+    if (type === 'item') {
+        url.searchParams.set('itemId', itemId);
+    }
+    else if (type === 'meal') {
+        url.searchParams.set('mealId', itemId);
+    }
     url.hash = '#menu';
     window.history.pushState({}, '', url); 
     console.log('Item ID updated in URL with hash:', url);
 }
 
 
-function removeItemIdFromURL() {
+function removeItemIdFromURL(type) {
     const url = new URL(window.location);
     url.searchParams.delete('itemId');
+    url.searchParams.delete('mealId');
     window.history.pushState({}, '', url);
     console.log('Item ID parameter removed from URL');
 }
 
   
-const renderRestaurantCard = async () => {
+async function renderRestaurantCard () {
     const data = await fetchMenuItems();
-    // console.log(data);
 
     const restaurantMenuSection = document.querySelector(".restaurant-menu-section");
 
     data.forEach((item) => {
-        // console.log(item)
         const restaurantCard = document.createElement("div");
         restaurantCard.className = "restaurant-card";
-        
+
+        // Check localStorage for the quantity of this item
+        const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+        const cartItem = cart.find(cartItem => cartItem.id === item.id);
+        const quantity = cartItem ? cartItem.quantity : 0;
+
         restaurantCard.innerHTML = `
             <div class="restaurant-card-image">
                 <img src="./images/burgerfrommenu.png" alt="${item.name}" draggable="false">
@@ -350,22 +559,34 @@ const renderRestaurantCard = async () => {
                 <p>${item.description}</p>
             </div>
             <div class="restaurant-card-price">
-                <h2>$${item.price}</h2>
+                <h2>${item.price}€</h2>
                 <i class="fa-solid fa-cart-shopping"></i>
+                ${quantity > 0 ? `<span class="item-quantity">Quantity: ${quantity}</span>` : ""}
             </div>
         `;
-        // console.log(item.image_url);
+
         restaurantMenuSection.appendChild(restaurantCard);
 
         restaurantCard.addEventListener("click", () => {
-            displayRestaurantModal(item.id)
+            displayRestaurantModal(item.id, item.type);
         });
     });
 }
 
-const displayRestaurantModal = async (id) => {
-    const data = await fetchMenuItemsById(id);
-    updateItemIdInURL(data.id);
+const displayRestaurantModal = async (id, type) => {
+    let data;
+
+    if (type === 'item') {
+        data = await fetchMenuItemsById(id);
+    } else if (type === 'meal') {
+        data = await fetchMenuMealsById(id);
+    } else {
+        throw new Error(`Unsupported type: ${type}`);
+    }
+
+    updateItemIdInURL(data.id, data.type);
+
+
     // console.log(`Clicked on ${item.name}`);
     
     const information = document.getElementById("information");
@@ -391,7 +612,7 @@ const displayRestaurantModal = async (id) => {
             <div class="information-content">
                 <div class="information-content-top">
                     <h1>${data.name}</h1>
-                    <p>$${data.price}</p>
+                    <p>${data.price}€</p>
                 </div>
                 <div class="information-content-description">
                     <p>${data.description}</p>
@@ -419,7 +640,7 @@ const displayRestaurantModal = async (id) => {
                 </div>
                 <div class="information-footer-add">
                     <p>Add to Cart</p>
-                    <p id="information-total-price">$${(data.price * amount).toFixed(2)}</p>
+                    <p id="information-total-price">${(data.price * amount).toFixed(2)}€</p>
                 </div>
             </div>
         </div>
@@ -441,7 +662,7 @@ const displayRestaurantModal = async (id) => {
             decreaseButton.style.cursor = "pointer";
         }
 
-        totalPriceDisplay.textContent = `$${(data.price * amount).toFixed(2)}`;
+        totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
     });
 
     decreaseButton.addEventListener("click", () => {
@@ -455,13 +676,13 @@ const displayRestaurantModal = async (id) => {
             decreaseButton.style.cursor = "not-allowed";
         }
 
-        totalPriceDisplay.textContent = `$${(data.price * amount).toFixed(2)}`;
+        totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
     });
 
     const buttonAddToCart = document.querySelector(".information-footer-add");
     buttonAddToCart.addEventListener("click", () => {
         const shoppingCartList = document.querySelector(".shopping-cart-list");
-    
+
         let existingCartItem = shoppingCartList.querySelector(`[data-item-id="${data.id}"]`);
         if (existingCartItem) {
             const cartAmountDisplay = existingCartItem.querySelector("#shopping-cart-amount");
@@ -469,9 +690,18 @@ const displayRestaurantModal = async (id) => {
             let currentAmount = parseInt(cartAmountDisplay.textContent, 10);
             currentAmount += amount;
             cartAmountDisplay.textContent = currentAmount;
-    
+
             // Update the price for this specific item
-            cartPriceDisplay.textContent = `$${(currentAmount * data.price).toFixed(2)}`;
+            cartPriceDisplay.textContent = `${(currentAmount * data.price).toFixed(2)}€`;
+            // alert("Item already in cart. Amount updated.");
+
+            // Update localStorage
+            const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+            const itemIndex = cart.findIndex(item => item.id === data.id);
+            if (itemIndex !== -1) {
+                cart[itemIndex].quantity = currentAmount;
+            }
+            localStorage.setItem("shoppingCart", JSON.stringify(cart));
         } else {
             let shoppingCartItem;
             shoppingCartItem = document.createElement("div");
@@ -484,7 +714,7 @@ const displayRestaurantModal = async (id) => {
                     </div>
                     <div class="shopping-cart-info">
                         <h4>${data.name}</h4>
-                        <p id="shopping-cart-price">$${(amount * data.price).toFixed(2)}</p>
+                        <p id="shopping-cart-price">${(amount * data.price).toFixed(2)}€</p>
                     </div>
                 </div>
                 <div class="shopping-cart-options">
@@ -501,10 +731,13 @@ const displayRestaurantModal = async (id) => {
                 </div>
             `;
 
-            openShoppingCartItem(shoppingCartItem);
-    
             shoppingCartList.appendChild(shoppingCartItem);
             setupCartItemButtons(shoppingCartItem, data);
+
+            // Add to localStorage
+            const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+            cart.push({ id: data.id, quantity: amount, type: data.type }); // Include the type of the item
+            localStorage.setItem("shoppingCart", JSON.stringify(cart));
         }
         updateCartTotal();
         removeInformationClasses();
@@ -514,18 +747,6 @@ const displayRestaurantModal = async (id) => {
     informationOverlay.classList.toggle("show-information-overlay");
 } 
 
-const openShoppingCartItem = (item) => {
-    console.log(item);
-    item.addEventListener("click", async () => {
-        // const urlParams = new URLSearchParams(window.location.search);
-        // const itemId = urlParams.get('itemId');
-        handleItemIdFromURL();
-        // const data = await fetchData(`${apiUrl}/items/${itemId}`);
-        // console.log(data);
-        // displayRestaurantModal(data.id);
-    });
-}
-
 function setupCartItemButtons(cartItem, item) {
     const decreaseButton = cartItem.querySelector("#cart-btn-decrease");
     const increaseButton = cartItem.querySelector("#cart-btn-increase");
@@ -533,14 +754,46 @@ function setupCartItemButtons(cartItem, item) {
     const amountDisplay = cartItem.querySelector("#shopping-cart-amount");
     const priceDisplay = cartItem.querySelector("#shopping-cart-price");
 
+    const updateRestaurantCardQuantity = (itemId, quantity, type) => {
+        const restaurantCards = document.querySelectorAll(".restaurant-card");
+        restaurantCards.forEach(card => {
+            const cardName = card.querySelector(".restaurant-card-header h2").textContent;
+            if (cardName === item.name && item.type === type) {
+                const quantityDisplay = card.querySelector(".item-quantity");
+                if (quantity > 0) {
+                    if (!quantityDisplay) {
+                        const newQuantityDisplay = document.createElement("span");
+                        newQuantityDisplay.className = "item-quantity";
+                        newQuantityDisplay.textContent = `Quantity: ${quantity}`;
+                        card.querySelector(".restaurant-card-price").appendChild(newQuantityDisplay);
+                    } else {
+                        quantityDisplay.textContent = `Quantity: ${quantity}`;
+                    }
+                } else if (quantityDisplay) {
+                    quantityDisplay.remove();
+                }
+            }
+        });
+    };
+
     // Increase button logic
     increaseButton.addEventListener("click", () => {
         let amount = parseInt(amountDisplay.textContent, 10);
         amount++;
         amountDisplay.textContent = amount;
 
-        priceDisplay.textContent = `$${(amount * item.price).toFixed(2)}`;
+        priceDisplay.textContent = `${(amount * item.price).toFixed(2)}€`;
         updateCartTotal();
+
+        // Update localStorage
+        const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+        const cartItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
+        if (cartItemIndex !== -1) {
+            cart[cartItemIndex].quantity = amount;
+        }
+        localStorage.setItem("shoppingCart", JSON.stringify(cart));
+
+        updateRestaurantCardQuantity(item.id, amount, item.type);
     });
 
     // Decrease button logic
@@ -550,11 +803,28 @@ function setupCartItemButtons(cartItem, item) {
             amount--;
             amountDisplay.textContent = amount;
 
-            priceDisplay.textContent = `$${(amount * item.price).toFixed(2)}`;
+            priceDisplay.textContent = `${(amount * item.price).toFixed(2)}€`;
             updateCartTotal();
+
+            // Update localStorage
+            const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+            const cartItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
+            if (cartItemIndex !== -1) {
+                cart[cartItemIndex].quantity = amount;
+            }
+            localStorage.setItem("shoppingCart", JSON.stringify(cart));
+
+            updateRestaurantCardQuantity(item.id, amount, item.type);
         } else {
             cartItem.remove();
             updateCartTotal();
+
+            // Remove item from localStorage
+            const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+            const updatedCart = cart.filter(cartItem => cartItem.id !== item.id);
+            localStorage.setItem("shoppingCart", JSON.stringify(updatedCart));
+
+            updateRestaurantCardQuantity(item.id, 0, item.type);
         }
     });
 
@@ -562,10 +832,18 @@ function setupCartItemButtons(cartItem, item) {
     trashButton.addEventListener("click", () => {
         cartItem.remove();
         updateCartTotal();
+
+        // Remove item from localStorage
+        const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+        const updatedCart = cart.filter(cartItem => cartItem.id !== item.id);
+        localStorage.setItem("shoppingCart", JSON.stringify(updatedCart));
+
+        updateRestaurantCardQuantity(item.id, 0, item.type);
     });
 }
 
 function toggleProceedButton() {
+    console.log("toggleProceed function");
     const shoppingCartList = document.querySelector(".shopping-cart-list");
     const proceedButton = document.getElementById("shopping-cart-order");
 
@@ -584,21 +862,22 @@ function updateCartTotal() {
 
     cartItems.forEach((item) => {
         // Extract the total price for this item directly from the #shopping-cart-price element
-        const itemTotalPrice = parseFloat(item.querySelector("#shopping-cart-price").textContent.replace("$", ""));
+        const itemTotalPrice = parseFloat(item.querySelector("#shopping-cart-price").textContent.replace("€", ""));
         totalPrice += itemTotalPrice;
     });
 
     // Update the shopping cart total
     const shoppingCartOrderTotal = document.querySelector("#shopping-cart-total");
     if (shoppingCartOrderTotal) {
-        shoppingCartOrderTotal.textContent = `$${totalPrice.toFixed(2)}`;
+        shoppingCartOrderTotal.textContent = `${totalPrice.toFixed(2)}€`;
     }
 
     // Update the navbar shopping cart total
     const navbarCartPrice = document.getElementById("navbar-cart-price");
     if (navbarCartPrice) {
-        navbarCartPrice.textContent = `$${totalPrice.toFixed(2)}`;
+        navbarCartPrice.textContent = `${totalPrice.toFixed(2)}€`;
     }
+    renderRestaurantCard();
     toggleProceedButton();
 }
 
@@ -610,6 +889,13 @@ informationOverlay.addEventListener("click",  removeInformationClasses);
 document.addEventListener("DOMContentLoaded", () => {
     handleItemIdFromURL();
     loggedIn();
+
+    // Update shopping cart on page load
+    const shoppingCartLink = document.getElementById("navbar-shopping-cart");
+    if (shoppingCartLink) {
+        shoppingCartLink.click(); // Trigger the shopping cart logic to update
+        shoppingCartLink.click(); // Close it back to its original state
+    }
 });
 
 // Logged in setup
@@ -639,6 +925,7 @@ const loggedIn = () => {
         navbarActions.appendChild(navbarLoggedIn);
     }
 }
+
 
 // Initialize the Leaflet map
 let map; // Declare map in a higher scope
