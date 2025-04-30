@@ -698,7 +698,27 @@ async function drawStopsOnMap(map) {
 
                     try {
                         const summaries = await getRouteSummaries(fromLat, fromLon, toLat, toLon);
-                        console.log(summaries.join("\n\n")); // Display the summaries in the console or UI
+
+                        // Populate the modal with the summaries
+                        const modal = document.getElementById("route-modal");
+                        const summariesContainer = document.getElementById("route-summaries");
+                        summariesContainer.innerHTML = summaries.map(summary => `<p>${summary}</p>`).join("");
+
+                        // Show the modal
+                        modal.style.display = "block";
+
+                        // Close the modal when the close button is clicked
+                        const closeButton = document.querySelector(".close-button");
+                        closeButton.onclick = () => {
+                            modal.style.display = "none";
+                        };
+
+                        // Close the modal when clicking outside the modal content
+                        window.onclick = (event) => {
+                            if (event.target === modal) {
+                                modal.style.display = "none";
+                            }
+                        };
                     } catch (error) {
                         console.error("Error displaying route summaries:", error);
                     }
