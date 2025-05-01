@@ -936,7 +936,6 @@ function initMap() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
-
     drawStopsOnMap(map)
 }
 
@@ -1009,6 +1008,14 @@ async function drawStopsOnMap(map) {
                         console.error("Error displaying route summaries:", error);
                     }
                 });
+            });
+
+            //
+            const marker = L.marker([60.22378791379731, 25.0792582351028]).addTo(map);
+
+            marker.bindTooltip("Burger Company", {
+                permanent: false, // Tooltip only shows on hover
+                direction: 'top'
             });
         });
     } catch (error) {
