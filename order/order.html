@@ -1,3 +1,190 @@
+flame
+flame0932
+Näkymätön
+
+flame — eilen klo 2.02
+for me it saved
+SHST — eilen klo 2.02
+oh now its saved nice
+flame — eilen klo 2.04
+SHST — eilen klo 10.27
+@flame Here is the api to fetch current user
+
+async function fetchCurrentUser() {
+    try {
+        const response = await fetch('http://localhost:3000/api/v1/users/token', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch current user');
+        }
+
+        const user = await response.json();
+        console.log('Current User:', user);
+    } catch (error) {
+        console.error('Error fetching current user:', error);
+    }
+}
+
+fetchCurrentUser();
+flame — eilen klo 10.28
+Alright
+SHST — eilen klo 12.57
+        const response = await fetch('http://localhost:3000/api/v1/orders/user/:userId', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+flame — eilen klo 13.00
+https://prod.liveshare.vsengsaas.visualstudio.com/join?66510D99BA6C85FFED53466817BE2D7B6EBF
+Visual Studio Code for the Web
+Build with Visual Studio Code, anywhere, anytime, entirely in your browser.
+http://localhost:5500/index.html
+SHST — 12.08
+Do you have any problems?
+flame — 12.12
+I'm alright 👍
+SHST — 12.42
+To update user api
+
+/api/v1/users/update
+Request
+{
+  "email": "haratoc163@nutrv.com",
+  "name": "New Name",
+  "password": "newpassword123",
+  "retypePassword": "newpassword123"
+}
+Before updating if have show a messaeg syaing that after updating you will automatically logout. Then we have verify our email again to continue login
+SHST — 13.00
+Here is the api for user favourites
+
+/api/v1/favourites
+Request:
+
+{
+  "itemId": 1,
+  "type": "item"
+}
+Make sure when requesting to add also the token
+Have you changed any of the orders page codes?
+flame — 13.01
+Nope
+SHST — 13.02
+Aight I will make some chages
+flame — 13.02
+okay
+SHST — 14.22
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Contrail+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/*
+    default background color - #0D0D0D
+Laajenna
+order.css
+7 kt
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="order.css">
+Laajenna
+order.html
+6 kt
+let userId = null; // Declare userId variable outside of functions
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loggedIn(); // Ensure loggedIn completes before proceeding
+    displayShoppingCart();
+    setupOrderForm();
+Laajenna
+order.js
+16 kt
+Here are the updated files for order page 
+Make sure to commit to github too
+I will also make the annoucement page
+flame — 14.35
+Alright
+SHST — 20.35
+have you made any changes to index.html
+the main index.html and script.js
+flame — 20.36
+Yes I have
+SHST — 20.36
+Wht have you done?
+flame — 20.38
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+Laajenna
+index.html
+18 kt
+"use strict";
+import { fetchData } from './lib/fetchData.js';
+import {fetchRoutes, directionsTo, getRouteSummaries} from './lib/hslReittiopas.js';
+
+// Simple call to fetchRoutes
+fetchRoutes().then(data => console.log('Fetched routes:', data));
+Laajenna
+script.js
+43 kt
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Contrail+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/*
+    default background color - #0D0D0D
+Laajenna
+style.css
+25 kt
+SHST — 20.41
+Are you making any chnages right now?
+flame — 20.41
+Nope
+I'm working on profile page
+SHST — 20.41
+Did you add any of the favourites button to items?
+flame — 20.42
+for in index.html?
+SHST — 20.42
+jep
+flame — 20.42
+No i haven't
+SHST — 20.42
+btw, whats the 3 thats hiding?
+Kuva
+flame — 20.43
+quantitys
+I haven't added it yet
+SHST — 20.43
+AIght
+Shall I make the favourite button?
+I can help you with that
+flame — 20.44
+If you want 🙂
+SHST — 20.44
+AIght I will make it
+flame — 20.44
+okay
+SHST — 22.02
+Are you coding?
+If yes, then can you share the live code?
+if no, all good
+flame — 22.03
+I'll come in 30min
+SHST — 22.03
+👍
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>

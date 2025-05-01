@@ -205,9 +205,10 @@ const displayOrderHistory = async () => {
 
 displayOrderHistory();
 
-const orderHistoryPopup = (item, data) => {
+const orderHistoryPopup = async (item, data) => {
     console.log(item);
     console.log(data);
+
     orderPopupOverlay.classList.toggle("open");
     orderPopup.classList.toggle("open");
 
@@ -215,11 +216,59 @@ const orderHistoryPopup = (item, data) => {
 
     const orderPopupItem = document.createElement("div");
     orderPopupItem.className = "order-popup-item";
+
+    const detailedItems = await Promise.all(
+        data.items.map(async (item) => {
+            const endpoint = item.type === "meal" ? "meals" : "items";
+            const response = await fetch(`${apiUrl}/${endpoint}/${item.id}`);
+            const itemDetails = await response.json();
+            return {
+                ...item,
+                details: itemDetails
+            };
+        })
+    );
+
+    console.log(detailedItems);
+    
     orderPopupItem.innerHTML = `
         <div class="order-popup-header">
-            <h1>#${data.order_id}</h1>
+            <h1>Order #${data.order_id}</h1>
             <i class="fa-solid fa-xmark" id="x-order"></i>
         </div>
+        <hr>
+        <div class="order-popup-description">
+            <h2>Status: <span class="status">${data.status}</span></h2>
+            <p><strong>Name:</strong> <span>${data.customer_name}</span></p>
+            <p><strong>Email:</strong> <span>${data.customer_email}</span></p>
+            <p><strong>Phone:</strong> <span>${data.customer_phone}</span></p>
+            <p><strong>Method:</strong> <span>${data.method}</span></p>
+            <p><strong>Scheduled:</strong> <span>${new Date(data.scheduled_time).toLocaleString()}</span></p>
+            <p><strong>Address:</strong> <span>${data?.address?.street}, ${data?.address?.postalCode}, ${data?.address?.city}</span></p>
+            ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ""}
+        </div>
+        <div class="order-popup-card">
+            <h3>Items</h3>
+            <div class="order-popup-items">
+                ${detailedItems.map(item => `
+                    <div class="order-popup-box">
+                        <div class="order-popup-box-header">
+                            <div class="order-popup-box-image">
+                                <img src="../images/burgerfrommenu.png" alt="${item.details.name}">
+                                <p class="order-popup-box-quantity">${item.quantity}</p>
+                            </div>
+                            <div class="order-popup-box-name">
+                                <p>${item.details.name}</p>
+                            </div>
+                        </div>
+                        <div class="order-popup-items-price">
+                            <span>€${item.price}</span>
+                        </div>
+                    </div>
+                `).join("")}
+            </div>
+        </div>
+        <h2 class="order-popup-total">Total: €${data.total_price}</h2>
     `;
 
     orderPopup.appendChild(orderPopupItem);

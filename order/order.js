@@ -1,5 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
-    loggedIn();
+let userId = null; // Declare userId variable outside of functions
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loggedIn(); // Ensure loggedIn completes before proceeding
     displayShoppingCart();
     setupOrderForm();
     toggleAddressInputs();
@@ -30,7 +32,7 @@ const showOrderSuccessModal = (orderId) => {
     modalContent.innerHTML = `
         <h2>Order Completed Successfully!</h2>
         <p>Your order ID is: <strong>${orderId}</strong></p>
-        <p style="margin-top:20px">A confirmation email with your order details has been sent to you. 📩</p>
+        <p style="margin-top:20px">A confirmation email with your order details has been sent to your email. 📩</p>
         <button id="close-modal" style="margin-top: 20px; padding: 10px 20px; background-color: #F7B41A; color: #0D0D0D; border: none; border-radius: 5px; cursor: pointer;">Close</button>
     `;
 
@@ -44,7 +46,6 @@ const showOrderSuccessModal = (orderId) => {
     });
 };
 
-
 const getScheduledTime = () => {
     const scheduledTimeSelect = document.getElementById("scheduled-time");
     const customTimeInput = document.getElementById("custom-time");
@@ -57,12 +58,112 @@ const getScheduledTime = () => {
     return "now"; // Default fallback
 };
 
+const clearErrorOnInput = (inputElement) => {
+    inputElement.addEventListener("input", () => {
+        const errorBox = document.getElementById("error-box");
+        errorBox.style.display = "none";
+        inputElement.style.border = "";
+    });
+};
+
+const validateForm = () => {
+    const errors = [];
+    const customerNameInput = document.getElementById("customer-name");
+    const customerPhoneInput = document.getElementById("customer-phone");
+    const customerEmailInput = document.getElementById("customer-email");
+    const methodInput = document.getElementById("method");
+    const streetInput = document.getElementById("street");
+    const postalCodeInput = document.getElementById("postal-code");
+    const cityInput = document.getElementById("city");
+    const scheduledTimeInput = document.getElementById("scheduled-time");
+    const customTimeInput = document.getElementById("custom-time");
+
+    // Attach clearErrorOnInput to each input
+    [
+        customerNameInput,
+        customerPhoneInput,
+        customerEmailInput,
+        methodInput,
+        streetInput,
+        postalCodeInput,
+        cityInput,
+        scheduledTimeInput,
+        customTimeInput
+    ].forEach(input => clearErrorOnInput(input));
+
+    // Reset input borders
+    [
+        customerNameInput,
+        customerPhoneInput,
+        customerEmailInput,
+        methodInput,
+        streetInput,
+        postalCodeInput,
+        cityInput,
+        scheduledTimeInput,
+        customTimeInput
+    ].forEach(input => input.style.border = "");
+
+    if (!customerNameInput.value.trim()) {
+        errors.push("Name is required.");
+        customerNameInput.style.border = "2px solid red";
+    }
+
+    if (!customerPhoneInput.value.trim() || !/^(?:\+358|0)\d{8,9}$/.test(customerPhoneInput.value.trim())) {
+        errors.push("Invalid phone number format. Expected Finnish format: +358XXXXXXXXX or 0XXXXXXXXX.");
+        customerPhoneInput.style.border = "2px solid red";
+    }
+
+    if (!customerEmailInput.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmailInput.value.trim())) {
+        errors.push("A valid email is required.");
+        customerEmailInput.style.border = "2px solid red";
+    }
+
+    if (methodInput.value === "delivery") {
+        if (!streetInput.value.trim()) {
+            errors.push("Street is required for delivery.");
+            streetInput.style.border = "2px solid red";
+        }
+        if (!postalCodeInput.value.trim() || !/^\d{5}$/.test(postalCodeInput.value.trim())) {
+            errors.push("A valid Finnish postal code is required (5 digits).");
+            postalCodeInput.style.border = "2px solid red";
+        }
+        const validCities = ["Helsinki", "Vantaa", "Espoo"];
+        if (!cityInput.value.trim() || !validCities.includes(cityInput.value.trim())) {
+            errors.push("City must be one of the following: Helsinki, Vantaa, Espoo.");
+            cityInput.style.border = "2px solid red";
+        }
+    }
+
+    if (scheduledTimeInput.value === "custom" && !customTimeInput.value.trim()) {
+        errors.push("Custom time is required if selected.");
+        customTimeInput.style.border = "2px solid red";
+    }
+
+    return errors;
+};
+
 const setupOrderForm = () => {
     const orderForm = document.getElementById("order-form");
     const orderBtn = document.getElementById('order-button');
     const orderSpinner = document.querySelector('.spinner');
+    const errorBox = document.createElement("div");
+    errorBox.id = "error-box";
+    errorBox.style.color = "red";
+    errorBox.style.marginTop = "10px";
+    orderForm.appendChild(errorBox);
+
     orderForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+
+        const errors = validateForm();
+        errorBox.innerHTML = "";
+
+        if (errors.length > 0) {
+            errorBox.innerHTML = errors.map(error => `<p>${error}</p>`).join("");
+            errorBox.style.display = "block";
+            return;
+        }
 
         orderBtn.disabled = true;
         orderSpinner.style.display = 'inline-block';
@@ -111,6 +212,7 @@ const setupOrderForm = () => {
         const totalPrice = updatedCart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2);
 
         const orderData = {
+            user_id: userId,
             customer_name: customerName,
             customer_phone: customerPhone,
             customer_email: customerEmail,
@@ -167,7 +269,7 @@ const setupOrderForm = () => {
             orderSpinner.style.display = 'none';
         }
     });
-};           
+};
 
 const displayShoppingCart = async () => {
     const shoppingCart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
@@ -265,26 +367,42 @@ const toggleAddressInputs = () => {
     methodSelect.dispatchEvent(new Event("change"));
 };
 
-const loggedIn = () => {
+const loggedIn = async () => {
     const navbarActions = document.querySelector(".navbar-actions");
     const navbarLogin = document.getElementById("navbar-login");
 
     const token = localStorage.getItem("authToken");
 
     if (token) {
-        const navbarLoggedIn = document.createElement("div");
-        navbarLoggedIn.className = "navbar-logged-in";
-        navbarLoggedIn.setAttribute("id", "navbar-logged-in");
+        try {
+            const response = await fetch("https://10.120.32.59/app/api/v1/users/token", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
 
-        navbarLoggedIn.innerHTML = `
-            <a href="/profile/profile.html">${"username"}</a>
-        `;
+            if (response.ok) {
+                const userData = await response.json();
+                userId = userData.id; // Assign user ID to the variable
+                document.getElementById("customer-name").value = userData.name;
+                document.getElementById("customer-email").value = userData.email;
 
-        navbarLogin.remove();
-        navbarActions.appendChild(navbarLoggedIn);
+                const navbarLoggedIn = document.createElement("div");
+                navbarLoggedIn.className = "navbar-logged-in";
+                navbarLoggedIn.setAttribute("id", "navbar-logged-in");
+
+                navbarLoggedIn.innerHTML = `
+                    <a href="/profile/profile.html">${userData.name}</a>
+                `;
+
+                navbarLogin.remove();
+                navbarActions.appendChild(navbarLoggedIn);
+            } else {
+                console.error("Failed to fetch user data", response.status);
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
     }
-}
-
-
-
-
+};
