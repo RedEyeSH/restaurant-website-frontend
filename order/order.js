@@ -315,7 +315,12 @@ const displayShoppingCart = async () => {
 
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td><img src="${data.image}" alt="${data.name}" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;"> ${data.name}</td>
+                        <td>
+                            <div class="tr-header">
+                                <img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}" style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+                                <p>${data.name}</p>
+                            </div>
+                        </td>
                         <td>${data.price}€</td>
                         <td>${quantity}</td>
                         <td>${itemTotalPrice.toFixed(2)}€</td>
@@ -406,3 +411,8 @@ const loggedIn = async () => {
         }
     }
 };
+
+
+
+
+

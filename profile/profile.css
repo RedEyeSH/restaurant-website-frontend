@@ -103,7 +103,7 @@ body {
     width: fit-content;
 }
 
-.menu-toggle {
+#menu-toggle {
     display: none;
     background: none;
     border: none;
@@ -129,6 +129,7 @@ body {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     display: flex;
     z-index: 2000;
+    overflow: hidden;
 }
 
 .navigation-links {
@@ -192,6 +193,7 @@ body {
     background-color: #F7B41A;
 }
 
+
 /* Profile */
 .profile {
     width: 50%;
@@ -217,8 +219,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* justify-content: center; */
-    position: fixed;
+    /* position: fixed; */
+    overflow-y: auto;
 }
 
 .profile-container h1 {
@@ -239,7 +241,7 @@ body {
 .profile-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
     width: 100%;
 }
 
@@ -249,6 +251,7 @@ body {
 }
 
 .profile-form input {
+    width: 100%;
     padding: 12px;
     font-size: 1rem;
     background-color: #333333;
@@ -285,6 +288,27 @@ body {
     cursor: not-allowed;
     pointer-events: none;
 }
+
+/* -------------------- */
+/* Spinner              */
+/* -------------------- */
+.spinner {
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    display: inline-block;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #555;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 
 /* Favourite design starts here */
 .favourite {
@@ -486,9 +510,11 @@ body {
     z-index: 2020;
     transform: translateY(100vh);
     transition: 0.25s;
+    visibility: hidden;
 }
 
 .order-popup.open {
+    visibility: visible;
     transform: translateY(0);
 }
 
@@ -780,7 +806,7 @@ body {
         flex-direction: column;
     }
 
-    .menu-toggle {
+    #menu-toggle {
         display: block;
     }
 
@@ -843,12 +869,4 @@ body {
         padding: 10px 18px;
     }
 }
-
-@media only screen and (max-width: 480px) {
-    /* .restaurant-card {
-        flex: 1 1 100%;
-    } */
-}
 /* Responsive design ends here */
-
-

@@ -12,6 +12,8 @@
     <title>Restaurant</title>
 </head>
 <body>
+
+
     <nav class="navbar">
         <a href="#home" class="navbar-logo">
             <img src="./images/logo_trimmed.png" alt="logo">
@@ -147,6 +149,9 @@
     <div class="shopping-cart-overlay"></div>
     <!-- Shopping cart side bar ends here -->
     
+<!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toast-container"></div>
+
     <!-- Home section starts here -->
     <section class="home" id="home">
         <div class="home-background"></div>
@@ -163,12 +168,8 @@
                 </div>
                 <div class="content-section-description">
                     <p>At our restaurant, we believe every meal should be a celebration. We craft delicious dishes with fresh ingredients and plenty of love. Whether you're craving something savory, sweet, or a bit of both, we've got something special waiting for you.</p>
-                    <!-- <p>Lorem ipsum dolor sit amet consectetur. Aenean maurisnam tortor curabitur phasellus.</p> -->
                 </div>
-                <div class="content-section-button">
-                    <button>Start Ordering</button>
-                    <!-- <h4>Get Started</h4> -->
-                </div>
+                <a href="#menu" class="content-section-button">Start Ordering</a>
             </div>
         </div>
     </section>
@@ -207,6 +208,7 @@
                             <h2>$2.20</h2>
                             <i class="fa-solid fa-cart-shopping"></i>
                         </div>
+                        <button class="add-to-favourites" data-id="{{id}}" data-type="item">Add to Favourites</button>
                     </div>
                     <div class="restaurant-card">
                         <div class="restaurant-card-image">
@@ -222,6 +224,7 @@
                             <h2>$2.20</h2>
                             <i class="fa-solid fa-cart-shopping"></i>
                         </div>
+                        <button class="add-to-favourites" data-id="{{id}}" data-type="item">Add to Favourites</button>
                     </div>
                     <div class="restaurant-card">
                         <div class="restaurant-card-image">
@@ -237,6 +240,7 @@
                             <h2>$2.20</h2>
                             <i class="fa-solid fa-cart-shopping"></i>
                         </div>
+                        <button class="add-to-favourites" data-id="{{id}}" data-type="item">Add to Favourites</button>
                     </div>
                     <div class="restaurant-card">
                         <div class="restaurant-card-image">
@@ -252,6 +256,7 @@
                             <h2>$2.20</h2>
                             <i class="fa-solid fa-cart-shopping"></i>
                         </div>
+                        <button class="add-to-favourites" data-id="{{id}}" data-type="item">Add to Favourites</button>
                     </div>
                     <div class="restaurant-card">
                         <div class="restaurant-card-image">
@@ -269,17 +274,18 @@
                                 <i class="fa-solid fa-cart-shopping"></i>
                             </div>
                         </div>
+                        <button class="add-to-favourites" data-id="{{id}}" data-type="item">Add to Favourites</button>
                     </div> -->
                 </div>
-                <div class="restaurant-option">
-                    <button id="restaurant-option-button">See All</button>
-                </div>
+                <!-- <div class="restaurant-option"> -->
+                    <!-- <button id="restaurant-option-button">See All</button> -->
+                <!-- </div> -->
             </div>
         </div>
 
         <!-- Added a new section for meals in the restaurant menu -->
         <div class="restaurant-meals-section">
-            <h2>Our Delicious Meals</h2>
+            <h2 class="restaurant-meal-header">Our Delicious Meals</h2>
             <div class="restaurant-meals-cards">
                 <!-- Meal cards will be dynamically populated by JavaScript -->
             </div>

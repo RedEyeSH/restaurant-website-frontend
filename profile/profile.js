@@ -46,7 +46,7 @@ function closeOrderPopup() {
     orderPopupOverlay.classList.remove("open");
 }
 
-const menuToggle = document.querySelector(".menu-toggle");
+const menuToggle = document.querySelector("#menu-toggle");
 
 menuToggle.addEventListener("click", () => {
     navigation.classList.toggle("open");
@@ -56,6 +56,17 @@ menuToggle.addEventListener("click", () => {
 navbarOverlay.addEventListener("click", () => {
     closeNavigation();
 });
+
+
+
+
+// Get the JWT token from localStorage
+const token = localStorage.getItem('authToken');
+
+// Redirect to login if no token is found
+if (!token) {
+  window.location.href = '../index.html';
+}
 
 const apiUrl = "https://10.120.32.59/app/api/v1";
 
@@ -98,27 +109,27 @@ const profileForm = document.querySelector(".profile-form");
 const saveButton = document.querySelector(".save-btn");
 
 // Function to check if all inputs have values
-const checkFormInputs = () => {
-    const inputs = profileForm.querySelectorAll("input");
-    let allFilled = true;
+// const checkFormInputs = () => {
+//     const inputs = profileForm.querySelectorAll("input");
+//     let allFilled = true;
 
-    inputs.forEach(input => {
-        if (input.value.trim() === "") {
-            allFilled = false;
-        }
-    });
+//     inputs.forEach(input => {
+//         if (input.value.trim() === "") {
+//             allFilled = false;
+//         }
+//     });
 
-    // Enable or disable the save button based on input values
-    saveButton.disabled = !allFilled;
-};
+//     // Enable or disable the save button based on input values
+//     saveButton.disabled = !allFilled;
+// };
 
 // Add event listeners to all input fields
-profileForm.querySelectorAll("input").forEach(input => {
-    input.addEventListener("input", checkFormInputs);
-});
+// profileForm.querySelectorAll("input").forEach(input => {
+    // input.addEventListener("input", checkFormInputs);
+// });
 
 // Initial check to disable the button if inputs are empty on page load
-checkFormInputs();
+// checkFormInputs();
 
 const serviceForm = document.querySelector(".service-form");
 const serviceButton = document.querySelector(".service-btn");
@@ -148,9 +159,76 @@ checkServiceFormInputs();
 
 const logout = document.getElementById("logout");
 logout.addEventListener("click", () => {
-    localStorage.removeItem("authToken");
-    window.location.href = "/index.html";
+    logoutUser();
 });
+
+const updateUserData = async () => {
+    const profileForm = document.querySelector(".profile-form");
+    const saveBtn = document.getElementById('save-btn');
+    const spinner = saveBtn.querySelector('.spinner');
+    profileForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        saveBtn.disabled = true;
+        spinner.style.display = "inline-block";
+        const name = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("new-password").value.trim();
+        const retypePassword = document.getElementById("retype-password").value.trim();
+
+        if (!name || !email) {
+            alert("Username and email are required.");
+            saveBtn.disabled = false;
+            spinner.style.display = "none";
+            return;
+        }
+
+        if (password !== retypePassword) {
+            alert("Passwords do not match.");
+            saveBtn.disabled = false;
+            spinner.style.display = "none";
+            return;
+        }
+
+        const formData = {
+            name,
+            email,
+            password,
+            retypePassword,
+        };
+
+        console.log("Form Data:", formData);
+        
+        try {
+            const token = localStorage.getItem("authToken");
+            const response = await fetch(`${apiUrl}/users/update`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to save data.");
+            }
+
+            const result = await response.json();
+            alert("Profile updated successfully! You have to log in again.");
+            logoutUser();
+            saveBtn.disabled = false;
+            spinner.style.display = "none";
+            // window.location.href = "../index.html";
+            console.log("Server Response:", result);
+        } catch (error) {
+            console.error("Error saving data:", error);
+            alert("An error occurred while saving your profile.");
+        }
+    });
+}
+
+updateUserData();
 
 const fetchOrderHistory = async () => {
     const userData = await fetchCurrentUser();
@@ -206,9 +284,6 @@ const displayOrderHistory = async () => {
 displayOrderHistory();
 
 const orderHistoryPopup = async (item, data) => {
-    console.log(item);
-    console.log(data);
-
     orderPopupOverlay.classList.toggle("open");
     orderPopup.classList.toggle("open");
 
@@ -243,6 +318,7 @@ const orderHistoryPopup = async (item, data) => {
             <p><strong>Email:</strong> <span>${data.customer_email}</span></p>
             <p><strong>Phone:</strong> <span>${data.customer_phone}</span></p>
             <p><strong>Method:</strong> <span>${data.method}</span></p>
+            ${}
             <p><strong>Scheduled:</strong> <span>${new Date(data.scheduled_time).toLocaleString()}</span></p>
             <p><strong>Address:</strong> <span>${data?.address?.street}, ${data?.address?.postalCode}, ${data?.address?.city}</span></p>
             ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ""}
@@ -283,3 +359,10 @@ orderPopupOverlay.addEventListener("click", () => {
     console.log("overlay");
     closeOrderPopup();
 });
+
+
+function logoutUser() {
+    localStorage.removeItem('authToken');
+    window.location.href = '../index.html';
+}
+  

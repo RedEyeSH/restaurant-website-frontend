@@ -1,13 +1,14 @@
 "use strict";
 import { fetchData } from './lib/fetchData.js';
+/*
 import {fetchRoutes, directionsTo, getRouteSummaries} from './lib/hslReittiopas.js';
 
 // Simple call to fetchRoutes
 fetchRoutes().then(data => console.log('Fetched routes:', data));
-directionsTo().then(data => console.log('Directions:', data));
+directionsTo().then(data => console.log('Directions:', data));*/
 
 // Smooth scrolling for navbar links
-document.querySelectorAll('.navbar a').forEach(link => {
+document.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
 
@@ -95,7 +96,7 @@ shoppingCartLink.addEventListener("click", async () => {
                     shoppingCartItem.innerHTML = `
                         <div class="shopping-cart-header">
                             <div class="shopping-cart-img">
-                                <img src="${item.image_url}" alt="${item.name}">
+                                <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${item.name}">
                             </div>
                             <div class="shopping-cart-info">
                                 <h4>${item.name}</h4>
@@ -188,59 +189,34 @@ close_form.forEach((button) => {
 const close_form_overlay = document.getElementById("box-overlay");
 close_form_overlay.addEventListener("click", closeForms)
 
-// Restaurant menu cards
-const restaurant_container = document.getElementById("");
-
 // Modify category button text to start with a capital letter and replace underscores with spaces
-function formatCategoryText(text) {
+const formatCategoryText = (text) => {
     return text.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
-}
+};
 
-// Fetch categories dynamically and populate buttons
-async function populateCategories() {
-    const data = await fetchData(`${apiUrl}/items`);
-
-    // Extract unique categories from the data
-    const categories = [...new Set(data.map(item => item.category))];
-
-    // Get the category menu container
-    const categoryMenu = document.querySelector('.restaurant-category-menu');
-
-    // Clear existing buttons
-    categoryMenu.innerHTML = '';
-
-    // Add 'All' button
-    const allButton = document.createElement('button');
-    allButton.className = 'restaurant-category-item menu-active';
-    allButton.textContent = 'All';
-    allButton.addEventListener('click', () => filterMenuItems('All'));
-    categoryMenu.appendChild(allButton);
-
-    // Add buttons for each category
-    categories.forEach(category => {
-        const button = document.createElement('button');
-        button.className = 'restaurant-category-item';
-        button.textContent = formatCategoryText(category);
-        button.addEventListener('click', () => filterMenuItems(category));
-        categoryMenu.appendChild(button);
-    });
-}
-
-// Filter menu items based on category
-function filterMenuItems(category) {
+// Consolidate renderRestaurantCard and filterMenuItems into a single function
+function renderRestaurantCards(category = 'All') {
     const restaurantMenuSection = document.querySelector('.restaurant-menu-section');
-    restaurantMenuSection.innerHTML = ""; // Clear existing items
+    restaurantMenuSection.innerHTML = ''; // Clear existing items
 
     fetchMenuItems().then(data => {
         const filteredItems = category === 'All' ? data : data.filter(item => item.category === category);
+
+        // Retrieve shopping cart data from localStorage
+        const cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
 
         filteredItems.forEach(item => {
             const restaurantCard = document.createElement('div');
             restaurantCard.className = 'restaurant-card';
 
+            // Check if the item exists in the cart and get its quantity
+            const cartItem = cart.find(cartItem => cartItem.id === item.id);
+            const quantity = cartItem ? cartItem.quantity : 0;
+
             restaurantCard.innerHTML = `
                 <div class="restaurant-card-image">
-                    <img src="./images/burgerfrommenu.png" alt="${item.name}" draggable="false">
+                    <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${item.name}" draggable="false">
+                    ${quantity > 0 ? `<p class="item-quantity">${quantity}</p>` : ''}
                 </div>
                 <div class="restaurant-card-header">
                     <h2>${item.name}</h2>
@@ -263,30 +239,69 @@ function filterMenuItems(category) {
     });
 }
 
+// Update populateCategories to use the new renderRestaurantCards function
+async function populateCategories() {
+    const data = await fetchData(`${apiUrl}/items`);
+
+    // Extract unique categories from the data
+    const categories = [...new Set(data.map(item => item.category))];
+
+    // Get the category menu container
+    const categoryMenu = document.querySelector('.restaurant-category-menu');
+
+    // Clear existing buttons
+    categoryMenu.innerHTML = '';
+
+    // Add 'All' button
+    const allButton = document.createElement('button');
+    allButton.className = 'restaurant-category-item menu-active';
+    allButton.textContent = 'All';
+    allButton.addEventListener('click', () => renderRestaurantCards('All'));
+    categoryMenu.appendChild(allButton);
+
+    // Add buttons for each category
+    categories.forEach(category => {
+        const button = document.createElement('button');
+        button.className = 'restaurant-category-item';
+        button.textContent = formatCategoryText(category);
+        button.addEventListener('click', () => renderRestaurantCards(category));
+        categoryMenu.appendChild(button);
+    });
+
+    const restaurantItems = document.querySelectorAll(".restaurant-category-item");
+    restaurantItems.forEach((item) => {
+        item.addEventListener("click", () => {
+            restaurantItems.forEach(div => div.classList.remove("menu-active"));
+            item.classList.add("menu-active");
+        });
+    });
+}
+
 // Add a new function to fetch and render meals from the API
 async function renderMeals() {
     const data = await fetchData(`${apiUrl}/meals`);
 
-    const restaurantMenuSection = document.querySelector(".restaurant-meals-section");
+    const restaurantMenuCards = document.querySelector(".restaurant-meals-cards");
 
     // Create a new section for meals
     const mealsSection = document.createElement("div");
-    mealsSection.className = "restaurant-meals-section";
+    mealsSection.className = "restaurant-meals-item";
 
-
-
+    // Retrieve shopping cart data from localStorage
+    const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
 
     data.forEach((meal) => {
         const mealCard = document.createElement("div");
         mealCard.className = "restaurant-card";
-        // Check localStorage for the quantity of this item
-        const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
-        const cartItem = cart.find(cartItem => cartItem.id === meal.id);
+
+        // Check localStorage for the quantity of this meal
+        const cartItem = cart.find(cartItem => cartItem.id === meal.id && cartItem.type === 'meal');
         const quantity = cartItem ? cartItem.quantity : 0;
 
         mealCard.innerHTML = `
             <div class="restaurant-card-image">
-                <img src="./images/burgerfrommenu.png" alt="${meal.name}" draggable="false">
+                <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${meal.name}" draggable="false">
+                ${quantity > 0 ? `<p class="item-quantity">${quantity}</p>` : ""}
             </div>
             <div class="restaurant-card-header">
                 <h2>${meal.name}</h2>
@@ -297,7 +312,6 @@ async function renderMeals() {
             <div class="restaurant-card-price">
                 <h2>${meal.price}€</h2>
                 <i class="fa-solid fa-cart-shopping"></i>
-                ${quantity > 0 ? `<span class="item-quantity">Quantity: ${quantity}</span>` : ""}
             </div>
         `;
 
@@ -308,12 +322,13 @@ async function renderMeals() {
         });
     });
 
-    restaurantMenuSection.appendChild(mealsSection);
+    restaurantMenuCards.appendChild(mealsSection);
 }
 
 // Call populateCategories and renderMeals on page load
 document.addEventListener('DOMContentLoaded', () => {
     populateCategories();
+    renderRestaurantCards('All'); // Ensure all cards are displayed on page load
     renderMeals();
 });
 
@@ -425,7 +440,6 @@ signupForm.addEventListener('submit', async function(event) {
 
 // Forgot password handling
 const forgotPasswordForm = document.querySelector(".forgot-password-form form");
-console.log(forgotPasswordForm)
 forgotPasswordForm.addEventListener("submit", async function(event) {
     event.preventDefault();  // Prevent the default form submission
 
@@ -472,6 +486,17 @@ const fetchMenuItemsById = async (id) => {
 
 const fetchMenuMealsById = async (id) => {
     const data = await fetchData(`${apiUrl}/meals/${id}`);
+    return data;
+}
+
+const getUserByToken = async (token) => {
+    const data = await fetchData(`${apiUrl}/users/token`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        }
+    });
     return data;
 }
 
@@ -532,46 +557,6 @@ function removeItemIdFromURL(type) {
     console.log('Item ID parameter removed from URL');
 }
   
-async function renderRestaurantCard () {
-    const data = await fetchMenuItems();
-
-    const restaurantMenuSection = document.querySelector(".restaurant-menu-section");
-
-    data.forEach((item) => {
-        const restaurantCard = document.createElement("div");
-        restaurantCard.className = "restaurant-card";
-
-        // Check localStorage for the quantity of this item
-        const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
-        const cartItem = cart.find(cartItem => cartItem.id === item.id);
-        const quantity = cartItem ? cartItem.quantity : 0;
-
-        restaurantCard.innerHTML = `
-            <div class="restaurant-card-image">
-                <img src="./images/burgerfrommenu.png" alt="${item.name}" draggable="false">
-                <p>3</p>
-            </div>
-            <div class="restaurant-card-header">
-                <h2>${item.name}</h2>
-            </div>
-            <div class="restaurant-card-description">
-                <p>${item.description}</p>
-            </div>
-            <div class="restaurant-card-price">
-                <h2>${item.price}€</h2>
-                <i class="fa-solid fa-cart-shopping"></i>
-                ${quantity > 0 ? `<span class="item-quantity">Quantity: ${quantity}</span>` : ""}
-            </div>
-        `;
-
-        restaurantMenuSection.appendChild(restaurantCard);
-
-        restaurantCard.addEventListener("click", () => {
-            displayRestaurantModal(item.id, item.type);
-        });
-    });
-}
-
 const displayRestaurantModal = async (id, type) => {
     let data;
 
@@ -585,9 +570,6 @@ const displayRestaurantModal = async (id, type) => {
 
     updateItemIdInURL(data.id, data.type);
 
-
-    // console.log(`Clicked on ${item.name}`);
-    
     const information = document.getElementById("information");
     information.classList.toggle("open-information-section");
     information.innerHTML = "";
@@ -596,154 +578,201 @@ const displayRestaurantModal = async (id, type) => {
         document.body.style.overflow = "hidden";
     } else {
         document.body.style.overflow = "";
-    }            
+    }
 
-    let amount = 1;
+    if (type === 'meal') {
+        let amount = 1;
 
-    // change this line if the html information also changes. (not updated)
-    const informationContainer = document.createElement("div");
-    informationContainer.className = "information-container";
-    informationContainer.innerHTML = `
-        <div class="information-container">
-            <div class="information-image">
-                <img src="./images/burgerfrommenu.png" alt="${data.name}" draggable="false">
-            </div>
-            <div class="information-content">
-                <div class="information-content-top">
-                    <h1>${data.name}</h1>
-                    <p>${data.price}€</p>
-                </div>
-                <div class="information-content-description">
-                    <p>${data.description}</p>
-                </div>
-                <hr style="border-color: #949494">
-                <div class="information-content-ingredients">
-                    <p>Ingredients -<span>${data.ingredients}</span></p>
-                </div>
-                <div class="information-content-allergens">
-                    <p>Allergens -<span style="background-color: #FFC94B">${data.allergens}</span></p>
-                </div>
-                <div class="information-content-size">
-                    <p>Size -<span style="background-color: #FFC94B">${data.size}</span></p>
-                </div>
-            </div>
-            <div class="information-footer">
-                <div class="information-footer-amount">
-                    <button id="information-amount-btn-decrease" ${amount == 1 ? "disabled" : ""}>
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
-                    <p id="information-amount-display">${amount}</p>
-                    <button id="information-amount-btn-increase">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                </div>
-                <div class="information-footer-add">
-                    <p>Add to Cart</p>
-                    <p id="information-total-price">${(data.price * amount).toFixed(2)}€</p>
-                </div>
-            </div>
-        </div>
-    `;
+        // Fetch associated items for the meal
+        const associatedItems = [];
+        const itemIds = [
+            data.hamburger_id,
+            data.wrap_id,
+            data.chicken_burger_id,
+            data.vegan_id,
+            data.side_id,
+            data.breakfast_id,
+            data.dessert_id
+        ].filter(id => id); // Filter out null or undefined IDs
 
-    information.appendChild(informationContainer);
-
-    const decreaseButton = informationContainer.querySelector("#information-amount-btn-decrease");
-    const increaseButton = informationContainer.querySelector("#information-amount-btn-increase");
-    const amountDisplay = informationContainer.querySelector("#information-amount-display");
-    const totalPriceDisplay = informationContainer.querySelector("#information-total-price");
-
-    increaseButton.addEventListener("click", () => {
-        amount++;
-        amountDisplay.textContent = amount;
-
-        if (amount > 1) {
-            decreaseButton.disabled = false;
-            decreaseButton.style.cursor = "pointer";
-        }
-
-        totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
-    });
-
-    decreaseButton.addEventListener("click", () => {
-        if (amount > 1) {
-            amount--;
-            amountDisplay.textContent = amount;
-        }
-
-        if (amount === 1) {
-            decreaseButton.disabled = true;
-            decreaseButton.style.cursor = "not-allowed";
-        }
-
-        totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
-    });
-
-    const buttonAddToCart = document.querySelector(".information-footer-add");
-    buttonAddToCart.addEventListener("click", () => {
-        const shoppingCartList = document.querySelector(".shopping-cart-list");
-
-        let existingCartItem = shoppingCartList.querySelector(`[data-item-id="${data.id}"]`);
-        if (existingCartItem) {
-            const cartAmountDisplay = existingCartItem.querySelector("#shopping-cart-amount");
-            const cartPriceDisplay = existingCartItem.querySelector("#shopping-cart-price");
-            let currentAmount = parseInt(cartAmountDisplay.textContent, 10);
-            currentAmount += amount;
-            cartAmountDisplay.textContent = currentAmount;
-
-            // Update the price for this specific item
-            cartPriceDisplay.textContent = `${(currentAmount * data.price).toFixed(2)}€`;
-            // alert("Item already in cart. Amount updated.");
-
-            // Update localStorage
-            const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
-            const itemIndex = cart.findIndex(item => item.id === data.id);
-            if (itemIndex !== -1) {
-                cart[itemIndex].quantity = currentAmount;
+        for (const itemId of itemIds) {
+            try {
+                const itemData = await fetchMenuItemsById(itemId);
+                associatedItems.push(itemData);
+            } catch (error) {
+                console.error(`Error fetching item with ID ${itemId}:`, error);
             }
-            localStorage.setItem("shoppingCart", JSON.stringify(cart));
-        } else {
-            let shoppingCartItem;
-            shoppingCartItem = document.createElement("div");
-            shoppingCartItem.className = "shopping-cart-item";
-            shoppingCartItem.setAttribute("data-item-id", data.id);
-            shoppingCartItem.innerHTML = `
-                <div class="shopping-cart-header">
-                    <div class="shopping-cart-img">
-                        <img src="./images/burgerfrommenu.png" alt="${data.name}">
-                    </div>
-                    <div class="shopping-cart-info">
-                        <h4>${data.name}</h4>
-                        <p id="shopping-cart-price">${(amount * data.price).toFixed(2)}€</p>
-                    </div>
-                </div>
-                <div class="shopping-cart-options">
-                    <button id="cart-btn-decrease">
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
-                    <p id="shopping-cart-amount">${amount}</p>
-                    <button id="cart-btn-increase">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                    <button id="cart-btn-trash">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            `;
-
-            shoppingCartList.appendChild(shoppingCartItem);
-            setupCartItemButtons(shoppingCartItem, data);
-
-            // Add to localStorage
-            const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
-            cart.push({ id: data.id, quantity: amount, type: data.type }); // Include the type of the item
-            localStorage.setItem("shoppingCart", JSON.stringify(cart));
         }
-        updateCartTotal();
-        removeInformationClasses();
-    });
 
-    const informationOverlay = document.getElementById("information-overlay");
-    informationOverlay.classList.toggle("show-information-overlay");
+        const mealDetailsHTML = `
+            <div class="information-container">
+                <div class="information-image">
+                    <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}" draggable="false">
+                </div>
+                <div class="information-content">
+                    <div class="information-content-top">
+                        <h1>${data.name}</h1>
+                        <p>${data.price}€</p>
+                    </div>
+                    <div class="information-content-description">
+                        <p>${data.description}</p>
+                    </div>
+                    <hr style="border-color: #949494">
+                    <div class="information-content-meal-items">
+                        <h3>Meal Includes:</h3>
+                        <ul>
+                            ${associatedItems.map(item => `<li class="meal-items"><strong>${item.name} (${formatCategoryText(item.category)}):</strong> ${item.description}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                <div class="information-footer">
+                    <div class="information-footer-amount">
+                        <button id="meal-amount-btn-decrease" ${amount === 1 ? 'disabled' : ''}>
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <p id="meal-amount-display">${amount}</p>
+                        <button id="meal-amount-btn-increase">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="information-footer-add">
+                        <p>Add to Cart</p>
+                        <p id="meal-total-price">${(data.price * amount).toFixed(2)}€</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        information.innerHTML = mealDetailsHTML;
+
+        const decreaseButton = document.getElementById("meal-amount-btn-decrease");
+        const increaseButton = document.getElementById("meal-amount-btn-increase");
+        const amountDisplay = document.getElementById("meal-amount-display");
+        const totalPriceDisplay = document.getElementById("meal-total-price");
+
+        increaseButton.addEventListener("click", () => {
+            amount++;
+            amountDisplay.textContent = amount;
+
+            if (amount > 1) {
+                decreaseButton.disabled = false;
+                decreaseButton.style.cursor = "pointer";
+            }
+
+            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
+        });
+
+        decreaseButton.addEventListener("click", () => {
+            if (amount > 1) {
+                amount--;
+                amountDisplay.textContent = amount;
+            }
+
+            if (amount === 1) {
+                decreaseButton.disabled = true;
+                decreaseButton.style.cursor = "not-allowed";
+            }
+
+            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
+        });
+
+        const addToCartButton = document.querySelector(".information-footer-add");
+        addToCartButton.addEventListener("click", () => {
+            addToCart(data, amount, 'meal');
+        });
+    } else {
+        const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+        let amount = 1;
+
+        const allergens = data.allergens.split(',');
+        const allergensHTML = allergens.map(allergen => `<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${allergen.trim()}</span>`).join('');
+
+        const informationContainer = document.createElement("div");
+        informationContainer.className = "information-container";
+        informationContainer.innerHTML = `
+            <div class="information-container">
+                <div class="information-image">
+                    <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}" draggable="false">
+                </div>
+                <div class="information-content">
+                    <div class="information-content-top">
+                        <h1>${data.name}</h1>
+                        <p>${data.price}€</p>
+                    </div>
+                    <div class="information-content-description">
+                        <p>${data.description}</p>
+                    </div>
+                    <hr style="border-color: #949494">
+                    <div class="information-content-ingredients">
+                        <p>Ingredients -<span>${data.ingredients}</span></p>
+                    </div>
+                    <div class="information-content-allergens">
+                        <p>Allergens - ${allergensHTML}</p>
+                    </div>
+                    <div class="information-content-size">
+                        <p>Size -<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${capitalize(data.size)}</span></p>
+                    </div>
+                </div>
+                <div class="information-footer">
+                    <div class="information-footer-amount">
+                        <button id="information-amount-btn-decrease" ${amount == 1 ? "disabled" : ""}>
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <p id="information-amount-display">${amount}</p>
+                        <button id="information-amount-btn-increase">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <div class="information-footer-add">
+                        <p>Add to Cart</p>
+                        <p id="information-total-price">${(data.price * amount).toFixed(2)}€</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        information.appendChild(informationContainer);
+
+        const decreaseButton = informationContainer.querySelector("#information-amount-btn-decrease");
+        const increaseButton = informationContainer.querySelector("#information-amount-btn-increase");
+        const amountDisplay = informationContainer.querySelector("#information-amount-display");
+        const totalPriceDisplay = informationContainer.querySelector("#information-total-price");
+
+        increaseButton.addEventListener("click", () => {
+            amount++;
+            amountDisplay.textContent = amount;
+
+            if (amount > 1) {
+                decreaseButton.disabled = false;
+                decreaseButton.style.cursor = "pointer";
+            }
+
+            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
+        });
+
+        decreaseButton.addEventListener("click", () => {
+            if (amount > 1) {
+                amount--;
+                amountDisplay.textContent = amount;
+            }
+
+            if (amount === 1) {
+                decreaseButton.disabled = true;
+                decreaseButton.style.cursor = "not-allowed";
+            }
+
+            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
+        });
+
+        const buttonAddToCart = document.querySelector(".information-footer-add");
+        buttonAddToCart.addEventListener("click", () => {
+            addToCart(data, amount, 'item');
+        });
+
+        const informationOverlay = document.getElementById("information-overlay");
+        informationOverlay.classList.toggle("show-information-overlay");
+    }
 } 
 
 function setupCartItemButtons(cartItem, item) {
@@ -761,12 +790,10 @@ function setupCartItemButtons(cartItem, item) {
                 const quantityDisplay = card.querySelector(".item-quantity");
                 if (quantity > 0) {
                     if (!quantityDisplay) {
-                        const newQuantityDisplay = document.createElement("span");
-                        newQuantityDisplay.className = "item-quantity";
-                        newQuantityDisplay.textContent = `Quantity: ${quantity}`;
-                        card.querySelector(".restaurant-card-price").appendChild(newQuantityDisplay);
+                        quantityDisplay.textContent = `${quantity}`;
+                        card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
                     } else {
-                        quantityDisplay.textContent = `Quantity: ${quantity}`;
+                        quantityDisplay.textContent = `${quantity}`;
                     }
                 } else if (quantityDisplay) {
                     quantityDisplay.remove();
@@ -784,7 +811,6 @@ function setupCartItemButtons(cartItem, item) {
         priceDisplay.textContent = `${(amount * item.price).toFixed(2)}€`;
         updateCartTotal();
 
-        // Update localStorage
         const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
         const cartItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
         if (cartItemIndex !== -1) {
@@ -805,7 +831,6 @@ function setupCartItemButtons(cartItem, item) {
             priceDisplay.textContent = `${(amount * item.price).toFixed(2)}€`;
             updateCartTotal();
 
-            // Update localStorage
             const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
             const cartItemIndex = cart.findIndex(cartItem => cartItem.id === item.id);
             if (cartItemIndex !== -1) {
@@ -818,7 +843,6 @@ function setupCartItemButtons(cartItem, item) {
             cartItem.remove();
             updateCartTotal();
 
-            // Remove item from localStorage
             const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
             const updatedCart = cart.filter(cartItem => cartItem.id !== item.id);
             localStorage.setItem("shoppingCart", JSON.stringify(updatedCart));
@@ -832,25 +856,23 @@ function setupCartItemButtons(cartItem, item) {
         cartItem.remove();
         updateCartTotal();
 
-        // Remove item from localStorage
         const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
         const updatedCart = cart.filter(cartItem => cartItem.id !== item.id);
         localStorage.setItem("shoppingCart", JSON.stringify(updatedCart));
 
+        showToast(`${item.name} removed from cart!`, 'success');
         updateRestaurantCardQuantity(item.id, 0, item.type);
     });
 }
 
 function toggleProceedButton() {
-    console.log("toggleProceed function");
     const shoppingCartList = document.querySelector(".shopping-cart-list");
     const proceedButton = document.getElementById("shopping-cart-order");
 
-    // Check if the shopping cart is empty
     if (shoppingCartList.children.length === 0) {
-        proceedButton.disabled = true; // Disable the button
+        proceedButton.disabled = true;
     } else {
-        proceedButton.disabled = false; // Enable the button
+        proceedButton.disabled = false;
     }
 }
 
@@ -860,27 +882,21 @@ function updateCartTotal() {
     let totalPrice = 0;
 
     cartItems.forEach((item) => {
-        // Extract the total price for this item directly from the #shopping-cart-price element
         const itemTotalPrice = parseFloat(item.querySelector("#shopping-cart-price").textContent.replace("€", ""));
         totalPrice += itemTotalPrice;
     });
 
-    // Update the shopping cart total
     const shoppingCartOrderTotal = document.querySelector("#shopping-cart-total");
     if (shoppingCartOrderTotal) {
         shoppingCartOrderTotal.textContent = `${totalPrice.toFixed(2)}€`;
     }
 
-    // Update the navbar shopping cart total
     const navbarCartPrice = document.getElementById("navbar-cart-price");
     if (navbarCartPrice) {
         navbarCartPrice.textContent = `${totalPrice.toFixed(2)}€`;
     }
-    // renderRestaurantCard();
     toggleProceedButton();
 }
-
-renderRestaurantCard();
 
 const informationOverlay = document.getElementById("information-overlay");
 informationOverlay.addEventListener("click",  removeInformationClasses);
@@ -889,35 +905,95 @@ document.addEventListener("DOMContentLoaded", () => {
     handleItemIdFromURL();
     loggedIn();
 
-    // Update shopping cart on page load
     const shoppingCartLink = document.getElementById("navbar-shopping-cart");
     if (shoppingCartLink) {
-        shoppingCartLink.click(); // Trigger the shopping cart logic to update
-        shoppingCartLink.click(); // Close it back to its original state
+        shoppingCartLink.click();
+        shoppingCartLink.click();
     }
+
+    const shoppingCartList = document.querySelector(".shopping-cart-list");
+    const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+
+    shoppingCartList.innerHTML = ""; // Clear existing items
+
+    cart.forEach(cartItem => {
+        fetch(`${apiUrl}/${cartItem.type === 'meal' ? 'meals' : 'items'}/${cartItem.id}`)
+            .then(response => response.json())
+            .then(data => {
+                const shoppingCartItem = document.createElement("div");
+                shoppingCartItem.className = "shopping-cart-item";
+                shoppingCartItem.setAttribute("data-item-id", data.id);
+                shoppingCartItem.innerHTML = `
+                    <div class="shopping-cart-header">
+                        <div class="shopping-cart-img">
+                            <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}">
+                        </div>
+                        <div class="shopping-cart-info">
+                            <h4>${data.name}</h4>
+                            <p id="shopping-cart-price">${(cartItem.quantity * data.price).toFixed(2)}€</p>
+                        </div>
+                    </div>
+                    <div class="shopping-cart-options">
+                        <button id="cart-btn-decrease">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <p id="shopping-cart-amount">${cartItem.quantity}</p>
+                        <button id="cart-btn-increase">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button id="cart-btn-trash">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+
+                shoppingCartList.appendChild(shoppingCartItem);
+                setupCartItemButtons(shoppingCartItem, data);
+            })
+            .catch(error => console.error(`Error fetching ${cartItem.type} with ID ${cartItem.id}:`, error));
+    });
+
+    updateCartTotal();
+
+    // Update item-quantity display for restaurant cards on page load
+    const restaurantCards = document.querySelectorAll(".restaurant-card");
+
+    restaurantCards.forEach(card => {
+        const cardName = card.querySelector(".restaurant-card-header h2").textContent;
+        const cartItem = cart.find(item => item.name === cardName);
+
+        if (cartItem && cartItem.quantity > 0) {
+            let quantityDisplay = card.querySelector(".item-quantity");
+
+            if (!quantityDisplay) {
+                quantityDisplay = document.createElement("p");
+                quantityDisplay.className = "item-quantity";
+                card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
+            }
+
+            quantityDisplay.textContent = `${cartItem.quantity}`;
+        }
+    });
 });
 
-// Logged in setup
-// const getUserByToken = async () => {
-//     const data = fetchData(`${apiUrl}/items`)
-//     console.log(data);
-// }
+const loggedIn = async () => {
+    const token = localStorage.getItem("authToken");
 
-// getUserByToken();
+    let userData;
+    if (token) {
+        userData = await getUserByToken(token);
+    }
 
-const loggedIn = () => {
     const navbarActions = document.querySelector(".navbar-actions");
     const navbarLogin = document.getElementById("navbar-login");
 
-    const token = localStorage.getItem("authToken");
-
-    if (token) {
+    if (userData) {
         const navbarLoggedIn = document.createElement("div");
         navbarLoggedIn.className = "navbar-logged-in";
         navbarLoggedIn.setAttribute("id", "navbar-logged-in");
 
         navbarLoggedIn.innerHTML = `
-            <a href="/profile/profile.html">${"username"}</a>
+            <a href="/profile/profile.html">${userData.name}</a>
         `;
 
         navbarLogin.remove();
@@ -925,151 +1001,149 @@ const loggedIn = () => {
     }
 }
 
+function addToCart(data, amount, type) {
+    const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+    const existingItem = cart.find(item => item.id === data.id && item.type === type);
 
-// Initialize the Leaflet map
-let map; // Declare map in a higher scope
-
-function initMap() {
-    const location = [60.22487539389367, 25.07793846566476];
-    map = L.map('map-container').setView(location, 14);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
-    drawStopsOnMap(map)
-}
-
-async function drawStopsOnMap(map) {
-    try {
-        const stops = await fetchRoutes(); // Get stops from hslReittiopas.js
-
-        stops.forEach(({ lat, lon, name }) => {
-            const circle = L.circle([lat, lon], {
-                color: 'green',
-                fillColor: '#32CD32',
-                fillOpacity: 0.5,
-                radius: 50,
-            }).addTo(map);
-
-            circle.bindTooltip(`<b>${name}</b>`, {
-                permanent: false, // Tooltip only shows on hover
-                direction: 'top', // Tooltip appears above the circle
-                offset: [0, -10], // Adjust the position of the tooltip
-            });
-
-            // Add click event to get directions
-            circle.on('click', () => {
-                navigator.geolocation.getCurrentPosition(async (position) => {
-                    const fromLat = position.coords.latitude;
-                    const fromLon = position.coords.longitude;
-                    const toLat = lat;
-                    const toLon = lon;
-
-                    try {
-                        const itineraries = await directionsTo(fromLat, fromLon, toLat, toLon);
-                        console.log('Itineraries:', itineraries);
-                        console.log(decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon));
-                    } catch (error) {
-                        console.error('Error fetching directions:', error);
-                    }
-                });
-            });
-            circle.on("click", async () => {
-                navigator.geolocation.getCurrentPosition(async (position) => {
-                    const fromLat = position.coords.latitude;
-                    const fromLon = position.coords.longitude;
-                    const toLat = lat;
-                    const toLon = lon;
-
-                    try {
-                        const summaries = await getRouteSummaries(fromLat, fromLon, toLat, toLon);
-
-                        // Populate the modal with the summaries
-                        const modal = document.getElementById("route-modal");
-                        const summariesContainer = document.getElementById("route-summaries");
-                        summariesContainer.innerHTML = summaries.map(summary => `<p>${summary}</p>`).join("");
-
-                        // Show the modal
-                        modal.style.display = "block";
-
-                        // Close the modal when the close button is clicked
-                        const closeButton = document.querySelector(".close-button");
-                        closeButton.onclick = () => {
-                            modal.style.display = "none";
-                        };
-
-                        // Close the modal when clicking outside the modal content
-                        window.onclick = (event) => {
-                            if (event.target === modal) {
-                                modal.style.display = "none";
-                            }
-                        };
-                    } catch (error) {
-                        console.error("Error displaying route summaries:", error);
-                    }
-                });
-            });
-
-            //
-            const marker = L.marker([60.22378791379731, 25.0792582351028]).addTo(map);
-
-            marker.bindTooltip("Burger Company", {
-                permanent: false, // Tooltip only shows on hover
-                direction: 'top'
-            });
-        });
-    } catch (error) {
-        console.error('Error drawing stops on map:', error);
+    if (existingItem) {
+        existingItem.quantity += amount;
+    } else {
+        cart.push({ id: data.id, quantity: amount, type });
     }
-}
 
-initMap();
-console.log(map)
-// Users current location
-navigator.geolocation.getCurrentPosition((position) => {
-    const { latitude, longitude } = position.coords;
-});
+    localStorage.setItem("shoppingCart", JSON.stringify(cart));
 
-let currentPolyline = null; // Store the currently drawn polyline
+    // Update the cart dynamically
+    const shoppingCartList = document.querySelector(".shopping-cart-list");
+    let cartItemElement = shoppingCartList.querySelector(`[data-item-id="${data.id}"]`);
 
-async function decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon) {
-    try {
-        const data = await directionsTo(fromLat, fromLon, toLat, toLon);
-        const edges = data?.data?.planConnection?.edges;
+    if (cartItemElement) {
+        const quantityDisplay = cartItemElement.querySelector("#shopping-cart-amount");
+        const priceDisplay = cartItemElement.querySelector("#shopping-cart-price");
 
-        if (edges && edges.length > 0) {
-            // Find the shortest connection based on duration
-            const shortestConnection = edges.reduce((shortest, current) => {
-                return current.node.duration < shortest.node.duration ? current : shortest;
-            });
+        const newQuantity = parseInt(quantityDisplay.textContent, 10) + amount;
+        quantityDisplay.textContent = newQuantity;
+        priceDisplay.textContent = `${(newQuantity * data.price).toFixed(2)}€`;
+        showToast(`${data.name} quantity updated in cart!`, 'success');
+    } else {
+        const shoppingCartItem = document.createElement("div");
+        shoppingCartItem.className = "shopping-cart-item";
+        shoppingCartItem.setAttribute("data-item-id", data.id);
+        shoppingCartItem.innerHTML = `
+            <div class="shopping-cart-header">
+                <div class="shopping-cart-img">
+                    <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}">
+                </div>
+                <div class="shopping-cart-info">
+                    <h4>${data.name}</h4>
+                    <p id="shopping-cart-price">${(amount * data.price).toFixed(2)}€</p>
+                </div>
+            </div>
+            <div class="shopping-cart-options">
+                <button id="cart-btn-decrease">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+                <p id="shopping-cart-amount">${amount}</p>
+                <button id="cart-btn-increase">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button id="cart-btn-trash">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        `;
 
-            console.log('Shortest Connection:', shortestConnection);
+        shoppingCartList.appendChild(shoppingCartItem);
+        setupCartItemButtons(shoppingCartItem, data);
+        showToast(`${data.name} added to cart!`, 'success');
+    }
 
-            // Remove the previously drawn polyline if it exists
-            if (currentPolyline) {
-                map.removeLayer(currentPolyline);
+    updateCartTotal();
+
+    // Update the item-quantity display on the restaurant card
+    const restaurantCards = document.querySelectorAll(".restaurant-card");
+    restaurantCards.forEach(card => {
+        const cardName = card.querySelector(".restaurant-card-header h2").textContent;
+        if (cardName === data.name) {
+            let quantityDisplay = card.querySelector(".item-quantity");
+
+            if (!quantityDisplay) {
+                quantityDisplay = document.createElement("p");
+                quantityDisplay.className = "item-quantity";
+                card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
             }
 
-            // Decode and draw the polyline for the shortest connection
-            const decodedPoints = shortestConnection.node.legs.flatMap((leg) => {
-                return leg.legGeometry && leg.legGeometry.points
-                    ? polyline.decode(leg.legGeometry.points)
-                    : [];
-            });
-
-            if (decodedPoints.length > 0) {
-                currentPolyline = L.polyline(decodedPoints, {
-                    color: 'blue', // Set the color of the line
-                    weight: 4,     // Set the thickness of the line
-                    opacity: 0.7   // Set the opacity of the line
-                }).addTo(map);
-            } else {
-                console.log('No valid geometry found for the shortest connection.');
-            }
-        } else {
-            console.error('No connections found in the response.');
+            const cartItem = cart.find(item => item.id === data.id && item.type === type);
+            quantityDisplay.textContent = `${cartItem.quantity}`;
         }
-    } catch (error) {
-        console.error('Error decoding polyline:', error);
-    }
+    });
+
+    removeInformationClasses();
 }
+
+
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.classList.add('toast', type);
+  
+    const toastContent = document.createElement('div');
+    toastContent.classList.add('toast-content');
+  
+    const icon = document.createElement('div');
+    icon.classList.add('check');
+    icon.innerHTML = type === 'success' ? '✔' : '✖';
+  
+    const msg = document.createElement('div');
+    msg.classList.add('message');
+    msg.innerHTML = `<div class="text text-1">${message}</div>`;
+  
+    const closeButton = document.createElement('i');
+    closeButton.classList.add('fa-solid', 'fa-xmark', 'close');
+    closeButton.addEventListener('click', () => {
+      hideToast(toast);
+      clearTimeout(autoDismissTimeout);
+    });
+  
+    toastContent.appendChild(icon);
+    toastContent.appendChild(msg);
+  
+    toast.appendChild(toastContent);
+    toast.appendChild(closeButton);
+  
+    const container = document.getElementById('toast-container');
+    container.appendChild(toast);
+  
+    const allToasts = container.querySelectorAll('.toast');
+    allToasts.forEach(existingToast => {
+      if (existingToast !== toast) {
+        existingToast.classList.add('slide-down');
+      }
+    });
+  
+    setTimeout(() => {
+      toast.classList.add('active');
+    }, 100);
+  
+    // Manage timeout and hover logic
+    let autoDismissTimeout = setTimeout(() => {
+      hideToast(toast);
+    }, 4000);
+  
+    toast.addEventListener('mouseenter', () => {
+      clearTimeout(autoDismissTimeout);
+    });
+  
+    toast.addEventListener('mouseleave', () => {
+      autoDismissTimeout = setTimeout(() => {
+        hideToast(toast);
+      }, 2000); 
+    });
+  }
+  
+  function hideToast(toast) {
+    toast.classList.add('slide-out');
+    setTimeout(() => {
+      toast.remove();
+    }, 500);
+  }

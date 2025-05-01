@@ -712,6 +712,130 @@ section {
 }
 /* Shopping cart section ends here */
 
+/* Toast Notification */
+#toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column-reverse;  /* Reverses the order so new toasts appear at the top */
+    gap: 10px;
+    align-items: flex-end;
+}
+  
+.toast {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 10px 10px 10px 25px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    border-left: 6px solid #4070f4; /* Default border color */
+    transform: translateX(100%); 
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35), opacity 0.5s ease;
+    width: 350px;
+    z-index: 1000;
+  }
+  
+  /* Toast Active State (Slide in) */
+  .toast.active {
+    transform: translateX(0);  /* Slide into view */
+    opacity: 1;
+  }
+  
+  /* Sliding Down Effect (Old toasts) */
+  .toast.slide-down {
+    transform: translateY(20px);  /* Move down when older toasts slide */
+    transition: transform 0.5s ease;
+  }
+  
+  /* Sliding Out Effect (Removing toasts) */
+  .toast.slide-out {
+    transform: translateX(100%);  /* Slide out to the right */
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35), opacity 0.5s ease;
+  }
+  
+  /* Toast Content */
+  .toast-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .toast-content .check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;        
+    width: 35px;          
+    color: #fff;
+    font-size: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;      
+  }
+  
+  
+  .toast-content .message {
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px;
+  }
+  
+  .message .text {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+  }
+  
+  .message .text.text-1 {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .toast .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 20px;
+    width: 20px;
+    padding: 5px;
+    cursor: pointer;
+    opacity: 0.7;
+    background-color: #c6c6c6;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+  }
+  
+  .toast .close:hover {
+    opacity: 1;
+  }
+  
+  /* Success Toast (Green) */
+  .toast.success {
+    border-left-color: #4CAF50; /* Green border for success */
+  }
+  
+  .toast.success .check {
+    background-color: #4CAF50; /* Green icon for success */
+  }
+  
+  
+  /* Error Toast (Red) */
+  .toast.error {
+    border-left-color: #f44336; /* Red border for error */
+  }
+  
+  .toast.error .check {
+    background-color: #f44336; /* Red icon for error */
+  }
+  
+  
 /* Home section starts here */
 .home {
     position: relative;
@@ -782,7 +906,7 @@ section {
     -webkit-text-stroke: 1px white;
 }
 
-.content-section-button button {
+.content-section-button {
     width: fit-content;
     padding: 15px;
     border-radius: 30px;
@@ -790,9 +914,11 @@ section {
     border: none;
     font-weight: bold;
     transition: 0.25s;
+    text-decoration: none;
+    color: white;
 }
 
-.content-section-button button:hover {
+.content-section-button:hover {
     background-color: #FFC94B;
 }
 /* Home section ends here */
@@ -819,7 +945,7 @@ section {
 .restaurant-category-menu {
     padding: 10px;
     display: flex;
-    gap: 75px;
+    gap: 50px;
 }
 
 .restaurant-category-item {
@@ -869,9 +995,9 @@ section {
 }
 
 .restaurant-card {
-    /* width: fit-content; */
-    width: calc(33.333% - 20px);
+    /* width: calc(33.333% - 20px); */
     cursor: pointer;
+    min-width: 370px;;
     max-width: 370px;
     display: flex;
     /* justify-content: center; */
@@ -909,7 +1035,7 @@ section {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #333333;
+    background-color: #F7B41A;
     font-size: 1rem;
     font-weight: bold;
     transition: all 0.3s ease;
@@ -947,7 +1073,7 @@ section {
     height: 18px;
 }
 
-.restaurant-option {
+/* .restaurant-option {
     display: flex;
     justify-content: center;
 }
@@ -965,6 +1091,24 @@ section {
 
 .restaurant-option button:hover {
     background-color: #afafaf;
+} */
+
+.restaurant-meals-section {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.restaurant-meal-header {
+    text-align: center;
+}
+
+.restaurant-meals-item {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 25px;
 }
 /* Restaurant ends here */
 
@@ -1046,7 +1190,7 @@ section {
     display: flex;
     align-items: center;
     gap: 25px;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     align-items: stretch;
 }
@@ -1082,6 +1226,15 @@ section {
     cursor: pointer;
     transition: 0.25s;
     scale: 1;
+}
+
+.information-content-meal-items h3{
+    color: #FFC94B;
+}
+.information-content-meal-items .meal-items {
+    margin-top: 10px;
+    text-decoration: none;
+    list-style: none;
 }
 
 .information-footer-amount button:hover {
