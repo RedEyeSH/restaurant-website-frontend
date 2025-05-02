@@ -3,6 +3,7 @@
 const sections = document.querySelectorAll(".container section");
 const navigationLinks = document.querySelectorAll(".navigation-link");
 
+// Save the current section in localStorage when a navigation link is clicked
 navigationLinks.forEach(link => {
     link.addEventListener("click", (event) => {
         event.preventDefault(); // Prevent default link behavior
@@ -16,19 +17,34 @@ navigationLinks.forEach(link => {
         // Get the section ID from the link's ID (e.g., 'account-link' -> 'profile')
         const sectionId = event.currentTarget.id.replace("-link", "");
 
+        // Save the current section ID in localStorage
+        localStorage.setItem("currentSection", sectionId);
+
         // Hide all sections and show the corresponding section
         sections.forEach(section => {
-            if (section.id === sectionId) {
-                section.classList.remove("fade-out");
-                section.classList.add("fade-in");
-                section.style.display = "block";
-            } else {
-                section.classList.remove("fade-in");
-                section.classList.add("fade-out");
-            }
-            closeNavigation();
             section.style.display = section.id === sectionId ? "block" : "none";
         });
+
+        closeNavigation();
+    });
+});
+
+// On page load, check localStorage for the saved section ID
+document.addEventListener("DOMContentLoaded", () => {
+    const savedSection = localStorage.getItem("currentSection") || "profile"; // Default to "profile" if no section is saved
+
+    // Show the saved section and hide others
+    sections.forEach(section => {
+        section.style.display = section.id === savedSection ? "block" : "none";
+    });
+
+    // Highlight the corresponding navigation link
+    navigationLinks.forEach(link => {
+        if (link.id === `${savedSection}-link`) {
+            link.classList.add("link-active");
+        } else {
+            link.classList.remove("link-active");
+        }
     });
 });
 
@@ -57,9 +73,6 @@ navbarOverlay.addEventListener("click", () => {
     closeNavigation();
 });
 
-
-
-
 // Get the JWT token from localStorage
 const token = localStorage.getItem('authToken');
 
@@ -87,6 +100,7 @@ const fetchCurrentUser = async () => {
         return data;
     } catch (error) {
         console.error('Error fetching current user:', error);
+        return null;
     }
 }
 
@@ -130,32 +144,6 @@ const saveButton = document.querySelector(".save-btn");
 
 // Initial check to disable the button if inputs are empty on page load
 // checkFormInputs();
-
-const serviceForm = document.querySelector(".service-form");
-const serviceButton = document.querySelector(".service-btn");
-
-// Function to check if all inputs in the service form have values
-const checkServiceFormInputs = () => {
-    const inputs = serviceForm.querySelectorAll("input, textarea");
-    let allFilled = true;
-
-    inputs.forEach(input => {
-        if (input.value.trim() === "") {
-            allFilled = false;
-        }
-    });
-
-    // Enable or disable the service button based on input values
-    serviceButton.disabled = !allFilled;
-};
-
-// Add event listeners to all input fields in the service form
-serviceForm.querySelectorAll("input, textarea").forEach(input => {
-    input.addEventListener("input", checkServiceFormInputs);
-});
-
-// Initial check to disable the button if inputs are empty on page load
-checkServiceFormInputs();
 
 const logout = document.getElementById("logout");
 logout.addEventListener("click", () => {
@@ -242,6 +230,8 @@ const fetchOrderHistory = async () => {
         });
 
         if (!response.ok) {
+            // Log the error details for debugging
+            console.error(`Error: ${response.status} ${response.statusText}`);
             throw new Error("Failed to fetch user's ordered data.");
         }
 
@@ -249,15 +239,24 @@ const fetchOrderHistory = async () => {
         return data;
 
     } catch (error) {
-        console.error("Error fetching user's ordered data:", error);
+        // console.error("Error fetching user's ordered data:", error);
+        return null; // Return null to indicate failure
     }
-}
+};
 
 const displayOrderHistory = async () => {
     const orderedData = await fetchOrderHistory();
-    // console.log(orderedData);
 
     const orderHistory = document.querySelector(".order-history");
+    orderHistory.innerHTML = "";
+
+    if (!orderedData || orderedData.length === 0) {
+        const noOrdersMessage = document.createElement("p");
+        noOrdersMessage.textContent = "You have no orders yet.";
+        noOrdersMessage.className = "no-orders-message";
+        orderHistory.appendChild(noOrdersMessage);
+        return;
+    }
 
     for (const data of orderedData) {
         const orderItem = document.createElement("div");
@@ -289,22 +288,10 @@ const orderHistoryPopup = async (item, data) => {
 
     orderPopup.innerHTML = "";
 
+    console.log(data)
+
     const orderPopupItem = document.createElement("div");
     orderPopupItem.className = "order-popup-item";
-
-    const detailedItems = await Promise.all(
-        data.items.map(async (item) => {
-            const endpoint = item.type === "meal" ? "meals" : "items";
-            const response = await fetch(`${apiUrl}/${endpoint}/${item.id}`);
-            const itemDetails = await response.json();
-            return {
-                ...item,
-                details: itemDetails
-            };
-        })
-    );
-
-    console.log(detailedItems);
     
     orderPopupItem.innerHTML = `
         <div class="order-popup-header">
@@ -318,15 +305,17 @@ const orderHistoryPopup = async (item, data) => {
             <p><strong>Email:</strong> <span>${data.customer_email}</span></p>
             <p><strong>Phone:</strong> <span>${data.customer_phone}</span></p>
             <p><strong>Method:</strong> <span>${data.method}</span></p>
-            ${}
-            <p><strong>Scheduled:</strong> <span>${new Date(data.scheduled_time).toLocaleString()}</span></p>
-            <p><strong>Address:</strong> <span>${data?.address?.street}, ${data?.address?.postalCode}, ${data?.address?.city}</span></p>
+
+            ${data.scheduled_time && data.scheduled_time !== "Now" 
+                ? `<p><strong>Scheduled:</strong> <span>${new Date(data.scheduled_time).toLocaleString()}</span></p>` 
+                : `<p><strong>Scheduled:</strong> <span>Now</span></p>`}
+            ${data.address ? `<p><strong>Address:</strong> <span>${data.address.street}, ${data.address.postalCode}, ${data.address.city}</span></p>` : ""}
             ${data.notes ? `<p><strong>Notes:</strong> ${data.notes}</p>` : ""}
         </div>
         <div class="order-popup-card">
             <h3>Items</h3>
             <div class="order-popup-items">
-                ${detailedItems.map(item => `
+                ${data.items.map(item => `
                     <div class="order-popup-box">
                         <div class="order-popup-box-header">
                             <div class="order-popup-box-image">
@@ -360,9 +349,182 @@ orderPopupOverlay.addEventListener("click", () => {
     closeOrderPopup();
 });
 
-
 function logoutUser() {
     localStorage.removeItem('authToken');
     window.location.href = '../index.html';
 }
   
+// Customer service
+const serviceForm = document.querySelector(".service-form");
+const serviceButton = document.querySelector(".service-btn");
+
+// Function to check if all inputs in the service form have values
+const checkServiceFormInputs = () => {
+    const inputs = serviceForm.querySelectorAll("input, textarea");
+    let allFilled = true;
+
+    inputs.forEach(input => {
+        if (input.value.trim() === "") {
+            allFilled = false;
+        }
+    });
+
+    // Enable or disable the service button based on input values
+    serviceButton.disabled = !allFilled;
+};
+
+// Add event listeners to all input fields in the service form
+serviceForm.querySelectorAll("input, textarea").forEach(input => {
+    input.addEventListener("input", checkServiceFormInputs);
+});
+
+checkServiceFormInputs();
+
+serviceForm.addEventListener("submit", async (event) => {
+    event.preventDefault(); // Prevent default form submission
+
+    const title = document.getElementById("service-title").value.trim();
+    const description = document.getElementById("service-description").value.trim();
+
+    if (!title || !description) {
+        alert("Both title and description are required.");
+        return;
+    }
+
+    const formData = {
+        title,
+        description,
+    };
+
+    try {
+        const token = localStorage.getItem("authToken");
+        const response = await fetch(`${apiUrl}/contacts/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to submit the service request.");
+        }
+
+        const result = await response.json();
+        alert("Service request submitted successfully!");
+        console.log("Service Request Response:", result);
+
+        // Clear the form after successful submission
+        location.reload();
+
+    } catch (error) {
+        console.error("Error submitting service request:", error);
+        alert("An error occurred while submitting your service request.");
+    }
+});
+
+// // Fetch all contacts for the user
+// const fetchUserContacts = async () => {
+//     try {
+//         const token = localStorage.getItem("authToken");
+//         const response = await fetch(`${apiUrl}/contacts/user`, {
+//             method: "GET",
+//             headers: {
+//                 "Authorization": `Bearer ${token}`,
+//             },
+//         });
+
+//         if (!response.ok) {
+//             throw new Error("Failed to fetch user contacts.");
+//         }
+
+//         const contacts = await response.json();
+//         console.log("User Contacts:", contacts);
+//         return contacts;
+//     } catch (error) {
+//         console.error("Error fetching user contacts:", error);
+//         return [];
+//     }
+// }
+
+// // Fetch a specific contact by ID
+// const fetchContactById = async (contactId) => {
+//     try {
+//         const token = localStorage.getItem("authToken");
+//         const response = await fetch(`${apiUrl}/contacts/${contactId}`, {
+//             method: "GET",
+//             headers: {
+//                 "Authorization": `Bearer ${token}`,
+//             },
+//         });
+
+//         if (!response.ok) {
+//             throw new Error(`Failed to fetch contact with ID: ${contactId}`);
+//         }
+
+//         const contact = await response.json();
+//         console.log("Contact Details:", contact);
+//         return contact;
+//     } catch (error) {
+//         console.error("Error fetching contact by ID:", error);
+//         return null;
+//     }
+// }
+
+const contactsList = document.querySelector(".contacts-list");
+
+// Function to fetch and display user contacts
+const fetchAndDisplayContacts = async () => {
+    try {
+        const token = localStorage.getItem("authToken");
+        const response = await fetch(`${apiUrl}/contacts/user`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch user contacts.");
+        }
+
+        const contacts = await response.json();
+
+        // Clear the contacts list
+        contactsList.innerHTML = "";
+
+        if (contacts.length === 0) {
+            // Display a message if no contacts are found
+            const noContactsMessage = document.createElement("p");
+            noContactsMessage.textContent = "You have not submitted any contacts yet.";
+            noContactsMessage.className = "no-contacts-message";
+            contactsList.appendChild(noContactsMessage);
+            return;
+        }
+
+        // Render each contact
+        contacts.forEach(contact => {
+            const contactItem = document.createElement("div");
+            contactItem.className = "contact-item";
+            contactItem.innerHTML = `
+                <h3>${contact.title}</h3>
+                <p>${contact.description}</p>
+                <div class="contact-timeline">
+                    <p><strong>Submitted At:</strong> <span>${new Date(contact.created_at).toLocaleString()}</span></p>
+                    <p style="color: #F7B41A">${contact.status}</p>
+                </div>
+            `;
+            contactsList.appendChild(contactItem);
+        });
+    } catch (error) {
+        console.error("Error fetching user contacts:", error);
+        const errorMessage = document.createElement("p");
+        errorMessage.textContent = "An error occurred while fetching your contacts.";
+        errorMessage.className = "error-message";
+        contactsList.appendChild(errorMessage);
+    }
+};
+
+// Call the function to fetch and display contacts
+fetchAndDisplayContacts();

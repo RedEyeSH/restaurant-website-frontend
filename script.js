@@ -10,16 +10,21 @@ directionsTo().then(data => console.log('Directions:', data));*/
 // Smooth scrolling for navbar links
 document.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', (e) => {
-        e.preventDefault();
+        const href = link.getAttribute('href');
 
-        const targetId = link.getAttribute('href').substring(1); // Get the target section ID
-        const targetSection = document.getElementById(targetId);
+        // Check if the href starts with '#' (indicating an in-page anchor link)
+        if (href.startsWith('#')) {
+            e.preventDefault(); // Prevent default behavior for in-page links
 
-        if (targetSection) {
-            targetSection.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            const targetId = href.substring(1); // Get the target section ID
+            const targetSection = document.getElementById(targetId);
+
+            if (targetSection) {
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
     });
 });
@@ -31,6 +36,13 @@ navbar_login.addEventListener('click', () => {
     document.getElementById("account-container").classList.toggle("account-container-form");
 
     document.getElementById("box-overlay").classList.toggle("show-box-overlay");
+});
+
+const navbarMobileLink = document.querySelector(".navbar-mobile-link");
+navbarMobileLink.addEventListener("click", () => {
+    closeShoppingCart();
+    const mobileSidebar = document.querySelector(".mobile-sidebar");
+    mobileSidebar.classList.toggle("open");
 });
 
 const loginForgotPassword = document.getElementById("login-forgot-password");
@@ -66,6 +78,7 @@ loginLink.addEventListener('click', () => {
 // Shopping cart side bar
 const shoppingCartLink = document.getElementById("navbar-shopping-cart");
 shoppingCartLink.addEventListener("click", async () => {
+    closeMobileSidebar();
     const shoppingCart = document.getElementById("shopping-cart");
     shoppingCart.classList.toggle("show-shopping-cart");
 
@@ -86,7 +99,12 @@ shoppingCartLink.addEventListener("click", async () => {
             try {
 
                 const endpoint = cartItem.type === "meal" ? `${apiUrl}/meals/${cartItem.id}` : `${apiUrl}/items/${cartItem.id}`;
-                const response = await fetch(endpoint);
+                const response = await fetch(endpoint, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include token for authorization
+                    }
+                });
                 const item = await response.json();
 
                 if (response.ok) {
@@ -146,6 +164,11 @@ shoppingCartLink.addEventListener("click", async () => {
     toggleProceedButton();
 });
 
+function closeMobileSidebar() {
+    const mobileSidebar = document.querySelector(".mobile-sidebar");
+    mobileSidebar.classList.remove("open");
+}
+
 function closeShoppingCart() {
     const shoppingCart = document.getElementById("shopping-cart");
     shoppingCart.classList.remove("show-shopping-cart");
@@ -158,6 +181,9 @@ function closeShoppingCart() {
 
 const shoppingCartOverlay = document.querySelector(".shopping-cart-overlay");
 shoppingCartOverlay.addEventListener("click", closeShoppingCart);
+
+const xCloseCart = document.getElementById("x-close-cart");
+xCloseCart.addEventListener("click", closeShoppingCart);
 
 // Handling for closing forms
 function closeForms() {
@@ -188,6 +214,8 @@ close_form.forEach((button) => {
 
 const close_form_overlay = document.getElementById("box-overlay");
 close_form_overlay.addEventListener("click", closeForms)
+
+
 
 // Modify category button text to start with a capital letter and replace underscores with spaces
 const formatCategoryText = (text) => {
@@ -234,6 +262,8 @@ function renderRestaurantCards(category = 'All') {
 
             restaurantCard.addEventListener('click', () => {
                 displayRestaurantModal(item.id, item.type);
+                // informationOverlay
+
             });
         });
     });
@@ -279,25 +309,61 @@ async function populateCategories() {
 
 // Add a new function to fetch and render meals from the API
 async function renderMeals() {
-    const data = await fetchData(`${apiUrl}/meals`);
+    const [meals, items] = await Promise.all([
+        fetchData(`${apiUrl}/meals`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+            }
+        }),
+        fetchData(`${apiUrl}/items`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+            }
+        })
+    ]);
 
+    const validItemIds = new Set(items.map(item => item.id));
     const restaurantMenuCards = document.querySelector(".restaurant-meals-cards");
+    restaurantMenuCards.innerHTML = ""; // clear previous meals
 
-    // Create a new section for meals
     const mealsSection = document.createElement("div");
     mealsSection.className = "restaurant-meals-item";
 
-    // Retrieve shopping cart data from localStorage
     const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
 
-    data.forEach((meal) => {
-        const mealCard = document.createElement("div");
-        mealCard.className = "restaurant-card";
+    meals.forEach(meal => {
+        const {
+            breakfast_id,
+            chicken_burger_id,
+            dessert_id,
+            hamburger_id,
+            side_id,
+            vegan_id,
+            wrap_id
+        } = meal;
 
-        // Check localStorage for the quantity of this meal
+        const requiredItemIds = [
+            breakfast_id,
+            chicken_burger_id,
+            dessert_id,
+            hamburger_id,
+            side_id,
+            vegan_id,
+            wrap_id
+        ];
+
+        const allItemsExist = requiredItemIds.every(id => validItemIds.has(id));
+        if (!allItemsExist) return;
+
         const cartItem = cart.find(cartItem => cartItem.id === meal.id && cartItem.type === 'meal');
         const quantity = cartItem ? cartItem.quantity : 0;
 
+        const mealCard = document.createElement("div");
+        mealCard.className = "restaurant-card";
         mealCard.innerHTML = `
             <div class="restaurant-card-image">
                 <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${meal.name}" draggable="false">
@@ -315,14 +381,21 @@ async function renderMeals() {
             </div>
         `;
 
-        mealsSection.appendChild(mealCard);
-
         mealCard.addEventListener("click", () => {
             displayRestaurantModal(meal.id, "meal");
         });
+
+        mealsSection.appendChild(mealCard);
     });
 
-    restaurantMenuCards.appendChild(mealsSection);
+    if (mealsSection.children.length === 0) {
+        const noMealsMessage = document.createElement("p");
+        noMealsMessage.textContent = "Meals are currently not available.";
+        noMealsMessage.className = "no-meals-message"; // add style if desired
+        restaurantMenuCards.appendChild(noMealsMessage);
+    } else {
+        restaurantMenuCards.appendChild(mealsSection);
+    }
 }
 
 // Call populateCategories and renderMeals on page load
@@ -356,7 +429,8 @@ loginForm.addEventListener('submit', async function(event) {
         const response = await fetch(`${apiUrl}/login`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
             },
             body: JSON.stringify(formData)
         });
@@ -419,7 +493,8 @@ signupForm.addEventListener('submit', async function(event) {
         const response = await fetch(`${apiUrl}/register`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
             },
             body: JSON.stringify(formData)
         });
@@ -452,6 +527,7 @@ forgotPasswordForm.addEventListener("submit", async function(event) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
             },
             body: JSON.stringify({ email })
         });
@@ -475,17 +551,35 @@ forgotPasswordForm.addEventListener("submit", async function(event) {
 });
 
 const fetchMenuItems = async () => {
-    const data = await fetchData(`${apiUrl}/items`);
+    const data = await fetchData(`${apiUrl}/items`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+        }
+    });
     return data;
 }
 
 const fetchMenuItemsById = async (id) => {
-    const data = await fetchData(`${apiUrl}/items/${id}`);
+    const data = await fetchData(`${apiUrl}/items/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+        }
+    });
     return data;
 }
 
 const fetchMenuMealsById = async (id) => {
-    const data = await fetchData(`${apiUrl}/meals/${id}`);
+    const data = await fetchData(`${apiUrl}/meals/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+        }
+    });
     return data;
 }
 
@@ -494,7 +588,7 @@ const getUserByToken = async (token) => {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
         }
     });
     return data;
@@ -510,7 +604,13 @@ async function handleItemIdFromURL() {
     try {
       if (itemId) {
         // Fetch item details from items API
-        const res = await fetch(`${apiUrl}/items/${itemId}`);
+        const res = await fetch(`${apiUrl}/items/${itemId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+            }
+        });
         const item = await res.json();
   
         if (res.ok) {
@@ -521,11 +621,15 @@ async function handleItemIdFromURL() {
         }
       } else if (mealId) {
         // Fetch meal details from meals API
-        const res = await fetch(`${apiUrl}/meals/${mealId}`);
+        const res = await fetch(`${apiUrl}/meals/${mealId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
         const meal = await res.json();
   
         if (res.ok) {
-          console.log(meal);
           displayRestaurantModal(meal.id, meal.type); // Adjust type as needed
         } else {
           console.warn('Failed to fetch meal by ID from URL.');
@@ -568,6 +672,8 @@ const displayRestaurantModal = async (id, type) => {
         throw new Error(`Unsupported type: ${type}`);
     }
 
+    console.log(data);
+
     updateItemIdInURL(data.id, data.type);
 
     const information = document.getElementById("information");
@@ -594,6 +700,8 @@ const displayRestaurantModal = async (id, type) => {
             data.breakfast_id,
             data.dessert_id
         ].filter(id => id); // Filter out null or undefined IDs
+
+        console.log(itemIds);
 
         for (const itemId of itemIds) {
             try {
@@ -770,9 +878,10 @@ const displayRestaurantModal = async (id, type) => {
             addToCart(data, amount, 'item');
         });
 
-        const informationOverlay = document.getElementById("information-overlay");
-        informationOverlay.classList.toggle("show-information-overlay");
     }
+    const informationOverlay = document.getElementById("information-overlay");
+    informationOverlay.classList.toggle("show-information-overlay");
+    console.log("information overlay activated!");
 } 
 
 function setupCartItemButtons(cartItem, item) {
@@ -1080,8 +1189,6 @@ function addToCart(data, amount, type) {
 
     removeInformationClasses();
 }
-
-
 
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');

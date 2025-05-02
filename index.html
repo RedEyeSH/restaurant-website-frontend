@@ -12,8 +12,6 @@
     <title>Restaurant</title>
 </head>
 <body>
-
-
     <nav class="navbar">
         <a href="#home" class="navbar-logo">
             <img src="./images/logo_trimmed.png" alt="logo">
@@ -23,7 +21,8 @@
             <a href="#home">Home</a>
             <a href="">About Us</a>
             <a href="#menu">Menu</a>
-            <a href="#">Contact</a>
+            <a href="/reservation/index.html">Reservation</a>
+            <a href="/annoucement/index.html">Announcements</a>
         </div>
         <div class="navbar-actions">
             <div class="navbar-icons">
@@ -39,8 +38,26 @@
                 <i class="fa-solid fa-arrow-right-to-bracket"></i>
                 <p>Login</p>
             </div>
+
+        </div>
+        <!-- Mobile layout -->
+        <div class="navbar-mobile-link">
+            <i class="fa-solid fa-bars"></i>
         </div>
     </nav>
+
+    <!-- side bar for just mobile buttons -->
+    <section class="mobile-sidebar">
+        <div class="mobile-sidebar-container">
+            <div class="sidebar-link">
+                <a href="#home">Home</a>
+                <a href="">About Us</a>
+                <a href="#menu">Menu</a>
+                <a href="/reservation/index.html">Reservation</a>
+                <a href="/annoucement/index.html">Announcements</a>
+            </div>
+        </div>
+    </section>
 
     <!-- Account setup starts here -->
     <section class="account" id="account">
@@ -132,6 +149,7 @@
             <div class="shopping-cart-box">
                 <div class="shopping-cart-title">
                     <h1>Shopping cart</h1>
+                    <i class="fa-solid fa-xmark" id="x-close-cart"></i>
                 </div>
                 <div class="shopping-cart-list"> <!-- Shopping cart item goes in here --> </div>
                 <div class="shopping-cart-proceed">
@@ -149,8 +167,8 @@
     <div class="shopping-cart-overlay"></div>
     <!-- Shopping cart side bar ends here -->
     
-<!-- ================= TOAST NOTIFICATION ================= -->
-  <div id="toast-container"></div>
+    <!-- ================= TOAST NOTIFICATION ================= -->
+    <div id="toast-container"></div>
 
     <!-- Home section starts here -->
     <section class="home" id="home">
@@ -158,8 +176,6 @@
         <div class="home-container">
             <div class="content-section">
                 <div class="content-section-header">
-                    <!-- <h1>Grab Big Deals</h1>
-                    <h1>On <span>Yummy Meals!</span></h1> -->
                     <h1>
                         Welcome!<br>
                         We Made <span>Delicious</span><br>
@@ -357,40 +373,49 @@
                         <h3>Our products</h3>
                     </div>
                     <div class="footer-content">
-                        <p>Our menus</p>
-                        <p>Our burgers</p>
-                        <p>Our times sides</p>
-                        <p>Our sandwiches</p>
+                        <p>A items</p>
+                        <p>A meals</p>
+                        <!-- <p>Our times sides</p> -->
+                        <!-- <p>Our sandwiches</p> -->
                     </div>
                 </div>
-                <div class="footer-column">
+                <!-- <div class="footer-column">
                     <div class="footer-title">
                         <h3>legal information</h3>
                     </div>
                     <div class="footer-content">
                         <p>Legal Notice</p>
                     </div>
-                </div>
+                </div> -->
                 <div class="footer-column">
                     <div class="footer-title">
                         <h3>Contact us</h3>
                     </div>
                     <div class="footer-content">
-                        <p>Contacts</p>
-                        <p>Our addresses</p>
-                        <p>Become a Times Square franchisee</p>
+                        <p>Burgerhelsinki@gmail.com</p>
+                        <p>Myllypurontie 1, 00920 Helsinki</p>
                     </div>
                 </div>
                 <div class="footer-column">
                     <h3>We accept</h3>
+                    <div class="footer-payment">
+                        <i class="fa-brands fa-cc-visa"></i>
+                        <i class="fa-brands fa-cc-mastercard"></i>
+                        <i class="fa-brands fa-paypal"></i>
+                    </div>
                 </div>
             </div>
             <hr>
             <div class="footer-link-section">
-                <i class="fa-brands fa-facebook"></i>
-                <i class="fa-brands fa-x-twitter"></i>
-                <i class="fa-brands fa-discord"></i>
-                <i class="fa-brands fa-linkedin"></i>
+                <div class="footer-link-icons">
+                    <i class="fa-brands fa-facebook"></i>
+                    <i class="fa-brands fa-x-twitter"></i>
+                    <i class="fa-brands fa-discord"></i>
+                    <i class="fa-brands fa-linkedin"></i>
+                </div>
+                <div class="footer-copyright">
+                    <p>&copy; 2025 Burgers Company. All rights reserved.</p>
+                </div>
             </div>
         </div>
     </footer>
