@@ -65,6 +65,7 @@ section {
     top: 0;
     z-index: 2999;
     overflow: hidden;
+    transition: 0.3s;
 }
 
 .navbar a {
@@ -209,6 +210,7 @@ section {
 }
 
 .navbar-mobile-link i {
+    cursor: pointer;
     font-size: 24px;
 }
 
@@ -251,7 +253,7 @@ section {
 .mobile-sidebar {
     /* width: 100%; */
     height: 100%;
-    padding: 50px;
+    padding: 25px 50px;
     background-color: #0D0D0D;
     display: none;
     z-index: 100;
@@ -260,6 +262,7 @@ section {
     right: 0;
     transition: 0.25s;
     transform: translateX(100%);
+    border-top: 2px solid #F7B41A;
     border-left: 2px solid #F7B41A;
 }
 
@@ -277,9 +280,14 @@ section {
 }
 
 .mobile-sidebar-header {
-    display: flex;
-    gap: 10px;
+    width: 100%;
+    text-align: right;
 }
+
+.mobile-sidebar-header i {
+    cursor: pointer;
+}
+
 
 .sidebar-link {
     display: flex;
@@ -317,13 +325,14 @@ section {
 }
 
 .open-account-section {
-    height: 500px;
-    /* height: 50%; */
+    /* height: 500px; */
+    height: 100%;
+    /* height: auto; */
     visibility: visible;
 }
 
 .account-container {
-    transform: translateY(-150vh);
+    transform: translateY(-200vh);
     perspective: 800px;
     position: relative;
     transition: 0.5s;
@@ -350,8 +359,8 @@ section {
     gap: 20px;
     backface-visibility: hidden;
     position: absolute;
-    top: 0;
-    left: 0;
+    /* top: 0; */
+    /* left: 0; */
     background-color: #E0A92B;
     transition: 0.5s ease;
 }
@@ -473,7 +482,6 @@ section {
 
 .signup-form {
     width: 100%;
-    /* height: 100%; */
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -481,8 +489,8 @@ section {
     background-color: #0D0D0D;
     padding: 20px;
     position: absolute;
-    top: 0;
-    left: 0;
+    /* top: 0; */
+    /* left: 0; */
     transform: rotateY(180deg);
     backface-visibility: hidden;
     transition: 0.5s ease;
@@ -536,7 +544,6 @@ section {
     display: flex;
     justify-content: space-between;
 }
-
 
 .show-box-overlay {
     background-color: black;
@@ -793,6 +800,13 @@ section {
 
 #shopping-cart-order:disabled:active {
     scale: 1;
+}
+
+.empty-cart-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 20px;
 }
 
 .show-shopping-cart-overlay {
@@ -1084,6 +1098,7 @@ section {
 }
 
 .restaurant-menu-section {
+    padding: 1rem;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -1092,12 +1107,10 @@ section {
 
 .restaurant-card {
     border: 1px solid #F7B41A;
-    /* width: calc(33.333% - 20px); */
     cursor: pointer;
     min-width: 370px;;
     max-width: 370px;
     display: flex;
-    /* justify-content: center; */
     flex-direction: column;
     padding: 30px;
     background-color: #191919;
@@ -1218,6 +1231,7 @@ section {
 
 /* Restaurant's item menu information starts here */
 .information {
+    /* max-width: 50%; */
     width: 40%;
     height: 90%;
     /* height: 0; */
@@ -1233,6 +1247,7 @@ section {
     display: flex;
     flex-direction: column;
     visibility: hidden;
+    overflow-x: hidden;
 }
 
 .open-information-section {
@@ -1243,9 +1258,11 @@ section {
 }
 
 .information-container {
+    width: 100%;
     height: 100%;
     color: white;
     border-radius: 10px;
+    border: 1px solid #F7B41A;
     background-color: #2D2D2D;
     margin: auto;
     position: relative;
@@ -1291,7 +1308,7 @@ section {
     width: 100%;
     padding: 10px;
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     gap: 25px;
     position: fixed;
     bottom: 0;
@@ -1390,6 +1407,54 @@ section {
 }
 /* Restaurant's item menu information ends here */
 
+/* About us section starts here */
+.about {
+    padding: 60px 20px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    height: 600px;
+}
+
+.about-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.about-content {
+    flex: 1 1 400px;
+}
+
+.about-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #F7B41A;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #dddddd;
+}
+
+.about-image {
+    flex: 1 1 400px;
+    text-align: center;
+}
+
+.about-image img {
+    max-width: 100%;
+    height: 100%;
+    border-radius: 15px;
+}
+
+/* About us section ends here */
+
 /* Footer starts here */
 .footer {
     padding: 40px 0;
@@ -1456,13 +1521,11 @@ section {
 .footer-link-icons i {
     font-size: 24px;
 }
-
-
 /* Footer ends here */
 
 /* Map starts here */
 .map {
-    padding: 4rem 0;
+    padding: 2rem 0;
 }
 
 .map-box {
@@ -1529,6 +1592,20 @@ section {
 }
 /* Directions popup ends here */
 
+/* Animation keyframe starts here */
+@keyframes borderAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+/* Animation keyframe ends here */
+
 /* Responsive design starts here */
 @media screen and (max-width: 1280px) {    
     .navbar-link {
@@ -1569,6 +1646,10 @@ section {
         flex: 1 1;
     }
 
+    .information {
+        width: 60%;
+    }
+
     .footer-container {
         align-items: center;
     }
@@ -1602,6 +1683,24 @@ section {
     .content-section-header h1,
     .content-section-header span {
         font-size: 48px;
+    }
+
+    .information {
+        width: 70%;
+    }
+
+    .about {
+        display: block;
+        height: auto;
+    }
+
+    .about-content {
+        flex: none;
+        text-align: center;
+    }
+
+    .about-container {
+        flex-direction: column;
     }
 }
 
@@ -1658,6 +1757,8 @@ section {
 
     .shopping-cart {
         width: 100%;
+        top: 0;
+        padding-bottom: 0;
     }
     
     .home-container {
@@ -1670,37 +1771,21 @@ section {
         font-size: 36px;
     }
     
-    .footer-link-section {
-        flex-direction: column;
-    }
-    
     .restaurant-card {
       flex: 1 1 calc(50% - 10px);
     }
 
-    /* .home-container {
-        margin: 0;
-        padding: 0 20px;
+    .information {
+        width: 80%;
     }
 
-    .content-section {
-        align-items: center;
+    .information-image {
+        height: auto;
     }
 
-    .content-section-header h1,
-    .content-section-header span {
-        font-size: 36px;
-        -webkit-text-stroke: 0;
+    .footer-link-section {
+        flex-direction: column;
     }
-
-    .content-section-description p {
-        font-size: 1rem;
-    }
-
-    .content-section-button {
-        padding: 12px 20px;
-        font-size: 1rem;
-    } */
 }
 
 @media only screen and (max-width: 480px) {
@@ -1723,9 +1808,40 @@ section {
 
     .restaurant-card {
         width: 280px;
-        max-width: auto;
         min-width: auto;
         padding: 10px;
+    }
+
+    .information-footer {
+        flex-direction: column;
+    }
+
+    .information-content-top {
+        font-size: 12px;
+    }
+    
+    .information-image {
+        height: 20%;
+    }
+
+    .information-content-description {
+        font-size: 10px;
+    }
+
+    .information-content-ingredients {
+        font-size: 10px;
+    }
+
+    .information-content-allergens {
+        font-size: 10px;
+    }
+
+    .information-content-size {
+        font-size: 10px;
+    }
+
+    .information-footer-amount {
+        width: 100%;
     }
 }
 /* Responsive design ends here */

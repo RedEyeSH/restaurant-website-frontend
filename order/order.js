@@ -196,27 +196,28 @@ const setupOrderForm = () => {
                         const data = await response.json();
                         return { ...item, price: data.price };
                     } else {
-                        console.error(`Failed to fetch item with ID ${item.id}: ${response.status}`);
-                        orderBtn.disabled = false;
-                        orderSpinner.style.display = 'none';
+                        console.warn(`Item with ID ${item.id} not found in API. Removing from cart.`);
+                        return null; // Mark item as invalid
                     }
                 } catch (error) {
                     console.error(`Error fetching item with ID ${item.id}:`, error);
-                    orderBtn.disabled = false;
-                    orderSpinner.style.display = 'none';
+                    return null; // Mark item as invalid
                 }
             }
-            return item; // Return the original item if fetching fails
+            return null; // Mark item as invalid if no API URL
         }));
 
-        const totalPrice = updatedCart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2);
+        // Filter out invalid items
+        const validCart = updatedCart.filter(item => item !== null);
+
+        const totalPrice = validCart.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2);
 
         const orderData = {
             user_id: userId,
             customer_name: customerName,
             customer_phone: customerPhone,
             customer_email: customerEmail,
-            items: updatedCart,
+            items: validCart, // Use only valid items
             method: method,
             address: {
                 street: street,

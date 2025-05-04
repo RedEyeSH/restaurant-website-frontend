@@ -22,9 +22,16 @@ navigationLinks.forEach(link => {
 
         // Hide all sections and show the corresponding section
         sections.forEach(section => {
+            if (section.id === sectionId) {
+                section.classList.remove("fade-out");
+                section.classList.add("fade-in");
+                section.style.display = "block";
+            } else {
+                section.classList.remove("fade-in");
+                section.classList.add("fade-out");
+            }
             section.style.display = section.id === sectionId ? "block" : "none";
         });
-
         closeNavigation();
     });
 });
@@ -218,6 +225,121 @@ const updateUserData = async () => {
 
 updateUserData();
 
+// Fetch all favourite entries
+const fetchFavourites = async () => {
+    try {
+        const response = await fetch(`${apiUrl}/favourites`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
+
+        const data = await response.json();
+        return data;
+        // console.log(data);
+    } catch (error) {
+        console.error("Error fetching favourites:", error);
+        return null;
+    }
+};
+
+// Fetch item details by ID
+const fetchFavouritesByItemId = async (id) => {
+    try {
+        const response = await fetch(`${apiUrl}/items/${id}`);
+        if (!response.ok) throw new Error(`Failed to fetch item ${id}`);
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching item ${id}:`, error);
+        return null;
+    }
+};
+
+const displayFavourites = async () => {
+    const favouriteList = document.querySelector(".favourite-list");
+    favouriteList.innerHTML = "";
+
+    const favouritesData = await fetchFavourites();
+    if (!favouritesData || favouritesData.length === 0) {
+        const noFavouritesMessage = document.createElement("p");
+        noFavouritesMessage.textContent = "You have no favourite items yet.";
+        noFavouritesMessage.className = "no-favourites-message";
+        favouriteList.appendChild(noFavouritesMessage);
+        return;
+    }
+
+    for (const data of favouritesData.favourites) {
+        console.log(data);
+        const item = await fetchFavouritesByItemId(data.item_id);
+        if (!item) continue;
+
+        const favouriteItem = document.createElement("div");
+        favouriteItem.className = "favourite-item";
+        favouriteItem.innerHTML = `
+            <div class="favourite-item-box">
+                <div class="favourite-header">
+                    <div class="favourite-image">
+                        <img src="../images/burgerfrommenu.png" alt="${item.name}">
+                    </div>
+                    <div class="favourite-info">
+                        <p>${item.name}</p>
+                    </div>
+                </div>
+                <div class="favourite-price">
+                    <p>${item.price}€</p>
+                </div>
+            </div>
+            <button class="favourite-delete">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        `;
+
+        const deleteButton = favouriteItem.querySelector(".favourite-delete");
+        deleteButton.addEventListener("click", async () => {
+            const confirmed = confirm("Are you sure you want to remove this item from your favourites?");
+            if (confirmed) {
+                await deleteFavourite(data.id);
+                console.log(data.id);
+                favouriteItem.remove();
+                if (favouriteList.children.length === 0) {
+                    const noFavouritesMessage = document.createElement("p");
+                    noFavouritesMessage.textContent = "You have no favourite items yet.";
+                    noFavouritesMessage.className = "no-favourites-message";
+                    favouriteList.appendChild(noFavouritesMessage);
+                }
+            }
+        });
+
+        favouriteList.appendChild(favouriteItem);
+    }
+}
+
+displayFavourites();
+
+const deleteFavourite = async (id) => {
+    try {
+        const token = localStorage.getItem("authToken");
+        const response = await fetch(`${apiUrl}/favourites/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to delete favourite with ID: ${id}`);
+        }
+
+        console.log(`Favourite with ID ${id} deleted successfully.`);
+    } catch (error) {
+        console.error(`Error deleting favourite with ID ${id}:`, error);
+        alert("An error occurred while trying to delete the item.");
+    }
+}
+
+// Fetches order history
 const fetchOrderHistory = async () => {
     const userData = await fetchCurrentUser();
 
@@ -230,7 +352,6 @@ const fetchOrderHistory = async () => {
         });
 
         if (!response.ok) {
-            // Log the error details for debugging
             console.error(`Error: ${response.status} ${response.statusText}`);
             throw new Error("Failed to fetch user's ordered data.");
         }

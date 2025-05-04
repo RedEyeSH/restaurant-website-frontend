@@ -112,6 +112,11 @@ body {
     cursor: pointer;
 }
 
+.order-popup-overlay {
+    display: none;
+}
+/* Navbar design ends here */
+
 .container {
     overflow-x: hidden;
     overflow-y: auto;
@@ -644,6 +649,7 @@ body {
 }
 
 .order-popup-overlay.open {
+    display: block;
     background-color: black;
     position: fixed;
     width: 100%;
@@ -895,6 +901,10 @@ body {
         width: 100%;
     }
 
+    .navigation.open {
+        width: 75%;
+    }
+
     .order-popup {
         width: 85%;
     }
@@ -906,11 +916,12 @@ body {
     .service h2 {
         font-size: 1.25rem;
     }
+    
 }
 
 @media only screen and (max-width: 768px) {
     .profile-container {
-        width: 90%;
+        /* width: 90%; */
         padding: 20px;
     }
 
@@ -945,5 +956,14 @@ body {
     .order-popup-items div {
         flex-direction: column;
     }
+
+    .navigation.open {
+        width: 100%;
+    }
+
+    .profile-container h1 {
+        font-size: 1.5rem;
+    }
+    
 }
 /* Responsive design ends here */

@@ -29,6 +29,68 @@ document.querySelectorAll('a').forEach(link => {
     });
 });
 
+let isAdmin;
+
+const loggedIn = async () => {
+    const token = localStorage.getItem("authToken");
+
+    let userData;
+    if (token) {
+        userData = await getUserByToken(token);
+    }
+
+    const navbarActions = document.querySelector(".navbar-actions");
+    const navbarLogin = document.getElementById("navbar-login");
+
+    if (userData) {
+        
+        if (userData.role === "admin") {
+            isAdmin = true;
+        } else {
+            isAdmin = false;
+        }
+        const navbarLoggedIn = document.createElement("div");
+        navbarLoggedIn.className = "navbar-logged-in";
+        navbarLoggedIn.setAttribute("id", "navbar-logged-in");
+
+        navbarLoggedIn.innerHTML = `
+            <a href="/profile/profile.html">${userData.name} ${isAdmin ? '<i class="fa fa-shield" style="margin-left: 6px; color: gold;"></i>' : ''}</a>
+        `;
+
+        navbarLogin.remove();
+        navbarActions.appendChild(navbarLoggedIn);
+     }
+}
+
+let lastScrollPosition = 0;
+const navbar = document.querySelector(".navbar");
+const mobileSidebar = document.querySelector(".mobile-sidebar");
+
+window.addEventListener("scroll", () => {
+    const currentScrollPosition = window.pageYOffset; // Get the current scroll position
+    const navbarHeight = navbar.offsetHeight; // Dynamically get the navbar's height
+    const scrollThreshold = navbarHeight; // Use the navbar's height as the threshold
+
+    if (currentScrollPosition > scrollThreshold) {
+        // Only hide/show the navbar if the user has scrolled past the threshold
+        if (currentScrollPosition > lastScrollPosition) {
+            // Scrolling down
+            navbar.style.transform = `translateY(-${navbarHeight}px)`; // Hide the navbar completely
+            mobileSidebar.style.top = "0"; // Move the mobile-sidebar to the top
+        } else {
+            // Scrolling up
+            navbar.style.transform = "translateY(0)"; // Show the navbar fully
+            mobileSidebar.style.top = `${navbarHeight}px`; // Move the mobile-sidebar back below the navbar
+        }
+    } else {
+        // If the user is at the top of the page, ensure the navbar and mobile-sidebar are fully visible
+        navbar.style.transform = "translateY(0)";
+        mobileSidebar.style.top = `${navbarHeight}px`;
+    }
+
+    lastScrollPosition = currentScrollPosition; // Update the last scroll position
+});
+
 // Login
 const navbar_login = document.getElementById("navbar-login");
 navbar_login.addEventListener('click', () => {
@@ -91,7 +153,10 @@ shoppingCartLink.addEventListener("click", async () => {
         // Fetch items from localStorage
         const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
         const shoppingCartList = document.querySelector(".shopping-cart-list");
-        shoppingCartList.innerHTML = ""; // Clear existing items
+        // shoppingCartList.innerHTML = ""; // Clear existing items
+
+        const cartItems = shoppingCartList.querySelectorAll(".shopping-cart-item");
+        cartItems.forEach(item => item.remove());
 
         let totalPrice = 0;
 
@@ -185,15 +250,14 @@ shoppingCartOverlay.addEventListener("click", closeShoppingCart);
 const xCloseCart = document.getElementById("x-close-cart");
 xCloseCart.addEventListener("click", closeShoppingCart);
 
+const xCloseMobileSidebar = document.getElementById("x-close-sidebar");
+xCloseMobileSidebar.addEventListener("click", closeMobileSidebar);
+
 // Handling for closing forms
 function closeForms() {
     document.getElementById("box-overlay").classList.remove("show-box-overlay");
     document.getElementById("account-container").classList.remove("account-container-form");
     document.getElementById("account").classList.remove("open-account-section");
-
-    // document.getElementById("login-form").classList.remove("close-login-form");
-    // document.getElementById("login-form").classList.remove("show-login-form");
-    // document.getElementById("signup-form").classList.remove("show-signup-form");
 }
 
 function removeInformationClasses() {
@@ -244,7 +308,7 @@ function renderRestaurantCards(category = 'All') {
             restaurantCard.innerHTML = `
                 <div class="restaurant-card-image">
                     <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${item.name}" draggable="false">
-                    ${quantity > 0 ? `<p class="item-quantity">${quantity}</p>` : ''}
+                    ${quantity > 0 ? `<p class="item-quantity"><i class="fa-solid fa-cart-shopping"></i>${quantity}</p>` : ''}
                 </div>
                 <div class="restaurant-card-header">
                     <h2>${item.name}</h2>
@@ -254,7 +318,10 @@ function renderRestaurantCards(category = 'All') {
                 </div>
                 <div class="restaurant-card-price">
                     <h2>${item.price}€</h2>
-                    <i class="fa-solid fa-cart-shopping"></i>
+                    ${isAdmin ? (item.visible === 'yes' 
+                    ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
+                    : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
+                    : ''}
                 </div>
             `;
 
@@ -335,29 +402,19 @@ async function renderMeals() {
 
     const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
 
-    meals.forEach(meal => {
-        const {
-            breakfast_id,
-            chicken_burger_id,
-            dessert_id,
-            hamburger_id,
-            side_id,
-            vegan_id,
-            wrap_id
-        } = meal;
+    for (const meal of meals) {
+        const itemIds = Object.values(meal.item_ids).filter(id => id); // Extract all item IDs
+        const associatedItems = [];
 
-        const requiredItemIds = [
-            breakfast_id,
-            chicken_burger_id,
-            dessert_id,
-            hamburger_id,
-            side_id,
-            vegan_id,
-            wrap_id
-        ];
+        for (const itemId of itemIds) {
+            try {
+                const itemData = await fetchMenuItemsById(itemId);
+                associatedItems.push(itemData);
+            } catch (error) {
+                console.error(`Error fetching item with ID ${itemId}:`, error);
+            }
+        }
 
-        const allItemsExist = requiredItemIds.every(id => validItemIds.has(id));
-        if (!allItemsExist) return;
 
         const cartItem = cart.find(cartItem => cartItem.id === meal.id && cartItem.type === 'meal');
         const quantity = cartItem ? cartItem.quantity : 0;
@@ -367,7 +424,7 @@ async function renderMeals() {
         mealCard.innerHTML = `
             <div class="restaurant-card-image">
                 <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${meal.name}" draggable="false">
-                ${quantity > 0 ? `<p class="item-quantity">${quantity}</p>` : ""}
+                ${quantity > 0 ? `<p class="item-quantity"><i class="fa-solid fa-cart-shopping"></i> ${quantity}</p>` : ""}
             </div>
             <div class="restaurant-card-header">
                 <h2>${meal.name}</h2>
@@ -377,7 +434,10 @@ async function renderMeals() {
             </div>
             <div class="restaurant-card-price">
                 <h2>${meal.price}€</h2>
-                <i class="fa-solid fa-cart-shopping"></i>
+                ${isAdmin ? (meal.visible === 'yes' 
+                ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
+                : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
+                : ''}
             </div>
         `;
 
@@ -386,7 +446,7 @@ async function renderMeals() {
         });
 
         mealsSection.appendChild(mealCard);
-    });
+    }
 
     if (mealsSection.children.length === 0) {
         const noMealsMessage = document.createElement("p");
@@ -438,22 +498,22 @@ loginForm.addEventListener('submit', async function(event) {
         const data = await response.json();
 
         if (response.ok) {
-            alert('Login successful!');
             // Store the JWT token for future requests
             localStorage.setItem('authToken', data.token);
             const token = localStorage.getItem('authToken');
             const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT token (base64)
             const role = decodedToken.role;
 
-            if (role !== 'admin') {
-                // If the role is not 'admin', redirect to a general page or login
-                // window.location.href = 'login-required.html';
+            if (role === 'admin') {
+                isAdmin = true;
             } else {
-                // Redirect to the admin dashboard or another page
-                // window.location.href = 'admin/menu.html';
+                isAdmin = false
             }
             loggedIn();
-            window.location.reload();
+            renderRestaurantCards('All');
+            renderMeals();
+            closeForms();
+            showToast("Login Successfull", "success")
         } else {
             alert(data.message || 'An error occurred during login.');
         }
@@ -691,15 +751,7 @@ const displayRestaurantModal = async (id, type) => {
 
         // Fetch associated items for the meal
         const associatedItems = [];
-        const itemIds = [
-            data.hamburger_id,
-            data.wrap_id,
-            data.chicken_burger_id,
-            data.vegan_id,
-            data.side_id,
-            data.breakfast_id,
-            data.dessert_id
-        ].filter(id => id); // Filter out null or undefined IDs
+        const itemIds = Object.values(data.item_ids).filter(id => id); // Extract all item IDs
 
         console.log(itemIds);
 
@@ -714,6 +766,10 @@ const displayRestaurantModal = async (id, type) => {
 
         const mealDetailsHTML = `
             <div class="information-container">
+                        ${isAdmin ? (data.visible === 'yes' 
+            ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
+            : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
+            : ''}
                 <div class="information-image">
                     <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}" draggable="false">
                 </div>
@@ -799,43 +855,45 @@ const displayRestaurantModal = async (id, type) => {
         const informationContainer = document.createElement("div");
         informationContainer.className = "information-container";
         informationContainer.innerHTML = `
-            <div class="information-container">
-                <div class="information-image">
-                    <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}" draggable="false">
+            ${isAdmin ? (data.visible === 'yes' 
+            ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
+            : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
+            : ''}
+            <div class="information-image">
+                <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}" draggable="false">
+            </div>
+            <div class="information-content">
+                <div class="information-content-top">
+                    <h1>${data.name}</h1>
+                    <p>${data.price}€</p>
                 </div>
-                <div class="information-content">
-                    <div class="information-content-top">
-                        <h1>${data.name}</h1>
-                        <p>${data.price}€</p>
-                    </div>
-                    <div class="information-content-description">
-                        <p>${data.description}</p>
-                    </div>
-                    <hr style="border-color: #949494">
-                    <div class="information-content-ingredients">
-                        <p>Ingredients -<span>${data.ingredients}</span></p>
-                    </div>
-                    <div class="information-content-allergens">
-                        <p>Allergens - ${allergensHTML}</p>
-                    </div>
-                    <div class="information-content-size">
-                        <p>Size -<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${capitalize(data.size)}</span></p>
-                    </div>
+                <div class="information-content-description">
+                    <p>${data.description}</p>
                 </div>
-                <div class="information-footer">
-                    <div class="information-footer-amount">
-                        <button id="information-amount-btn-decrease" ${amount == 1 ? "disabled" : ""}>
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <p id="information-amount-display">${amount}</p>
-                        <button id="information-amount-btn-increase">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                    <div class="information-footer-add">
-                        <p>Add to Cart</p>
-                        <p id="information-total-price">${(data.price * amount).toFixed(2)}€</p>
-                    </div>
+                <hr style="border-color: #949494">
+                <div class="information-content-ingredients">
+                    <p>Ingredients -<span>${data.ingredients}</span></p>
+                </div>
+                <div class="information-content-allergens">
+                    <p>Allergens - ${allergensHTML}</p>
+                </div>
+                <div class="information-content-size">
+                    <p>Size -<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${capitalize(data.size)}</span></p>
+                </div>
+            </div>
+            <div class="information-footer">
+                <div class="information-footer-amount">
+                    <button id="information-amount-btn-decrease" ${amount == 1 ? "disabled" : ""}>
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <p id="information-amount-display">${amount}</p>
+                    <button id="information-amount-btn-increase">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+                <div class="information-footer-add">
+                    <p>Add to Cart</p>
+                    <p id="information-total-price">${(data.price * amount).toFixed(2)}€</p>
                 </div>
             </div>
         `;
@@ -899,10 +957,10 @@ function setupCartItemButtons(cartItem, item) {
                 const quantityDisplay = card.querySelector(".item-quantity");
                 if (quantity > 0) {
                     if (!quantityDisplay) {
-                        quantityDisplay.textContent = `${quantity}`;
+                        quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"> ${quantity}`;
                         card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
                     } else {
-                        quantityDisplay.textContent = `${quantity}`;
+                        quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"> ${quantity}`;
                     }
                 } else if (quantityDisplay) {
                     quantityDisplay.remove();
@@ -978,7 +1036,10 @@ function toggleProceedButton() {
     const shoppingCartList = document.querySelector(".shopping-cart-list");
     const proceedButton = document.getElementById("shopping-cart-order");
 
-    if (shoppingCartList.children.length === 0) {
+    // Count only elements with the class "shopping-cart-item"
+    const cartItems = shoppingCartList.querySelectorAll(".shopping-cart-item");
+
+    if (cartItems.length === 0) {
         proceedButton.disabled = true;
     } else {
         proceedButton.disabled = false;
@@ -990,10 +1051,24 @@ function updateCartTotal() {
     const cartItems = shoppingCartList.querySelectorAll(".shopping-cart-item");
     let totalPrice = 0;
 
-    cartItems.forEach((item) => {
-        const itemTotalPrice = parseFloat(item.querySelector("#shopping-cart-price").textContent.replace("€", ""));
-        totalPrice += itemTotalPrice;
-    });
+    // Clear any existing empty cart message
+    const emptyCartMessage = document.querySelector(".empty-cart-message");
+    if (emptyCartMessage) {
+        emptyCartMessage.remove();
+    }
+
+    // Check if the cart is empty
+    if (cartItems.length === 0) {
+        const message = document.createElement("p");
+        message.className = "empty-cart-message";
+        message.textContent = "Your shopping cart is empty.";
+        shoppingCartList.appendChild(message);
+    } else {
+        cartItems.forEach((item) => {
+            const itemTotalPrice = parseFloat(item.querySelector("#shopping-cart-price").textContent.replace("€", ""));
+            totalPrice += itemTotalPrice;
+        });
+    }
 
     const shoppingCartOrderTotal = document.querySelector("#shopping-cart-total");
     if (shoppingCartOrderTotal) {
@@ -1010,59 +1085,76 @@ function updateCartTotal() {
 const informationOverlay = document.getElementById("information-overlay");
 informationOverlay.addEventListener("click",  removeInformationClasses);
 
-document.addEventListener("DOMContentLoaded", () => {
-    handleItemIdFromURL();
-    loggedIn();
+document.addEventListener("DOMContentLoaded", async () => {
+    await loggedIn(); // Ensure loggedIn is called early to set isAdmin
 
-    const shoppingCartLink = document.getElementById("navbar-shopping-cart");
-    if (shoppingCartLink) {
-        shoppingCartLink.click();
-        shoppingCartLink.click();
-    }
+    // Render content only after isAdmin is set
+    renderRestaurantCards('All');
+
+    handleItemIdFromURL();
 
     const shoppingCartList = document.querySelector(".shopping-cart-list");
     const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
 
     shoppingCartList.innerHTML = ""; // Clear existing items
 
-    cart.forEach(cartItem => {
-        fetch(`${apiUrl}/${cartItem.type === 'meal' ? 'meals' : 'items'}/${cartItem.id}`)
-            .then(response => response.json())
-            .then(data => {
-                const shoppingCartItem = document.createElement("div");
-                shoppingCartItem.className = "shopping-cart-item";
-                shoppingCartItem.setAttribute("data-item-id", data.id);
-                shoppingCartItem.innerHTML = `
-                    <div class="shopping-cart-header">
-                        <div class="shopping-cart-img">
-                            <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}">
-                        </div>
-                        <div class="shopping-cart-info">
-                            <h4>${data.name}</h4>
-                            <p id="shopping-cart-price">${(cartItem.quantity * data.price).toFixed(2)}€</p>
-                        </div>
-                    </div>
-                    <div class="shopping-cart-options">
-                        <button id="cart-btn-decrease">
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <p id="shopping-cart-amount">${cartItem.quantity}</p>
-                        <button id="cart-btn-increase">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                        <button id="cart-btn-trash">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                `;
+    let totalPrice = 0;
 
-                shoppingCartList.appendChild(shoppingCartItem);
-                setupCartItemButtons(shoppingCartItem, data);
-            })
-            .catch(error => console.error(`Error fetching ${cartItem.type} with ID ${cartItem.id}:`, error));
-    });
+    const renderCartItems = async () => {
+        for (const cartItem of cart) {
+            try {
+                const endpoint = cartItem.type === "meal" ? `${apiUrl}/meals/${cartItem.id}` : `${apiUrl}/items/${cartItem.id}`;
+                const response = await fetch(endpoint, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include token for authorization
+                    }
+                });
+                const item = await response.json();
 
-    updateCartTotal();
+                if (response.ok) {
+                    const shoppingCartItem = document.createElement("div");
+                    shoppingCartItem.className = "shopping-cart-item";
+                    shoppingCartItem.setAttribute("data-item-id", item.id);
+                    shoppingCartItem.innerHTML = `
+                        <div class="shopping-cart-header">
+                            <div class="shopping-cart-img">
+                                <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${item.name}">
+                            </div>
+                            <div class="shopping-cart-info">
+                                <h4>${item.name}</h4>
+                                <p id="shopping-cart-price">${(cartItem.quantity * item.price).toFixed(2)}€</p>
+                            </div>
+                        </div>
+                        <div class="shopping-cart-options">
+                            <button id="cart-btn-decrease">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <p id="shopping-cart-amount">${cartItem.quantity}</p>
+                            <button id="cart-btn-increase">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button id="cart-btn-trash">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    shoppingCartList.appendChild(shoppingCartItem);
+                    setupCartItemButtons(shoppingCartItem, item);
+                } else {
+                    console.warn(`Failed to fetch item with ID ${cartItem.id}`);
+                }
+            } catch (error) {
+                console.error(`Error fetching item with ID ${cartItem.id}:`, error);
+            }
+        }
+
+        // Call updateCartTotal after all items are rendered
+        updateCartTotal();
+    };
+
+    renderCartItems();
 
     // Update item-quantity display for restaurant cards on page load
     const restaurantCards = document.querySelectorAll(".restaurant-card");
@@ -1080,35 +1172,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
             }
 
-            quantityDisplay.textContent = `${cartItem.quantity}`;
+            quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"> ${cartItem.quantity}`;
         }
     });
 });
 
-const loggedIn = async () => {
-    const token = localStorage.getItem("authToken");
-
-    let userData;
-    if (token) {
-        userData = await getUserByToken(token);
-    }
-
-    const navbarActions = document.querySelector(".navbar-actions");
-    const navbarLogin = document.getElementById("navbar-login");
-
-    if (userData) {
-        const navbarLoggedIn = document.createElement("div");
-        navbarLoggedIn.className = "navbar-logged-in";
-        navbarLoggedIn.setAttribute("id", "navbar-logged-in");
-
-        navbarLoggedIn.innerHTML = `
-            <a href="/profile/profile.html">${userData.name}</a>
-        `;
-
-        navbarLogin.remove();
-        navbarActions.appendChild(navbarLoggedIn);
-    }
-}
 
 function addToCart(data, amount, type) {
     const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
@@ -1183,7 +1251,7 @@ function addToCart(data, amount, type) {
             }
 
             const cartItem = cart.find(item => item.id === data.id && item.type === type);
-            quantityDisplay.textContent = `${cartItem.quantity}`;
+            quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"> ${cartItem.quantity}`;
         }
     });
 

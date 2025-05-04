@@ -9,18 +9,37 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mapbox/polyline@1.1.1/src/polyline.min.js"></script>
+
+    <!-- <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: 'en', // or 'auto' to auto-detect
+            includedLanguages: 'en,fi,fr,de,es,zh-CN,ja', // optional: limit languages
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+          },
+          'google_translate_element'
+        );
+      }
+    </script>
+    
+    <script type="text/javascript" 
+            src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+    </script>
+     -->
     <title>Restaurant</title>
 </head>
 <body>
     <nav class="navbar">
+        <!-- <div id="google_translate_element"></div> -->
         <a href="#home" class="navbar-logo">
             <img src="./images/logo_trimmed.png" alt="logo">
             <h1>Burgers.</h1>
         </a>
         <div class="navbar-link">
             <a href="#home">Home</a>
-            <a href="">About Us</a>
             <a href="#menu">Menu</a>
+            <a href="#about">About Us</a>
             <a href="/reservation/index.html">Reservation</a>
             <a href="/annoucement/index.html">Announcements</a>
         </div>
@@ -49,10 +68,13 @@
     <!-- side bar for just mobile buttons -->
     <section class="mobile-sidebar">
         <div class="mobile-sidebar-container">
+            <div class="mobile-sidebar-header">
+                <i class="fa-solid fa-xmark" id="x-close-sidebar"></i>
+            </div>
             <div class="sidebar-link">
                 <a href="#home">Home</a>
-                <a href="">About Us</a>
                 <a href="#menu">Menu</a>
+                <a href="#about">About Us</a>
                 <a href="/reservation/index.html">Reservation</a>
                 <a href="/annoucement/index.html">Announcements</a>
             </div>
@@ -189,14 +211,7 @@
             </div>
         </div>
     </section>
-    
     <!-- Home section ends here -->
-
-    <!-- About section starts here -->
-    <section class="about">
-
-    </section>
-    <!-- About section ends here -->
 
     <!-- Restaurant section starts here -->
     <section class="restaurant" id="menu">
@@ -210,6 +225,7 @@
             <!-- Maybe in future 3 item per section seperated -->
             <div class="restaurant-menu" id="restaurant-menu">
                 <div class="restaurant-menu-section">
+                    <div class></div>
                     <!-- <div class="restaurant-card">
                         <div class="restaurant-card-image">
                             <img src="./images/burgerfrommenu.png" alt="burger-menu1">
@@ -346,6 +362,25 @@
     <div class="information-overlay" id="information-overlay"></div>
     <!-- Restaurant's item menu information ends here -->
     
+    <!-- About section starts here -->
+    <section class="about" id="about">
+        <div class="about-container">
+            <div class="about-content">
+                <h1>About Us</h1>
+                <p>
+                    We love making tasty burgers for everyone to enjoy. 
+                    At Burgers, we use fresh ingredients and cook every meal with care. 
+                    Whether you're eating here or taking your food to go, 
+                    we're here to make sure you have a delicious and satisfying meal.
+                </p>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D" alt="About Us">
+            </div>
+        </div>
+    </section>
+    <!-- About section ends here -->
+
     <!-- Map section starts here -->
     <section class="map" id="map">
         <div class="map-box">
