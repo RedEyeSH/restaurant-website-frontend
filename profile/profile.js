@@ -249,13 +249,23 @@ const fetchFavourites = async () => {
 const fetchFavouritesByItemId = async (id) => {
     try {
         const response = await fetch(`${apiUrl}/items/${id}`);
-        if (!response.ok) throw new Error(`Failed to fetch item ${id}`);
-        return await response.json();
+        if (response.status === 404) {
+            // Item not found, return null without throwing an error
+            // console.warn(`Item with ID ${id} not found, skipping.`);
+            return null;
+        }
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch item ${id}`);
+        }
+
+        const item = await response.json();
+        return item;
     } catch (error) {
         console.error(`Error fetching item ${id}:`, error);
         return null;
     }
-};
+}
 
 const displayFavourites = async () => {
     const favouriteList = document.querySelector(".favourite-list");
@@ -270,15 +280,29 @@ const displayFavourites = async () => {
         return;
     }
 
-    for (const data of favouritesData.favourites) {
-        console.log(data);
+    const validFavourites = []; // Array to store valid, visible items
+
+    for (const data of favouritesData) {
         const item = await fetchFavouritesByItemId(data.item_id);
         if (!item) continue;
+        validFavourites.push({ ...data, item }); // Add valid items to the array
+    }
+
+    if (validFavourites.length === 0) {
+        const noFavouritesMessage = document.createElement("p");
+        noFavouritesMessage.textContent = "You have no favourite items yet.";
+        noFavouritesMessage.className = "no-favourites-message";
+        favouriteList.appendChild(noFavouritesMessage);
+        return;
+    }
+
+    for (const favourite of validFavourites) {
+        const { item } = favourite;
 
         const favouriteItem = document.createElement("div");
         favouriteItem.className = "favourite-item";
         favouriteItem.innerHTML = `
-            <div class="favourite-item-box">
+            <a href="/?itemId=${item.id}" class="favourite-item-box">
                 <div class="favourite-header">
                     <div class="favourite-image">
                         <img src="../images/burgerfrommenu.png" alt="${item.name}">
@@ -290,7 +314,7 @@ const displayFavourites = async () => {
                 <div class="favourite-price">
                     <p>${item.price}€</p>
                 </div>
-            </div>
+            </a>
             <button class="favourite-delete">
                 <i class="fa-solid fa-trash"></i>
             </button>
@@ -300,8 +324,7 @@ const displayFavourites = async () => {
         deleteButton.addEventListener("click", async () => {
             const confirmed = confirm("Are you sure you want to remove this item from your favourites?");
             if (confirmed) {
-                await deleteFavourite(data.id);
-                console.log(data.id);
+                await deleteFavourite(favourite.id);
                 favouriteItem.remove();
                 if (favouriteList.children.length === 0) {
                     const noFavouritesMessage = document.createElement("p");
@@ -314,7 +337,7 @@ const displayFavourites = async () => {
 
         favouriteList.appendChild(favouriteItem);
     }
-}
+};
 
 displayFavourites();
 
@@ -327,6 +350,8 @@ const deleteFavourite = async (id) => {
                 "Authorization": `Bearer ${token}`
             }
         });
+
+        console.log(response);
 
         if (!response.ok) {
             throw new Error(`Failed to delete favourite with ID: ${id}`);
@@ -361,7 +386,7 @@ const fetchOrderHistory = async () => {
 
     } catch (error) {
         // console.error("Error fetching user's ordered data:", error);
-        return null; // Return null to indicate failure
+        return null;
     }
 };
 

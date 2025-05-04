@@ -30,11 +30,52 @@
     <title>Restaurant</title>
 </head>
 <body>
+
+    <div class="overlay">
+        <div class="overlayDoor"></div>
+        <div class="overlayContent">
+          <div class="loader">
+            <div class="inner"></div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          // Users can skip the loading process if they want.
+          document.querySelectorAll('.skip').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              document.querySelector('.overlay')?.classList.add('loaded');
+              document.body.classList.add('loaded');
+            });
+          });
+      
+          // Will wait for everything on the page to load.
+          window.addEventListener('load', function () {
+            document.querySelector('.overlay')?.classList.add('loaded');
+            document.body.classList.add('loaded');
+      
+            setTimeout(function () {
+              const overlay = document.querySelector('.overlay');
+              if (overlay) {
+                overlay.style.display = 'none';
+              }
+            }, 2000);
+          });
+      
+          // Will remove overlay after 1 min for users who cannot load properly.
+          setTimeout(function () {
+            document.querySelector('.overlay')?.classList.add('loaded');
+            document.body.classList.add('loaded');
+          }, 60000);
+        });
+      </script>
+      
     <nav class="navbar">
         <!-- <div id="google_translate_element"></div> -->
         <a href="#home" class="navbar-logo">
             <img src="./images/logo_trimmed.png" alt="logo">
-            <h1>Burgers.</h1>
+            <h1>Burger Company</h1>
         </a>
         <div class="navbar-link">
             <a href="#home">Home</a>
@@ -46,6 +87,7 @@
         <div class="navbar-actions">
             <div class="navbar-icons">
                 <div class="navbar-search">
+                    <input type="text" id="navbar-search" placeholder="Search...">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
                 <div class="navbar-shopping-cart" id="navbar-shopping-cart">
@@ -64,6 +106,25 @@
             <i class="fa-solid fa-bars"></i>
         </div>
     </nav>
+
+    <div class="search-results-container" id="search-results">
+        <div class="search-results-header">
+            <h2>Search Results</h2>
+        </div>
+        <!-- Sections for announcements, items, and meals -->
+        <div class="search-results-section" id="search-announcements">
+            <h3>Announcements</h3>
+            <div class="search-results-empty">No announcements found.</div>
+        </div>
+        <div class="search-results-section" id="search-items">
+            <h3>Items</h3>
+            <div class="search-results-empty">No items found.</div>
+        </div>
+        <div class="search-results-section" id="search-meals">
+            <h3>Meals</h3>
+            <div class="search-results-empty">No meals found.</div>
+        </div>
+    </div>
 
     <!-- side bar for just mobile buttons -->
     <section class="mobile-sidebar">
@@ -194,7 +255,11 @@
 
     <!-- Home section starts here -->
     <section class="home" id="home">
-        <div class="home-background"></div>
+        <div class="home-background">
+            <video autoplay muted loop playsinline class="home-video">
+                <source src="./video/burgershot.mp4" type="video/mp4">
+            </video>
+        </div>
         <div class="home-container">
             <div class="content-section">
                 <div class="content-section-header">
@@ -225,7 +290,6 @@
             <!-- Maybe in future 3 item per section seperated -->
             <div class="restaurant-menu" id="restaurant-menu">
                 <div class="restaurant-menu-section">
-                    <div class></div>
                     <!-- <div class="restaurant-card">
                         <div class="restaurant-card-image">
                             <img src="./images/burgerfrommenu.png" alt="burger-menu1">

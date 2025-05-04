@@ -423,5 +423,39 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
         border-radius: 5px;
     }
 
+    .order-table {
+        width: 100%; /* Ensure it takes full width */
+    }
+
+    .order-table thead {
+        display: none; /* Hide the table header */
+    }
+
+    .order-table tr {
+        display: block; /* Make each row a block */
+        margin-bottom: 15px; /* Add spacing between rows */
+    }
+
+    .order-table td {
+        display: flex; /* Use flexbox for each cell */
+        justify-content: space-between; /* Align content */
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #F7B41A;
+    }
+
+    .order-table td::before {
+        content: attr(data-label); /* Use the `data-label` attribute for labels */
+        font-weight: bold;
+        color: #F7B41A;
+        margin-right: 10px;
+    }
+
+    .order-total-row td {
+        font-size: 18px;
+        font-weight: bold;
+        background-color: #F7B41A;
+        color: #0D0D0D;
+    }
 }
 /* Responsive design ends here */

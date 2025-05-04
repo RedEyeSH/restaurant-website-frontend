@@ -62,9 +62,21 @@ const loggedIn = async () => {
      }
 }
 
+// What else we got to do?
+// is the favourite heart icon working?
+// No I don't think so. I will look into it again. I can focus on it
+/*
+    alright, i will do responsive web design for other pages. 
+    if needed and also i'm thinking about adding more animations
+*/
+// Alright. We will decide more at 9
+// Alright sounds cool. Maybe we can try to add a video also instead of the main image in front of the page.
+// yeah sure 
+// nice x2
 let lastScrollPosition = 0;
 const navbar = document.querySelector(".navbar");
 const mobileSidebar = document.querySelector(".mobile-sidebar");
+const shoppingCart = document.getElementById("shopping-cart");
 
 window.addEventListener("scroll", () => {
     const currentScrollPosition = window.pageYOffset; // Get the current scroll position
@@ -77,20 +89,25 @@ window.addEventListener("scroll", () => {
             // Scrolling down
             navbar.style.transform = `translateY(-${navbarHeight}px)`; // Hide the navbar completely
             mobileSidebar.style.top = "0"; // Move the mobile-sidebar to the top
+            shoppingCart.style.top = "0"; // Move the shopping cart to the top
+            shoppingCart.style.paddingBottom = "0px";
         } else {
             // Scrolling up
             navbar.style.transform = "translateY(0)"; // Show the navbar fully
             mobileSidebar.style.top = `${navbarHeight}px`; // Move the mobile-sidebar back below the navbar
+            shoppingCart.style.top = `${navbarHeight}px`; // Move the shopping cart back below the navbar
+            shoppingCart.style.paddingBottom = "110px";
         }
     } else {
-        // If the user is at the top of the page, ensure the navbar and mobile-sidebar are fully visible
+        // If the user is at the top of the page, ensure the navbar, mobile-sidebar, and shopping cart are fully visible
         navbar.style.transform = "translateY(0)";
         mobileSidebar.style.top = `${navbarHeight}px`;
+        shoppingCart.style.top = `${navbarHeight}px`;
+        shoppingCart.style.paddingBottom = "110px";
     }
 
     lastScrollPosition = currentScrollPosition; // Update the last scroll position
 });
-
 // Login
 const navbar_login = document.getElementById("navbar-login");
 navbar_login.addEventListener('click', () => {
@@ -300,6 +317,8 @@ function renderRestaurantCards(category = 'All') {
         filteredItems.forEach(item => {
             const restaurantCard = document.createElement('div');
             restaurantCard.className = 'restaurant-card';
+            restaurantCard.setAttribute('data-item-id', item.id);
+            restaurantCard.setAttribute('data-item-type', item.type);
 
             // Check if the item exists in the cart and get its quantity
             const cartItem = cart.find(cartItem => cartItem.id === item.id);
@@ -308,7 +327,7 @@ function renderRestaurantCards(category = 'All') {
             restaurantCard.innerHTML = `
                 <div class="restaurant-card-image">
                     <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${item.name}" draggable="false">
-                    ${quantity > 0 ? `<p class="item-quantity"><i class="fa-solid fa-cart-shopping"></i>${quantity}</p>` : ''}
+                    ${quantity > 0 ? `<p class="item-quantity"><i class="fa-solid fa-cart-shopping"></i> ${quantity}</p>` : ''}
                 </div>
                 <div class="restaurant-card-header">
                     <h2>${item.name}</h2>
@@ -327,12 +346,14 @@ function renderRestaurantCards(category = 'All') {
 
             restaurantMenuSection.appendChild(restaurantCard);
 
-            restaurantCard.addEventListener('click', () => {
-                displayRestaurantModal(item.id, item.type);
-                // informationOverlay
+            restaurantCard.addEventListener('click', (event) => {
+                if (event.target.closest('.favorite-icon')) return;
 
+                displayRestaurantModal(item.id, item.type);
             });
         });
+        setupFavoriteIcons();
+        fetchAndDisplayFavorites();
     });
 }
 
@@ -415,12 +436,13 @@ async function renderMeals() {
             }
         }
 
-
         const cartItem = cart.find(cartItem => cartItem.id === meal.id && cartItem.type === 'meal');
         const quantity = cartItem ? cartItem.quantity : 0;
 
         const mealCard = document.createElement("div");
         mealCard.className = "restaurant-card";
+        mealCard.setAttribute('data-item-id', meal.id);
+        mealCard.setAttribute('data-item-type', 'meal');
         mealCard.innerHTML = `
             <div class="restaurant-card-image">
                 <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${meal.name}" draggable="false">
@@ -506,12 +528,12 @@ loginForm.addEventListener('submit', async function(event) {
 
             if (role === 'admin') {
                 isAdmin = true;
+                location.reload();
             } else {
                 isAdmin = false
             }
             loggedIn();
-            renderRestaurantCards('All');
-            renderMeals();
+            fetchAndDisplayFavorites();
             closeForms();
             showToast("Login Successfull", "success")
         } else {
@@ -817,27 +839,47 @@ const displayRestaurantModal = async (id, type) => {
         increaseButton.addEventListener("click", () => {
             amount++;
             amountDisplay.textContent = amount;
-
+        
+            amountDisplay.classList.add("scale-animation");
+            amountDisplay.addEventListener("animationend", () => {
+                amountDisplay.classList.remove("scale-animation");
+            }, { once: true });
+        
+            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
+        
+            totalPriceDisplay.classList.add("scale-animation");
+            totalPriceDisplay.addEventListener("animationend", () => {
+                totalPriceDisplay.classList.remove("scale-animation");
+            }, { once: true });
+        
             if (amount > 1) {
                 decreaseButton.disabled = false;
                 decreaseButton.style.cursor = "pointer";
             }
-
-            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
         });
 
         decreaseButton.addEventListener("click", () => {
             if (amount > 1) {
                 amount--;
                 amountDisplay.textContent = amount;
+        
+                amountDisplay.classList.add("scale-animation");
+                amountDisplay.addEventListener("animationend", () => {
+                    amountDisplay.classList.remove("scale-animation");
+                }, { once: true });
+        
+                totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
+        
+                totalPriceDisplay.classList.add("scale-animation");
+                totalPriceDisplay.addEventListener("animationend", () => {
+                    totalPriceDisplay.classList.remove("scale-animation");
+                }, { once: true });
             }
-
+        
             if (amount === 1) {
                 decreaseButton.disabled = true;
                 decreaseButton.style.cursor = "not-allowed";
             }
-
-            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
         });
 
         const addToCartButton = document.querySelector(".information-footer-add");
@@ -849,8 +891,12 @@ const displayRestaurantModal = async (id, type) => {
 
         let amount = 1;
 
-        const allergens = data.allergens.split(',');
-        const allergensHTML = allergens.map(allergen => `<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${allergen.trim()}</span>`).join('');
+        const allergens = data.allergens ? data.allergens.split(',') : null;
+        const allergensHTML = allergens ? allergens.map(allergen => `<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${allergen.trim()}</span>`).join('') : 'None';
+
+        const sizeHTML = data.size ? `<div class="information-content-size">
+            <p>Size -<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${capitalize(data.size)}</span></p>
+        </div>` : '';
 
         const informationContainer = document.createElement("div");
         informationContainer.className = "information-container";
@@ -872,14 +918,14 @@ const displayRestaurantModal = async (id, type) => {
                 </div>
                 <hr style="border-color: #949494">
                 <div class="information-content-ingredients">
-                    <p>Ingredients -<span>${data.ingredients}</span></p>
+                    <h3>Ingredients:</h3>
+                    <p><span>${data.ingredients}</span></p>
                 </div>
                 <div class="information-content-allergens">
-                    <p>Allergens - ${allergensHTML}</p>
+                    <h3>Allergens: </h3>
+                    <p style="margin-top: 10px">${allergensHTML}</p>
                 </div>
-                <div class="information-content-size">
-                    <p>Size -<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${capitalize(data.size)}</span></p>
-                </div>
+                ${sizeHTML}
             </div>
             <div class="information-footer">
                 <div class="information-footer-amount">
@@ -908,27 +954,53 @@ const displayRestaurantModal = async (id, type) => {
         increaseButton.addEventListener("click", () => {
             amount++;
             amountDisplay.textContent = amount;
-
+        
+            // Add the scaling animation to amountDisplay
+            amountDisplay.classList.add("scale-animation");
+            amountDisplay.addEventListener("animationend", () => {
+                amountDisplay.classList.remove("scale-animation");
+            }, { once: true });
+        
+            // Update the total price
+            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
+        
+            // Add the scaling animation to totalPriceDisplay
+            totalPriceDisplay.classList.add("scale-animation");
+            totalPriceDisplay.addEventListener("animationend", () => {
+                totalPriceDisplay.classList.remove("scale-animation");
+            }, { once: true });
+        
             if (amount > 1) {
                 decreaseButton.disabled = false;
                 decreaseButton.style.cursor = "pointer";
             }
-
-            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
         });
-
+        
         decreaseButton.addEventListener("click", () => {
             if (amount > 1) {
                 amount--;
                 amountDisplay.textContent = amount;
+        
+                // Add the scaling animation to amountDisplay
+                amountDisplay.classList.add("scale-animation");
+                amountDisplay.addEventListener("animationend", () => {
+                    amountDisplay.classList.remove("scale-animation");
+                }, { once: true });
+        
+                // Update the total price
+                totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
+        
+                // Add the scaling animation to totalPriceDisplay
+                totalPriceDisplay.classList.add("scale-animation");
+                totalPriceDisplay.addEventListener("animationend", () => {
+                    totalPriceDisplay.classList.remove("scale-animation");
+                }, { once: true });
             }
-
+        
             if (amount === 1) {
                 decreaseButton.disabled = true;
                 decreaseButton.style.cursor = "not-allowed";
             }
-
-            totalPriceDisplay.textContent = `${(data.price * amount).toFixed(2)}€`;
         });
 
         const buttonAddToCart = document.querySelector(".information-footer-add");
@@ -974,6 +1046,12 @@ function setupCartItemButtons(cartItem, item) {
         let amount = parseInt(amountDisplay.textContent, 10);
         amount++;
         amountDisplay.textContent = amount;
+
+        // Add the scaling animation to amountDisplay
+        amountDisplay.classList.add("scale-animation");
+        amountDisplay.addEventListener("animationend", () => {
+            amountDisplay.classList.remove("scale-animation");
+        }, { once: true });
 
         priceDisplay.textContent = `${(amount * item.price).toFixed(2)}€`;
         updateCartTotal();
@@ -1085,11 +1163,11 @@ function updateCartTotal() {
 const informationOverlay = document.getElementById("information-overlay");
 informationOverlay.addEventListener("click",  removeInformationClasses);
 
-document.addEventListener("DOMContentLoaded", async () => {
-    await loggedIn(); // Ensure loggedIn is called early to set isAdmin
-
-    // Render content only after isAdmin is set
-    renderRestaurantCards('All');
+document.addEventListener("DOMContentLoaded", () => {
+    loggedIn().then(() => {
+        // Any actions that depend on loggedIn() being completed
+        console.log("User logged in");
+    });
 
     handleItemIdFromURL();
 
@@ -1177,7 +1255,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 });
 
-
 function addToCart(data, amount, type) {
     const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
     const existingItem = cart.find(item => item.id === data.id && item.type === type);
@@ -1251,7 +1328,7 @@ function addToCart(data, amount, type) {
             }
 
             const cartItem = cart.find(item => item.id === data.id && item.type === type);
-            quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"> ${cartItem.quantity}`;
+            quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> ${cartItem.quantity}`;
         }
     });
 
@@ -1322,3 +1399,236 @@ function showToast(message, type = 'success') {
       toast.remove();
     }, 500);
   }
+
+// Add favorite icon to each card and handle favorite functionality
+const setupFavoriteIcons = async () => {
+    const restaurantCards = document.querySelectorAll('.restaurant-card');
+
+    restaurantCards.forEach(card => {
+        const favoriteIcon = document.createElement('i');
+        favoriteIcon.className = 'fa fa-heart favorite-icon';
+        favoriteIcon.id = "heart-icon";
+        favoriteIcon.style.color = 'gray'; // Default color
+
+        card.appendChild(favoriteIcon);
+
+        favoriteIcon.addEventListener('click', async () => {
+            // Prevent the click event from propagating to the restaurant card
+
+            if (!isAdmin && !localStorage.getItem('authToken')) {
+                showToast('Please log in to use the favorite feature.', 'error');
+                return;
+            }
+
+            const itemId = card.getAttribute('data-item-id');
+            const type = card.getAttribute('data-item-type');
+            const favoriteId = favoriteIcon.getAttribute('data-favorite-id');
+
+            if (favoriteIcon.style.color === 'red') {
+                // Remove from favorites
+                try {
+                    const response = await fetch(`${apiUrl}/favourites/${favoriteId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        },
+                        body: JSON.stringify({ itemId, type })
+                    });
+
+                    if (response.ok) {
+                        favoriteIcon.style.color = 'gray';
+                        showToast('Removed from favorites.', 'success');
+                    } else {
+                        const data = await response.json();
+                        showToast(data.message || 'Failed to remove from favorites.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error removing from favorites:', error);
+                    showToast('An error occurred.', 'error');
+                }
+            } else {
+                // Add to favorites
+                try {
+                    const response = await fetch(`${apiUrl}/favourites`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        },
+                        body: JSON.stringify({ itemId, type })
+                    });
+
+                    if (response.ok) {
+                        favoriteIcon.style.color = 'red';
+                        showToast('Added to favorites.', 'success');
+                    } else {
+                        const data = await response.json();
+                        showToast(data.message || 'Failed to add to favorites.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding to favorites:', error);
+                    showToast('An error occurred.', 'error');
+                }
+            }
+        });
+    });
+};
+
+// Fetch and display user favorites on page load
+async function fetchAndDisplayFavorites() {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) return;
+
+    try {
+        const response = await fetch(`${apiUrl}/favourites`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const favorites = await response.json();
+            console.log("Fetched Favorites:", favorites);
+
+            // Get all restaurant cards
+            const restaurantCards = document.querySelectorAll(".restaurant-card");
+
+            // Iterate over the favorites and match them with the cards
+            favorites.forEach((favorite) => {
+                restaurantCards.forEach((card) => {
+                    const itemId = card.getAttribute("data-item-id");
+                    const favoriteIcon = card.querySelector(".favorite-icon");
+
+                    // Match the favorite with the card
+                    if (itemId === String(favorite.item_id)) {
+                        favoriteIcon.style.color = "red"; // Mark as favorite
+                        favoriteIcon.setAttribute("data-favorite-id", favorite.id); // Store the favorite ID
+                    }
+                });
+            });
+        } else {
+            console.warn("Failed to fetch favorites. Status:", response.status);
+        }
+    } catch (error) {
+        console.error("Error fetching favorites:", error);
+    }
+}
+// fetchAndDisplayFavorites();
+
+// Call setupFavoriteIcons and fetchAndDisplayFavorites on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // setupFavoriteIcons();
+    // fetchAndDisplayFavorites();
+});
+
+// Update the search results container with fetched data
+function updateSearchResults(data) {
+    const searchResultsContainer = document.getElementById("search-results");
+    const announcementsSection = document.getElementById("search-announcements");
+    const itemsSection = document.getElementById("search-items");
+    const mealsSection = document.getElementById("search-meals");
+
+    // Clear previous results
+    announcementsSection.innerHTML = "<h3>Announcements</h3>";
+    itemsSection.innerHTML = "<h3>Items</h3>";
+    mealsSection.innerHTML = "<h3>Meals</h3>";
+
+    // Populate announcements
+    if (data.announcements && data.announcements.length > 0) {
+        data.announcements.forEach(announcement => {
+            const link = document.createElement("a");
+            link.href = `/annoucement/index.html?id=${announcement.id}`;
+        
+            const announcementItem = document.createElement("div");
+            announcementItem.className = "search-results-item";
+            announcementItem.textContent = announcement.title || "Announcement";
+        
+            link.appendChild(announcementItem);
+            announcementsSection.appendChild(link);
+        });
+        
+    } else {
+        const noAnnouncements = document.createElement("div");
+        noAnnouncements.className = "search-results-empty";
+        noAnnouncements.textContent = "No announcements found.";
+        announcementsSection.appendChild(noAnnouncements);
+    }
+
+    // Populate items
+    if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+            const link = document.createElement("a");
+            link.href = `index.html?itemId=${item.id}#menu`;
+            
+            const itemElement = document.createElement("div");
+            itemElement.className = "search-results-item";
+            itemElement.textContent = `${item.name} - ${item.price}€`;
+            
+            link.appendChild(itemElement);
+            itemsSection.appendChild(link);            
+        });
+    } else {
+        const noItems = document.createElement("div");
+        noItems.className = "search-results-empty";
+        noItems.textContent = "No items found.";
+        itemsSection.appendChild(noItems);
+    }
+
+    // Populate meals
+    if (data.meals && data.meals.length > 0) {
+        data.meals.forEach(meal => {
+            const link = document.createElement("a");
+            link.href = `index.html?mealId=${meal.id}#menu`;
+
+            const mealElement = document.createElement("div");
+            mealElement.className = "search-results-item";
+            mealElement.textContent = `${meal.name} - ${meal.price}€`;
+            
+            link.appendChild(mealElement);
+            mealsSection.appendChild(link);            
+        });
+    } else {
+        const noMeals = document.createElement("div");
+        noMeals.className = "search-results-empty";
+        noMeals.textContent = "No meals found.";
+        mealsSection.appendChild(noMeals);
+    }
+
+    // Show the search results container
+    searchResultsContainer.classList.add("active");
+}
+
+// Modify the event listener for the search input
+const navbarSearchInput = document.getElementById("navbar-search");
+
+navbarSearchInput.addEventListener("input", async (event) => {
+    const query = event.target.value;
+
+    if (query.trim() === "") {
+        // Clear search results if input is empty
+        document.getElementById("search-results").classList.remove("active");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}/search/?query=${encodeURIComponent(query)}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+            },
+        });
+
+        if (response.ok) {
+            const searchResults = await response.json();
+            updateSearchResults(searchResults);
+        } else {
+            console.error("Failed to fetch search results.");
+        }
+    } catch (error) {
+        console.error("Error fetching search results:", error);
+    }
+});
