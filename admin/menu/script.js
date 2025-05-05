@@ -232,7 +232,6 @@ async function fetchItems() {
                 <td><span class="badge ${item.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${item.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}</span></td>
                 <td><a href="https://users.metropolia.fi/~quangth/restaurant/index.html?itemId=${item.id}#menu" target="blank">${item.name}</a></td>
                 <td>${item.category}</td>
-                <td>${item.description}</td>
                 <td>${item.size}</td>
                 <td><img src="https://10.120.32.59/app${item.image_url}" alt="${item.name}" style="width: 50px; height: 50px;"></td>
                 <td>${item.price}€</td>
