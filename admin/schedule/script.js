@@ -1,6 +1,6 @@
 async function fetchUserName(userId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/users/${userId}`, {
+        const response = await fetch(`https://10.120.32.59/app/api/v1/users/${userId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -23,7 +23,7 @@ async function fetchUserName(userId) {
 // Fetch and display the restaurant schedule
 async function fetchSchedule() {
     try {
-        const response = await fetch('http://localhost:3000/api/v1/schedule', {
+        const response = await fetch('https://10.120.32.59/app/api/v1/schedule', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -94,7 +94,7 @@ document.getElementById('addScheduleForm').addEventListener('submit', async func
     };
 
     try {
-        const response = await fetch('http://localhost:3000/api/v1/schedule', {
+        const response = await fetch('https://10.120.32.59/app/api/v1/schedule', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ document.getElementById('addScheduleForm').addEventListener('submit', async func
 
 async function populateEditScheduleModal(scheduleId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/schedule/${scheduleId}`, {
+        const response = await fetch(`https://10.120.32.59/app/api/v1/schedule/${scheduleId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -179,7 +179,7 @@ document.getElementById('editScheduleForm').addEventListener('submit', async fun
     };
 
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/schedule/${scheduleId}`, {
+        const response = await fetch(`https://10.120.32.59/app/api/v1/schedule/${scheduleId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ function showDeleteConfirmationModal(scheduleId) {
 // Function to delete a Schedule
 async function deleteSchedule(scheduleId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/schedule/${scheduleId}`, {
+        const response = await fetch(`https://10.120.32.59/app/api/v1/schedule/${scheduleId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include token for authorization
