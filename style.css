@@ -194,6 +194,7 @@ body.loaded {
 }
 
 .navbar-logo img {
+    max-width: 80px;
     width: 100%;
     height: 100%;
     object-fit: contain;
@@ -336,28 +337,67 @@ body.loaded {
     transform: scaleX(1);
     transform-origin: left;
 }
+
+#navbar-cart-price {
+    font-weight: bold;
+}
 /* Navbar ends here */
 
 /* Search starts here */
 .search-results-container {
+    /* padding: 10px; */
     position: fixed;
-    top: 100px; /* Adjust to match the navbar height */
-    left: 0;
-    width: 100%;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    min-height: 30%;
+    max-height: 70%;
     background-color: #191919;
     color: white;
     border: 1px solid #F7B41A;
-    z-index: 1000;
-    max-height: 300px;
+    z-index: 3006;
+    /* max-height: 300px; */
     overflow-y: auto;
-    display: none; /* Hidden by default */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transform: translate(-50%, -150vh);
+    transition: 0.25s;
 }
 
 .search-results-container.active {
-    display: block; /* Show when active */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
 }
 
-.search-results-header{
+.search-input {
+    padding: 5px;
+    background-color: #2A2A2A;
+    position: sticky;
+    top: 0;
+}
+
+.search-input input {
+    color: white;
+    border: 1px solid #444;
+    background-color: #2A2A2A;
+    width: 100%;
+    padding: 5px;
+    transition: 0.25s;
+}
+
+.search-input input:focus {
+    border-color: #F7B41A;
+    background-color: #444444;
+}
+
+.search-results-box {
+    display: none;
+}
+
+.search-results-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -365,6 +405,7 @@ body.loaded {
     background-color: #0D0D0D;
     border-bottom: 1px solid #F7B41A;
 }
+
 .search-results-section {
     padding: 10px;
     border-bottom: 1px solid #F7B41A;
@@ -394,11 +435,51 @@ body.loaded {
     padding: 10px;
     color: #FFC94B;
 }
+
 .search-results-section a {
     text-decoration: none;
     color: white;
 }
+
+.search-overlay.active {
+    background-color: black;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    top: 0;
+    z-index: 3005;
+}
 /* Search ends here */
+
+body { position: relative; top: 0 !important; }
+iframe.skiptranslate,
+.goog-te-banner-frame {
+  display: none !important;
+}
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
+#google_translate_element {
+font-size: 0;
+position: absolute;
+z-index: 9999;
+}
+/* Style the translation dropdown */
+.goog-te-combo {
+font-size: 14px;
+padding: 5px;
+border: 1px solid #ccc;
+border-radius: 4px;
+background-color: #f9f9f9;
+outline: none;
+cursor: pointer;
+}
+
+.goog-te-combo:focus {
+border-color: #007bff;
+}
 
 /* Mobile sidebar starts here */
 .mobile-sidebar {
@@ -519,7 +600,7 @@ body.loaded {
 .login-form input {
     padding: 10px;
     border-radius: 5px;
-    color: black;
+    color: white;
     background-color: #ae8626;
     transition: 0.25s;
 }
@@ -669,7 +750,7 @@ body.loaded {
 .signup-form input {
     padding: 10px;
     border-radius: 5px;
-    color: black;
+    color: white;
     border: none;
     background-color: #333333;
     transition: 0.25s;
@@ -1710,6 +1791,11 @@ body.loaded {
 
 /* About us section ends here */
 
+#reservation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 /* Footer starts here */
 .footer {
     padding: 40px 0;

@@ -1,22 +1,4 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  body {
-    padding: 40px;
-    background: #0D0D0D;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    /* Ensure the content stacks vertically */
-    justify-content: flex-start;
-    /* Align at the top */
-    align-items: center;
-  }
-  
+
   .info-container {
     color: #f3f3f3;
     margin-bottom: 20px;
@@ -74,7 +56,7 @@
     margin-top: 20px;
   }
   
-  ul {
+  .calendar ul {
     list-style: none;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -172,7 +154,7 @@
     resize: vertical;
   }
   
-  button {
+  #reservation-form button, #form-hide button, #calendar-section #process-btn {
     background: #FFC94B;
     color: #000000;
     border: none;
@@ -184,7 +166,7 @@
     margin-top: 10px;
   }
   
-  button:hover {
+  #reservation-form button:hover {
     background: #F7B41A;
   }
   

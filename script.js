@@ -108,6 +108,7 @@ window.addEventListener("scroll", () => {
 
     lastScrollPosition = currentScrollPosition; // Update the last scroll position
 });
+
 // Login
 const navbar_login = document.getElementById("navbar-login");
 navbar_login.addEventListener('click', () => {
@@ -179,7 +180,6 @@ shoppingCartLink.addEventListener("click", async () => {
 
         for (const cartItem of cart) {
             try {
-
                 const endpoint = cartItem.type === "meal" ? `${apiUrl}/meals/${cartItem.id}` : `${apiUrl}/items/${cartItem.id}`;
                 const response = await fetch(endpoint, {
                     method: "GET",
@@ -196,7 +196,7 @@ shoppingCartLink.addEventListener("click", async () => {
                     shoppingCartItem.innerHTML = `
                         <div class="shopping-cart-header">
                             <div class="shopping-cart-img">
-                                <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${item.name}">
+                                <img src="https://10.120.32.59/app/${item.image_url}" alt="${item.name}">
                             </div>
                             <div class="shopping-cart-info">
                                 <h4>${item.name}</h4>
@@ -288,7 +288,17 @@ function removeInformationClasses() {
     document.body.style.overflow = "";
 }
 
-const close_form = document.querySelectorAll("#x-close-form");
+function removeSearchClasses() {
+    const searchResultsContainer = document.getElementById("search-results");
+    searchResultsContainer.classList.remove("active");
+
+    const searchOverlay = document.querySelector(".search-overlay");
+    searchOverlay.classList.remove("active");
+
+    document.body.style.overflow = "";
+}
+
+const close_form = document.querySelectorAll(".x-close-form");
 close_form.forEach((button) => {
     button.addEventListener("click", closeForms);
 });
@@ -296,7 +306,8 @@ close_form.forEach((button) => {
 const close_form_overlay = document.getElementById("box-overlay");
 close_form_overlay.addEventListener("click", closeForms)
 
-
+const closeSearchOverlay = document.querySelector(".search-overlay");
+closeSearchOverlay.addEventListener("click", removeSearchClasses)
 
 // Modify category button text to start with a capital letter and replace underscores with spaces
 const formatCategoryText = (text) => {
@@ -324,9 +335,11 @@ function renderRestaurantCards(category = 'All') {
             const cartItem = cart.find(cartItem => cartItem.id === item.id);
             const quantity = cartItem ? cartItem.quantity : 0;
 
+            // console.log(item.image_url);
+
             restaurantCard.innerHTML = `
                 <div class="restaurant-card-image">
-                    <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${item.name}" draggable="false">
+                    <img src="https://10.120.32.59/app${item.image_url}" alt="${item.name}" draggable="false">
                     ${quantity > 0 ? `<p class="item-quantity"><i class="fa-solid fa-cart-shopping"></i> ${quantity}</p>` : ''}
                 </div>
                 <div class="restaurant-card-header">
@@ -445,7 +458,7 @@ async function renderMeals() {
         mealCard.setAttribute('data-item-type', 'meal');
         mealCard.innerHTML = `
             <div class="restaurant-card-image">
-                <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${meal.name}" draggable="false">
+                <img src="https://10.120.32.59/app${meal.image_url}" alt="${meal.name}" draggable="false">
                 ${quantity > 0 ? `<p class="item-quantity"><i class="fa-solid fa-cart-shopping"></i> ${quantity}</p>` : ""}
             </div>
             <div class="restaurant-card-header">
@@ -478,6 +491,8 @@ async function renderMeals() {
     } else {
         restaurantMenuCards.appendChild(mealsSection);
     }
+    setupFavoriteIcons();
+    fetchAndDisplayFavorites();
 }
 
 // Call populateCategories and renderMeals on page load
@@ -793,7 +808,7 @@ const displayRestaurantModal = async (id, type) => {
             : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
             : ''}
                 <div class="information-image">
-                    <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}" draggable="false">
+                    <img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}" draggable="false">
                 </div>
                 <div class="information-content">
                     <div class="information-content-top">
@@ -906,7 +921,7 @@ const displayRestaurantModal = async (id, type) => {
             : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
             : ''}
             <div class="information-image">
-                <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}" draggable="false">
+                <img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}" draggable="false">
             </div>
             <div class="information-content">
                 <div class="information-content-top">
@@ -1197,7 +1212,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     shoppingCartItem.innerHTML = `
                         <div class="shopping-cart-header">
                             <div class="shopping-cart-img">
-                                <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${item.name}">
+                                <img src="https://10.120.32.59/app${item.image_url}" alt="${item.name}">
                             </div>
                             <div class="shopping-cart-info">
                                 <h4>${item.name}</h4>
@@ -1286,7 +1301,7 @@ function addToCart(data, amount, type) {
         shoppingCartItem.innerHTML = `
             <div class="shopping-cart-header">
                 <div class="shopping-cart-img">
-                    <img src="https://users.metropolia.fi/~quangth/restaurant/images/burgerfrommenu.png" alt="${data.name}">
+                    <img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}">
                 </div>
                 <div class="shopping-cart-info">
                     <h4>${data.name}</h4>
@@ -1405,10 +1420,15 @@ const setupFavoriteIcons = async () => {
     const restaurantCards = document.querySelectorAll('.restaurant-card');
 
     restaurantCards.forEach(card => {
+        // Check if the card already has a favorite icon
+        if (card.querySelector('.favorite-icon')) {
+            return; // Skip if the icon already exists
+        }
+
         const favoriteIcon = document.createElement('i');
         favoriteIcon.className = 'fa fa-heart favorite-icon';
         favoriteIcon.id = "heart-icon";
-        favoriteIcon.style.color = 'gray'; // Default color
+        favoriteIcon.style.color = 'gray';
 
         card.appendChild(favoriteIcon);
 
@@ -1420,14 +1440,15 @@ const setupFavoriteIcons = async () => {
                 return;
             }
 
-            const itemId = card.getAttribute('data-item-id');
             const type = card.getAttribute('data-item-type');
-            const favoriteId = favoriteIcon.getAttribute('data-favorite-id');
+            const itemId = card.getAttribute('data-item-id');
+
+            console.log(favoriteIcon);
 
             if (favoriteIcon.style.color === 'red') {
                 // Remove from favorites
                 try {
-                    const response = await fetch(`${apiUrl}/favourites/${favoriteId}`, {
+                    const response = await fetch(`${apiUrl}/favourites/`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1436,11 +1457,13 @@ const setupFavoriteIcons = async () => {
                         body: JSON.stringify({ itemId, type })
                     });
 
+                    console.log(JSON.stringify({ itemId, type }))
                     if (response.ok) {
                         favoriteIcon.style.color = 'gray';
                         showToast('Removed from favorites.', 'success');
                     } else {
                         const data = await response.json();
+                        console.log(itemId, type);
                         showToast(data.message || 'Failed to remove from favorites.', 'error');
                     }
                 } catch (error) {
@@ -1450,7 +1473,7 @@ const setupFavoriteIcons = async () => {
             } else {
                 // Add to favorites
                 try {
-                    const response = await fetch(`${apiUrl}/favourites`, {
+                    const response = await fetch(`${apiUrl}/favourites/`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1460,7 +1483,9 @@ const setupFavoriteIcons = async () => {
                     });
 
                     if (response.ok) {
+                        const result = await response.json();
                         favoriteIcon.style.color = 'red';
+                        favoriteIcon.setAttribute('data-favorite-id', result.id);
                         showToast('Added to favorites.', 'success');
                     } else {
                         const data = await response.json();
@@ -1479,7 +1504,10 @@ const setupFavoriteIcons = async () => {
 async function fetchAndDisplayFavorites() {
     const token = localStorage.getItem("authToken");
 
-    if (!token) return;
+    if (!token) {
+        console.warn("No auth token found.");
+        return;
+    }
 
     try {
         const response = await fetch(`${apiUrl}/favourites`, {
@@ -1493,17 +1521,22 @@ async function fetchAndDisplayFavorites() {
             const favorites = await response.json();
             console.log("Fetched Favorites:", favorites);
 
-            // Get all restaurant cards
+            // Get all restaurant cards and meal cards
             const restaurantCards = document.querySelectorAll(".restaurant-card");
+            const restaurantMealCards = document.querySelectorAll(".restaurant-meals-cards .restaurant-card");
+
+            // Combine both types of cards
+            const allCards = [...restaurantCards, ...restaurantMealCards];
 
             // Iterate over the favorites and match them with the cards
             favorites.forEach((favorite) => {
-                restaurantCards.forEach((card) => {
+                allCards.forEach((card) => {
                     const itemId = card.getAttribute("data-item-id");
+                    const type = card.getAttribute("data-item-type"); // Can be 'item' or 'meal'
                     const favoriteIcon = card.querySelector(".favorite-icon");
 
                     // Match the favorite with the card
-                    if (itemId === String(favorite.item_id)) {
+                    if (itemId === String(favorite.item_id) && type === favorite.type) {
                         favoriteIcon.style.color = "red"; // Mark as favorite
                         favoriteIcon.setAttribute("data-favorite-id", favorite.id); // Store the favorite ID
                     }
@@ -1518,10 +1551,19 @@ async function fetchAndDisplayFavorites() {
 }
 // fetchAndDisplayFavorites();
 
-// Call setupFavoriteIcons and fetchAndDisplayFavorites on page load
-document.addEventListener('DOMContentLoaded', () => {
-    // setupFavoriteIcons();
-    // fetchAndDisplayFavorites();
+const searchBtn = document.getElementById("navbar-search-icon");
+searchBtn.addEventListener("click", () => {
+    const searchResultsContainer = document.getElementById("search-results");
+    searchResultsContainer.classList.add("active");
+
+    const searchOverlay = document.querySelector(".search-overlay");
+    searchOverlay.classList.toggle("active");
+
+    if (searchOverlay.classList.contains("active")) {
+        document.body.style.overflowY = "hidden";
+    } else {
+        document.body.style.overflowY = ""; // Reset to default
+    }
 });
 
 // Update the search results container with fetched data
@@ -1602,16 +1644,11 @@ function updateSearchResults(data) {
 }
 
 // Modify the event listener for the search input
-const navbarSearchInput = document.getElementById("navbar-search");
-
-navbarSearchInput.addEventListener("input", async (event) => {
+const searchItemInput = document.getElementById("search-item");
+searchItemInput.addEventListener("input", async (event) => {
     const query = event.target.value;
 
-    if (query.trim() === "") {
-        // Clear search results if input is empty
-        document.getElementById("search-results").classList.remove("active");
-        return;
-    }
+    console.log(query);
 
     try {
         const response = await fetch(`${apiUrl}/search/?query=${encodeURIComponent(query)}`, {
@@ -1624,7 +1661,14 @@ navbarSearchInput.addEventListener("input", async (event) => {
 
         if (response.ok) {
             const searchResults = await response.json();
-            updateSearchResults(searchResults);
+            const searchResultsBox = document.querySelector(".search-results-box");
+
+            if (query === "") {
+                searchResultsBox.style.display = "none";
+            } else {
+                searchResultsBox.style.display = "block";
+                updateSearchResults(searchResults);
+            }
         } else {
             console.error("Failed to fetch search results.");
         }

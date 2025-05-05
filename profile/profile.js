@@ -250,8 +250,26 @@ const fetchFavouritesByItemId = async (id) => {
     try {
         const response = await fetch(`${apiUrl}/items/${id}`);
         if (response.status === 404) {
-            // Item not found, return null without throwing an error
             // console.warn(`Item with ID ${id} not found, skipping.`);
+            return null;
+        }
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch item ${id}`);
+        }
+
+        const item = await response.json();
+        return item;
+    } catch (error) {
+        console.error(`Error fetching item ${id}:`, error);
+        return null;
+    }
+}
+
+const fetchFavouritesByMealId = async (id) => {
+    try {
+        const response = await fetch(`${apiUrl}/meals/${id}`);
+        if (response.status === 404) {
             return null;
         }
 
@@ -283,10 +301,18 @@ const displayFavourites = async () => {
     const validFavourites = []; // Array to store valid, visible items
 
     for (const data of favouritesData) {
-        const item = await fetchFavouritesByItemId(data.item_id);
+        let item = null;
+
+        if (data.type === "item") {
+            item = await fetchFavouritesByItemId(data.item_id);
+        } else if (data.type === "meal") {
+            item = await fetchFavouritesByMealId(data.item_id);
+        }
+
         if (!item) continue;
-        validFavourites.push({ ...data, item }); // Add valid items to the array
+        validFavourites.push({ ...data, item });
     }
+
 
     if (validFavourites.length === 0) {
         const noFavouritesMessage = document.createElement("p");
@@ -302,7 +328,7 @@ const displayFavourites = async () => {
         const favouriteItem = document.createElement("div");
         favouriteItem.className = "favourite-item";
         favouriteItem.innerHTML = `
-            <a href="/?itemId=${item.id}" class="favourite-item-box">
+            <a href="/?${item.type === "item" ? "item" : "meal"}Id=${item.id}" style="text-decoration: none" class="favourite-item-box">
                 <div class="favourite-header">
                     <div class="favourite-image">
                         <img src="../images/burgerfrommenu.png" alt="${item.name}">

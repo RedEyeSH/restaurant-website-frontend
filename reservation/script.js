@@ -359,6 +359,7 @@ const response = await fetch(`${apiUrl}/reservations/`, {
   document.getElementById("form-hide").style.display = "none";
   document.getElementById("form-message").classList.remove('hidden');
   document.getElementById("form-message").innerHTML = 'Reservation successful! Please check your email for confirmation.';
+  showReservationSuccessModal()
 } else {
   // Show error message
   const errorData = await response.json();
@@ -378,6 +379,44 @@ submitBtn.style.background = '#FFC94B';
 }
 });
 
+const showReservationSuccessModal = () => {
+  const modal = document.createElement("div");
+  modal.style.position = "fixed";
+  modal.style.top = "0";
+  modal.style.left = "0";
+  modal.style.width = "100%";
+  modal.style.height = "100%";
+  modal.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+  modal.style.display = "flex";
+  modal.style.justifyContent = "center";
+  modal.style.alignItems = "center";
+  modal.style.zIndex = "1000";
+
+  const modalContent = document.createElement("div");
+  modalContent.style.backgroundColor = "#191919";
+  modalContent.style.color = "white";
+  modalContent.style.padding = "20px";
+  modalContent.style.borderRadius = "10px";
+  modalContent.style.textAlign = "center";
+  modalContent.style.maxWidth = "500px";
+  modalContent.style.width = "100%";
+
+  modalContent.innerHTML = `
+  <h2>Table Reservation Confirmed!</h2>
+  
+  <p style="margin-top:20px">A confirmation email with your reservation details has been sent to your email. 📩</p>
+  <button id="close-modal" style="margin-top: 20px; padding: 10px 20px; background-color: #F7B41A; color: #0D0D0D; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+`;
+
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+
+  const closeModalButton = document.getElementById("close-modal");
+  closeModalButton.addEventListener("click", () => {
+      modal.remove();
+      window.location.reload();
+  });
+};
 
 // Initialize everything
 fetchAvailableDays().then(() => {

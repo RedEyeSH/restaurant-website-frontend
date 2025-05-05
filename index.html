@@ -3,34 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Welcome to Burger Company! Enjoy delicious burgers, meals, and more. Reserve your table, explore our menu, and order online for a delightful dining experience.">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../reservation/style.css">
     <script src="https://kit.fontawesome.com/2ed076f63b.js" crossorigin="anonymous"></script>
-    <script src="script.js" type="module" defer></script>
+    <script src="script.js" type="module"></script>
+    <script src="reservation/script.js" type="module"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mapbox/polyline@1.1.1/src/polyline.min.js"></script>
-
-    <!-- <script type="text/javascript">
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-          {
-            pageLanguage: 'en', // or 'auto' to auto-detect
-            includedLanguages: 'en,fi,fr,de,es,zh-CN,ja', // optional: limit languages
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-          },
-          'google_translate_element'
-        );
-      }
-    </script>
-    
-    <script type="text/javascript" 
-            src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
-    </script>
-     -->
     <title>Restaurant</title>
 </head>
 <body>
-
     <div class="overlay">
         <div class="overlayDoor"></div>
         <div class="overlayContent">
@@ -38,41 +22,42 @@
             <div class="inner"></div>
           </div>
         </div>
-      </div>
+    </div>
 
-      <script>
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
-          // Users can skip the loading process if they want.
-          document.querySelectorAll('.skip').forEach(function (btn) {
+            // Users can skip the loading process if they want.
+            document.querySelectorAll('.skip').forEach(function (btn) {
             btn.addEventListener('click', function () {
-              document.querySelector('.overlay')?.classList.add('loaded');
-              document.body.classList.add('loaded');
+                document.querySelector('.overlay')?.classList.add('loaded');
+                document.body.classList.add('loaded');
             });
-          });
-      
-          // Will wait for everything on the page to load.
-          window.addEventListener('load', function () {
+            });
+        
+            // Will wait for everything on the page to load.
+            window.addEventListener('load', function () {
             document.querySelector('.overlay')?.classList.add('loaded');
             document.body.classList.add('loaded');
-      
+        
             setTimeout(function () {
-              const overlay = document.querySelector('.overlay');
-              if (overlay) {
+                const overlay = document.querySelector('.overlay');
+                if (overlay) {
                 overlay.style.display = 'none';
-              }
+                }
             }, 2000);
-          });
-      
-          // Will remove overlay after 1 min for users who cannot load properly.
-          setTimeout(function () {
+        });
+        
+            // Will remove overlay after 1 min for users who cannot load properly.
+            setTimeout(function () {
             document.querySelector('.overlay')?.classList.add('loaded');
             document.body.classList.add('loaded');
-          }, 60000);
+            }, 60000);
         });
-      </script>
-      
+    </script>
+
     <nav class="navbar">
         <!-- <div id="google_translate_element"></div> -->
+        <div id="google_translate_element"></div>
         <a href="#home" class="navbar-logo">
             <img src="./images/logo_trimmed.png" alt="logo">
             <h1>Burger Company</h1>
@@ -81,14 +66,14 @@
             <a href="#home">Home</a>
             <a href="#menu">Menu</a>
             <a href="#about">About Us</a>
-            <a href="/reservation/index.html">Reservation</a>
+            <a href="#reservation">Reservation</a>
             <a href="/annoucement/index.html">Announcements</a>
         </div>
         <div class="navbar-actions">
             <div class="navbar-icons">
                 <div class="navbar-search">
-                    <input type="text" id="navbar-search" placeholder="Search...">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <!-- <input type="text" id="navbar-search" placeholder="Search..."> -->
+                    <i class="fa-solid fa-magnifying-glass" id="navbar-search-icon"></i>
                 </div>
                 <div class="navbar-shopping-cart" id="navbar-shopping-cart">
                     <i class="fa-solid fa-cart-shopping"></i>
@@ -107,27 +92,36 @@
         </div>
     </nav>
 
+    <!-- Search layout starts here -->
     <div class="search-results-container" id="search-results">
-        <div class="search-results-header">
-            <h2>Search Results</h2>
+        <div class="search-input">
+            <input type="text" id="search-item" placeholder="Search...">
         </div>
-        <!-- Sections for announcements, items, and meals -->
-        <div class="search-results-section" id="search-announcements">
-            <h3>Announcements</h3>
-            <div class="search-results-empty">No announcements found.</div>
-        </div>
-        <div class="search-results-section" id="search-items">
-            <h3>Items</h3>
-            <div class="search-results-empty">No items found.</div>
-        </div>
-        <div class="search-results-section" id="search-meals">
-            <h3>Meals</h3>
-            <div class="search-results-empty">No meals found.</div>
+        <div class="search-results-box">
+            <div class="search-results-header">
+                <h2>Search Results</h2>
+            </div>
+            <!-- Sections for announcements, items, and meals -->
+            <div class="search-results-section" id="search-announcements">
+                <h3>Announcements</h3>
+                <!-- <div class="search-results-empty">No announcements found.</div> -->
+            </div>
+            <div class="search-results-section" id="search-items">
+                <h3>Items</h3>
+                <!-- <div class="search-results-empty">No items found.</div> -->
+            </div>
+            <div class="search-results-section" id="search-meals">
+                <h3>Meals</h3>
+                <!-- <div class="search-results-empty">No meals found.</div> -->
+            </div>
         </div>
     </div>
 
-    <!-- side bar for just mobile buttons -->
-    <section class="mobile-sidebar">
+    <div class="search-overlay"></div>
+    <!-- Search layout ends here -->
+
+    <!-- sidebar for mobile -->
+    <div class="mobile-sidebar">
         <div class="mobile-sidebar-container">
             <div class="mobile-sidebar-header">
                 <i class="fa-solid fa-xmark" id="x-close-sidebar"></i>
@@ -136,11 +130,11 @@
                 <a href="#home">Home</a>
                 <a href="#menu">Menu</a>
                 <a href="#about">About Us</a>
-                <a href="/reservation/index.html">Reservation</a>
+                <a href="#reservation">Reservation</a>
                 <a href="/annoucement/index.html">Announcements</a>
             </div>
         </div>
-    </section>
+    </div>
 
     <!-- Account setup starts here -->
     <section class="account" id="account">
@@ -148,7 +142,7 @@
             <div class="login-form" id="login-form">
                 <div class="login-title">
                     <h1>Sign in to your account</h1>
-                    <i class="fa-solid fa-xmark" id="x-close-form"></i>
+                    <i class="fa-solid fa-xmark x-close-form"></i>
                 </div>
                 <form action="#">
                     <div class="login-email">
@@ -193,7 +187,7 @@
             <div class="signup-form" id="signup-form">
                 <div class="signup-title">
                     <h1>Get Started</h1>
-                    <i class="fa-solid fa-xmark" id="x-close-form"></i>
+                    <i class="fa-solid fa-xmark x-close-form"></i>
                 </div>
                 <form action="#">
                     <div class="signup-email">
@@ -236,12 +230,10 @@
                 </div>
                 <div class="shopping-cart-list"> <!-- Shopping cart item goes in here --> </div>
                 <div class="shopping-cart-proceed">
-                    <a href="/order/order.html">
-                        <button id="shopping-cart-order" disabled>
-                            <p>Proceed to checkout</p>
-                            <h2 id="shopping-cart-total">$0.00</h2>
-                        </button>
-                    </a>
+                    <button id="shopping-cart-order" disabled onclick="window.location.href='/order/order.html'">
+                        <span>Proceed to checkout</span>
+                        <span style="font-size: 24px;" id="shopping-cart-total">$0.00</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -390,7 +382,7 @@
     <!-- Restaurant section ends here -->
 
     <!-- Restaurant's item menu information starts here -->
-    <section class="information" id="information">
+    <div class="information" id="information">
         <!-- <div class="information-container">
             <div class="information-image">
                 <img src="./images/burgerfrommenu.png" alt="name" draggable="false">
@@ -421,7 +413,7 @@
                 </div>
             </div>
         </div> -->
-    </section>
+    </div>
 
     <div class="information-overlay" id="information-overlay"></div>
     <!-- Restaurant's item menu information ends here -->
@@ -445,13 +437,80 @@
     </section>
     <!-- About section ends here -->
 
-    <!-- Map section starts here -->
-    <section class="map" id="map">
+    <section id="reservation">
+        <div class="info-container">
+            <h1>Reservation Calendar</h1>
+            <p>Welcome to our reservation system! We are thrilled to assist you in booking your table.</p>
+            <p>To ensure a smooth experience, please select the number of guests and the date you wish to reserve.</p>
+            <p><strong>Note:</strong> The last reservation can be made 1 hour before closing time. Please plan accordingly.</p>
+            <p><strong>Maximum Guests:</strong> The maximum number of guests per reservation is 10. If you need to book for more than 10 guests, please <a href="mailto:burgersinhelsinki@gmail.com">contact us via email</a>.</p>
+          </div>
+          <!-- Calendar Wrapper -->
+          <div class="wrapper" id="calendar-section">
+            <div class="input-container" id="date-input">
+              <label for="guest">Guests:</label>
+              <select id="guest">
+                <option value="">Select</option>
+              </select>
+            </div>
+            <header>
+              <p class="current-date"></p>
+              <div class="icons">
+                <span id="prev">&#10094;</span>
+                <span id="next">&#10095;</span>
+              </div>
+            </header>
+            <div class="calendar">
+              <ul class="weeks">
+                <li>Sun</li>
+                <li>Mon</li>
+                <li>Tue</li>
+                <li>Wed</li>
+                <li>Thu</li>
+                <li>Fri</li>
+                <li>Sat</li>
+              </ul>
+              <ul class="days"></ul>
+            </div>
+            <div class="message-container" id="message-container">
+              <p id="message"></p>
+              <div id="time-input" style="display: none;">
+                <label for="time">Select Time:</label>
+                <input type="time" id="time" />
+                <p id="time-error"></p>
+                <button id="process-btn" style="display: none;">Proceed to Form</button>
+              </div>
+            </div>
+          </div>
+          <!-- Reservation Form Section -->
+          <div class="wrapper" id="form-section" style="display: none;">
+            <div id="form-hide">
+              <button id="back-btn">← Back to Calendar</button>
+              <h2>Complete Your Reservation</h2>
+              <p id="summary"></p>
+              <form id="reservation-form">
+                <input type="text" id="name" placeholder="Your Name" required><br>
+                <input type="tel" id="phone" placeholder="Phone Number" required><br>
+                <input type="email" id="email" placeholder="Email Address" required><br>
+                <textarea id="notes" placeholder="Additional Notes"></textarea><br>
+                <button type="submit" class="submit-btn" id="submit-btn">
+                <span class="btn-text">Submit Reservation</span>
+                <span class="spinner" id="spinner" style="display: none;"></span>
+                </button>
+              </form>
+            </div>
+            <p id="form-message" class="hidden"></p>
+            <!-- Message box -->
+          </div>
+    </section>
+
+    <!-- Map starts here -->
+    <div class="map" id="map">
         <div class="map-box">
             <div id="map-container"></div>
         </div>
-    </section>
-    <!-- Map section ends here -->
+    </div>
+    <!-- Map ends here -->
 
     <!-- Directions popup section starts here -->
     <div id="route-modal" class="modal">
@@ -521,6 +580,18 @@
     <!-- Footer starts here -->
 
     <!-- <section style="height: 1000px;"></section> -->
+  <!-- Google Translate Script -->
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+        { pageLanguage: 'en', includedLanguages: 'en,fi,sv' },
+        'google_translate_element'
+      );
+    }
+  </script>
+  <script
+    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit">
+  </script>
 
 </body>
 </html>
