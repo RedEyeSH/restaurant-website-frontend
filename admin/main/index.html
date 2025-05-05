@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Add Bootstrap Icons (optional for modern look) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../js/utils.js"></script>
+    <script type="module">
+        import checkUserAuthentication, { logout } from '../js/auth-check.js';
+        checkUserAuthentication();
+        document.getElementById('logoutButton').addEventListener('click', logout);
+    </script>
+</head>
+<body class="bg-light">
+
+
+
+<!-- Add a button to toggle the navbar -->
+<button id="navbar-toggle" class="btn btn-primary">
+    <i class="bi bi-list"></i>
+</button>
+
+<div class="d-flex" style="min-height: 100vh;">
+    <!-- Sidebar Navigation -->
+     <div id="navbar-container"></div>
+
+     <script>
+        fetch('../navbar.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('navbar-container').innerHTML = data;
+          });
+      </script>
+
+    <!-- Main Content -->
+    <div class="flex-grow-1 p-4">
+        <div class="text-center mb-4">
+            <h1 class="display-4 text-primary">Admin Dashboard</h1>
+            <p class="lead">Welcome to the admin dashboard. Manage your restaurant efficiently.</p>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total Orders</h5>
+                        <p class="card-text" id="total-orders">Fetching...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Total Order Price</h5>
+                        <p class="card-text" id="total-order-price">Fetching...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function logout() {
+            localStorage.removeItem('authToken');
+            window.location.href = '../login';
+        }
+
+        async function fetchOrderData() {
+            try {
+                const response = await fetch('https://10.120.32.59/app/api/v1/orders/', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                const orders = await response.json();
+
+                const totalOrders = orders.length;
+                const totalOrderPrice = orders.reduce((sum, order) => sum + parseFloat(order.total_price), 0).toFixed(2);
+
+                document.getElementById('total-orders').textContent = totalOrders;
+                document.getElementById('total-order-price').textContent = `${totalOrderPrice}€`;
+            } catch (error) {
+                console.error('Error fetching order data:', error);
+                document.getElementById('total-orders').textContent = 'Error';
+                document.getElementById('total-order-price').textContent = 'Error';
+            }
+        }
+
+        fetchOrderData();
+
+
+    
+    </script>
+</body>
+</html>

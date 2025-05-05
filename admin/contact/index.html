@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements Management</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+      <!-- Bootstrap Table CSS -->
+       <!-- Make sure jQuery is included first -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/bootstrap-table.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-table@1.24.1/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+    <!-- Bootstrap JavaScript and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <!-- Add Bootstrap Icons (optional for modern look) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <script src="../js/utils.js"></script>
+    <script type="module">
+        import checkUserAuthentication, { logout } from '../js/auth-check.js';
+        checkUserAuthentication();
+        document.getElementById('logoutButton').addEventListener('click', logout);
+    </script>
+    <!-- Add custom styles to make the table fit within the viewport -->
+    <style>
+        #ContactsTable{
+            font-size: 0.9rem; /* Reduce font size */
+            table-layout: auto; /* Allow table to adjust column widths */
+        }
+
+        #ContactsTable th, #ContactsTable td {
+            white-space: nowrap; /* Prevent text wrapping */
+            padding: 0.5rem; /* Reduce padding */
+        }
+
+        .table-container {
+            overflow-x: auto; /* Enable horizontal scrolling if necessary */
+        }
+    </style>
+</head>
+<body>
+
+<!-- Add a button to toggle the navbar -->
+<button id="navbar-toggle" class="btn btn-primary">
+    <i class="bi bi-list"></i>
+</button>
+
+<div class="d-flex" style="min-height: 100vh;">
+    <!-- Sidebar Navigation -->
+     <div id="navbar-container"></div>
+
+     <script>
+        fetch('../navbar.html')
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById('navbar-container').innerHTML = data;
+          });
+      </script>
+
+<!-- Main Content -->
+<div class="flex-grow-1 p-4">
+<div class="container mt-4">
+    <h3>Contact Messages</h3>
+    <div class="table-container table-responsive">
+        <table class="table table-striped table-bordered" id="ContactsTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Status</th> <!-- Added status column -->
+                    <th>Created at</th>
+                    <th>Updated at</th>
+                    <th>Updated By</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="ContactsBody">
+                <!-- Dynamic rows will be inserted here -->
+                <td>${contact.status}</td> <!-- Added status value -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- View Contact Modal -->
+<div class="modal fade" id="viewContactModal" tabindex="-1" aria-labelledby="viewContactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewContactModalLabel">View Contact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="contactDetails">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Contact Modal -->
+<div class="modal fade" id="editContactModal" tabindex="-1" aria-labelledby="editContactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editContactModalLabel">Edit Contact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editContactForm">
+                    <p><strong>Name:</strong> <span id="editContactUserName"></span></p>
+                    <div class="mb-3">
+                        <label for="editContactTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="editContactTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editContactDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editContactDescription" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editContactStatus" class="form-label">Status</label>
+                        <select class="form-select" id="editContactStatus" required>
+                            <option value="pending">Pending</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Save Changes
+                        <span id="editLoading" class="spinner-border spinner-border-sm text-light" style="display: none;"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- Toast Container -->
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto"></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        Hello, world! This is a toast message.
+      </div>
+    </div>
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>
