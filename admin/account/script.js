@@ -46,6 +46,7 @@ async function fetchUsers() {
                 <td>${user.role}</td>
                 <td>${user.status === 'enabled' ? '<span class="badge bg-success">Enabled</span>' : '<span class="badge bg-danger">Disabled</span>'}</td>
                 <td>${user.verified == '1' ? '<span class="badge bg-success">Verified</span>' : '<span class="badge bg-danger">Not verified</span>'}</td>
+                <td>${new Date(user.last_login).toLocaleString('fi')}</td>
                 <td>${new Date(user.created_at).toLocaleString('fi')}</td>
                 <td>${new Date(user.updated_at).toLocaleString('fi')}</td>
                 <td>${user.updated_by ? await fetchUserName(user.updated_by) : 'Not yet updated'}</td>
@@ -116,6 +117,7 @@ async function viewUserDetails(userId) {
               <i class="bi bi-clock-history me-2"></i>Audit Trail
             </div>
             <div class="card-body">
+              <p><i class="bi bi-clock me-2"></i><strong>Last Login:</strong> ${new Date(user.last_login).toLocaleString('fi')}</p>
               <p><i class="bi bi-calendar-plus me-2"></i><strong>Created At:</strong> ${new Date(user.created_at).toLocaleString('fi')}</p>
               <p><i class="bi bi-calendar-check me-2"></i><strong>Updated At:</strong> ${new Date(user.updated_at).toLocaleString('fi')}</p>
               <p><i class="bi bi-person-check me-2"></i><strong>Updated By:</strong> ${user.updated_by 
