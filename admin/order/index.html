@@ -186,6 +186,7 @@
                             <option value="preparing">Preparing</option>
                             <option value="ready">Ready</option>
                             <option value="completed">Completed</option>
+                            <option value="cancelled">Order Cancelled</option>
                         </select>
                     </div>
 
@@ -219,28 +220,6 @@
     </div>
   </div>
 
-<script>
-// Function to show form errors below the Save Changes button
-function showFormErrors(errors) {
-    const errorContainer = document.getElementById('formErrorContainer');
-    const errorList = document.getElementById('formErrorList');
-    errorList.innerHTML = '';
-
-    errors.forEach(error => {
-        const listItem = document.createElement('li');
-        listItem.textContent = error;
-        errorList.appendChild(listItem);
-    });
-
-    errorContainer.classList.remove('d-none');
-}
-
-// Function to hide form errors
-function hideFormErrors() {
-    const errorContainer = document.getElementById('formErrorContainer');
-    errorContainer.classList.add('d-none');
-}
-</script>
 
 <script>
     // Show or hide address field based on method selection

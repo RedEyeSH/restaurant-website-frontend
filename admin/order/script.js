@@ -1,6 +1,6 @@
 async function fetchUserName(userId) {
     try {
-        const response = await fetch(`https://10.120.32.59/app/api/v1/users/${userId}`, {
+        const response = await fetch(`http://localhost:3000/api/v1/users/${userId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -21,7 +21,7 @@ async function fetchUserName(userId) {
 
 async function fetchOrders() {
     try {
-        const response = await fetch('https://10.120.32.59/app/api/v1/orders/', {
+        const response = await fetch('http://localhost:3000/api/v1/orders/', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -48,7 +48,8 @@ async function fetchOrders() {
                 'processing': '<span class="badge bg-warning text-dark">Processing</span>',
                 'preparing': '<span class="badge bg-primary">Preparing</span>',
                 'ready': '<span class="badge bg-info text-dark">Ready</span>',
-                'completed': '<span class="badge bg-success">Completed</span>'
+                'completed': '<span class="badge bg-success">Completed</span>',
+                'cancelled': '<span class="badge bg-danger">Order Cancelled</span>'
             }[order.status] || `<span class="badge bg-secondary">${order.status}</span>`;
 
             const row = document.createElement('tr');
@@ -84,7 +85,7 @@ async function fetchOrders() {
 // Make viewOrderDetails globally accessible
 async function viewOrderDetails(orderId) {
     try {
-        const response = await fetch(`https://10.120.32.59/app/api/v1/orders/${orderId}`, {
+        const response = await fetch(`http://localhost:3000/api/v1/orders/${orderId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -116,14 +117,17 @@ async function viewOrderDetails(orderId) {
                     </tr>
                 </thead>
                 <tbody>
-                    ${order.items.map(item => `
-                        <tr>
-                            <td>${item.details.name}</td>
-                            <td>${item.quantity}</td>
-                            <td>€${item.price.toFixed(2)}</td>
-                            <td>€${(item.quantity * item.price).toFixed(2)}</td>
-                        </tr>
-                    `).join('')}
+                    ${order.items.map(item => {
+                        const price = parseFloat(item.price) || 0; // Default to 0 if price is not a valid number
+                        return `
+                            <tr>
+                                <td>${item.details.name}</td>
+                                <td>${item.quantity}</td>
+                                <td>€${price.toFixed(2)}</td>
+                                <td>€${(item.quantity * price).toFixed(2)}</td>
+                            </tr>
+                        `;
+                    }).join('')}
                 </tbody>
             </table>
         `;
@@ -138,7 +142,8 @@ async function viewOrderDetails(orderId) {
             'processing': '<span class="badge bg-warning text-dark">Processing</span>',
             'preparing': '<span class="badge bg-primary">Preparing</span>',
             'ready': '<span class="badge bg-info text-dark">Ready</span>',
-            'completed': '<span class="badge bg-success">Completed</span>'
+            'completed': '<span class="badge bg-success">Completed</span>',
+            'cancelled': '<span class="badge bg-danger">Order Cancelled</span>'
         }[order.status] || `<span class="badge bg-secondary">${order.status}</span>`;
 
         modalBody.innerHTML = `
@@ -254,7 +259,7 @@ document.getElementById('editItems').addEventListener('input', calculateAndPopul
 
 // Function to fetch items or meals based on the type and populate the select dropdown
 async function fetchOptions(type) {
-    const url = type === 'item' ? 'https://10.120.32.59/app/api/v1/items/' : 'https://10.120.32.59/app/api/v1/meals/';
+    const url = type === 'item' ? 'http://localhost:3000/api/v1/items/' : 'http://localhost:3000/api/v1/meals/';
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -291,6 +296,8 @@ async function addItemRow(item = { id: '', quantity: 1, price: 0.00, type: 'item
         `<option value="${option.id}" data-price="${option.price}" ${option.id === item.id ? 'selected' : ''} ${selectedIds.includes(option.id.toString()) && option.id !== item.id ? 'disabled' : ''}>${option.name}</option>`
     ).join('');
 
+    // Ensure item.price is a valid number before calling toFixed
+    const price = parseFloat(item.price) || 0; // Default to 0 if price is not a valid number
     itemRow.innerHTML = `
         <div class="row">
             <div class="col-md-2">
@@ -309,7 +316,7 @@ async function addItemRow(item = { id: '', quantity: 1, price: 0.00, type: 'item
                 <input type="number" class="form-control item-quantity" placeholder="Quantity" value="${item.quantity}" min="1" required>
             </div>
             <div class="col-md-3">
-                <input type="number" class="form-control item-price" placeholder="Price" value="${item.useOrderPrice ? item.price.toFixed(2) : 0.00}" step="0.01" disabled required>
+                <input type="number" class="form-control item-price" placeholder="Price" value="${price.toFixed(2)}" step="0.01" disabled required>
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn btn-danger remove-item-button">Remove</button>
@@ -364,7 +371,7 @@ function updateDisabledOptions() {
 
 async function populateEditOrderModal(orderId) {
     try {
-        const response = await fetch(`https://10.120.32.59/app/api/v1/orders/${orderId}`, {
+        const response = await fetch(`http://localhost:3000/api/v1/orders/${orderId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -377,6 +384,8 @@ async function populateEditOrderModal(orderId) {
 
         const order = await response.json();
 
+        hideFormErrors(); // Hide any previous error messages
+        
         document.getElementById('editCustomerName').value = order.customer_name;
         document.getElementById('editCustomerPhone').value = order.customer_phone;
         document.getElementById('editCustomerEmail').value = order.customer_email;
@@ -460,7 +469,7 @@ document.getElementById('editOrderForm').addEventListener('submit', async functi
     };
 
     try {
-        const response = await fetch(`https://10.120.32.59/app/api/v1/orders/${orderId}`, {
+        const response = await fetch(`http://localhost:3000/api/v1/orders/${orderId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -510,6 +519,27 @@ function showToast(message) {
 
     const toast = new bootstrap.Toast(toastElement);
     toast.show();
+}
+
+// Function to show form errors below the Save Changes button
+function showFormErrors(errors) {
+    const errorContainer = document.getElementById('formErrorContainer');
+    const errorList = document.getElementById('formErrorList');
+    errorList.innerHTML = '';
+
+    errors.forEach(error => {
+        const listItem = document.createElement('li');
+        listItem.textContent = error;
+        errorList.appendChild(listItem);
+    });
+
+    errorContainer.classList.remove('d-none');
+}
+
+// Function to hide form errors
+function hideFormErrors() {
+    const errorContainer = document.getElementById('formErrorContainer');
+    errorContainer.classList.add('d-none');
 }
 
 document.addEventListener('DOMContentLoaded', fetchOrders);
