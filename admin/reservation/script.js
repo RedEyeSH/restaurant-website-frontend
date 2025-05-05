@@ -57,7 +57,7 @@ async function fetchReservations() {
                     <td>
                         <button class="btn btn-primary view-reservation" onclick="viewReservationDetails(${reservation.reservation_id})" data-bs-toggle="modal" data-bs-target="#reservationModal">View</button>
                         <button class="btn btn-secondary edit-reservation" onclick="populateEditReservationModal(${reservation.reservation_id})" data-bs-toggle="modal" data-bs-target="#editReservationModal">Edit</button>
-                        <button class="btn btn-danger edit-reservation" onclick="showDeleteConfirmationModal(${reservation.reservation_id})" data-bs-toggle="modal" data-bs-target="#deleteReservationModal">Delete</button>
+                        <button class="btn btn-danger delete-reservation" onclick="showDeleteConfirmationModal(${reservation.reservation_id})" data-bs-toggle="modal" data-bs-target="#deleteReservationModal">Delete</button>
                     </td>
                 `;
                 tbody.appendChild(row);

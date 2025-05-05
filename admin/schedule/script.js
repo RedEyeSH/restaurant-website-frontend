@@ -1,7 +1,29 @@
+async function fetchUserName(userId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/v1/users/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch user details');
+        }
+
+        const user = await response.json();
+        return user.name || 'Unknown User';
+    } catch (error) {
+        console.error('Error fetching user name:', error);
+        return 'Unknown User';
+    }
+}
+
+
 // Fetch and display the restaurant schedule
 async function fetchSchedule() {
     try {
-        const response = await fetch('https://10.120.32.59/app/api/v1/schedule', {
+        const response = await fetch('http://localhost:3000/api/v1/schedule', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -16,22 +38,26 @@ async function fetchSchedule() {
         const tbody = document.getElementById('ScheduleBody');
         tbody.innerHTML = '';
 
-        schedule.forEach(entry => {
+        for (const entry of schedule) {
             const row = document.createElement('tr');
             row.dataset.id = entry.id;
             row.innerHTML = `
-                <td class="date">${new Date(entry.date).toLocaleDateString('fi-FI')}</td>
-                <td class="open-time">${entry.open_time || 'N/A'}</td>
-                <td class="close-time">${entry.close_time || 'N/A'}</td>
-                <td class="message">${entry.message || 'No message'}</td>
-                <td class="status">${entry.status === 'open' ? '<span class="badge bg-success">Open</span>' : '<span class="badge bg-danger">Closed</span>'}</td>
+                <td>${new Date(entry.date).toLocaleString('fi-FI')}</td>
+                <td>${entry.open_time || 'N/A'}</td>
+                <td>${entry.close_time || 'N/A'}</td>
+                <td>${entry.message || 'No message'}</td>
+                <td>${entry.status === 'open' ? '<span class="badge bg-success">Open</span>' : '<span class="badge bg-danger">Closed</span>'}</td>
+                <td>${new Date(entry.created_at).toLocaleString('fi-FI')}</td>
+                <td>${new Date(entry.updated_at).toLocaleString('fi-FI')}</td>
+                <td>${entry.added_by ? await fetchUserName(entry.added_by) : 'Null'}</td>
+                <td>${entry.updated_by ? await fetchUserName(entry.updated_by) : 'Not yet updated'}</td>
                 <td>
-                    <button class="btn btn-primary edit-btn">Edit</button>
-                    <button class="btn btn-danger delete-btn">Delete</button>
+                    <button class="btn btn-primary edit-btn" onclick="populateEditScheduleModal(${entry.id})" data-bs-toggle="modal" data-bs-target="#editScheduleModal">Edit</button>
+                    <button class="btn btn-danger delete-btn" onclick="showDeleteConfirmationModal(${entry.id})" data-bs-toggle="modal">Delete</button>
                 </td>
             `;
             tbody.appendChild(row);
-        });
+        };
     } catch (error) {
         console.error('Error fetching schedule:', error);
     }
@@ -68,7 +94,7 @@ document.getElementById('addScheduleForm').addEventListener('submit', async func
     };
 
     try {
-        const response = await fetch('https://10.120.32.59/app/api/v1/schedule', {
+        const response = await fetch('http://localhost:3000/api/v1/schedule', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -97,11 +123,41 @@ document.getElementById('addScheduleForm').addEventListener('submit', async func
     }
 });
 
+async function populateEditScheduleModal(scheduleId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/v1/schedule/${scheduleId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch schedule details');
+        }
+
+
+        const schedule = await response.json();
+        document.getElementById('editScheduleDate').value = schedule.date;
+        document.getElementById('editOpenTime').value = schedule.open_time || '';
+        document.getElementById('editCloseTime').value = schedule.close_time || '';
+        document.getElementById('editScheduleMessage').value = schedule.message || '';
+        document.getElementById('editScheduleStatus').value = schedule.status;
+
+        document.getElementById('editScheduleForm').dataset.scheduleId = scheduleId;
+    } catch (error) {
+        console.error('Error populating edit schedule modal:', error);
+    }
+}
+
+
 // Handle Edit Schedule Form Submission
 document.getElementById('editScheduleForm').addEventListener('submit', async function (event) {
     event.preventDefault();
 
     document.getElementById('editLoading').style.display = 'inline-block'; // Show loading spinner
+
+    const scheduleId = this.dataset.scheduleId;
 
     const id = document.getElementById('editScheduleId').value;
     const openTime = document.getElementById('editOpenTime').value;
@@ -123,7 +179,7 @@ document.getElementById('editScheduleForm').addEventListener('submit', async fun
     };
 
     try {
-        const response = await fetch(`https://10.120.32.59/app/api/v1/schedule/${id}`, {
+        const response = await fetch(`http://localhost:3000/api/v1/schedule/${scheduleId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -134,6 +190,7 @@ document.getElementById('editScheduleForm').addEventListener('submit', async fun
 
         if (!response.ok) {
             document.getElementById('editLoading').style.display = 'none'; // Hide loading spinner
+            console.error('Failed to update schedule:', response.statusText);
             throw new Error('Failed to update schedule');
         }
 
@@ -154,94 +211,42 @@ document.getElementById('editScheduleForm').addEventListener('submit', async fun
     }
 });
 
-// Handle Delete Schedule
-async function deleteSchedule(id) {
+
+// Function to show delete confirmation modal
+function showDeleteConfirmationModal(scheduleId) {
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteScheduleModal'));
+    const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+
+    confirmDeleteButton.onclick = function () {
+        deleteSchedule(scheduleId);
+    };
+
+    deleteModal.show();
+}
+
+// Function to delete a Schedule
+async function deleteSchedule(scheduleId) {
     try {
-        const response = await fetch(`https://10.120.32.59/app/api/v1/schedule/${id}`, {
+        const response = await fetch(`http://localhost:3000/api/v1/schedule/${scheduleId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Include token for authorization
             }
         });
 
         if (!response.ok) {
-            throw new Error('Failed to delete schedule');
+            throw new Error('Failed to delete Schedule');
         }
 
-        // Refresh the schedule table
-    
-        fetchSchedule();
+        showToast('Schedule deleted successfully!');
+        fetchSchedule(); // Refresh the schedule table
+
+        const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteScheduleModal'));
+        deleteModal.hide();
     } catch (error) {
-        console.error('Error deleting schedule:', error);
+        console.error('Error deleting Schedule:', error);
     }
 }
-
-let scheduleIdToDelete = null;
-
-// Show delete confirmation modal
-document.addEventListener('click', function (event) {
-    if (event.target.classList.contains('delete-btn')) {
-        scheduleIdToDelete = event.target.closest('tr').dataset.id;
-        const deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
-        deleteConfirmationModal.show();
-    }
-});
-
-// Handle delete confirmation
-document.getElementById('confirmDeleteButton').addEventListener('click', async function () {
-    if (scheduleIdToDelete) {
-        try {
-            const response = await fetch(`https://10.120.32.59/app/api/v1/schedule/${scheduleIdToDelete}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to delete schedule');
-            }
-
-            // Refresh the schedule table
-            showToast('Schedule deleted successfully!');
-            fetchSchedule();
-
-            // Close the modal
-            const deleteConfirmationModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal'));
-            deleteConfirmationModal.hide();
-
-            scheduleIdToDelete = null;
-        } catch (error) {
-            console.error('Error deleting schedule:', error);
-        }
-    }
-});
-
-// Add event listeners for edit and delete buttons
-document.addEventListener('click', function (event) {
-    if (event.target.classList.contains('edit-btn')) {
-        const row = event.target.closest('tr');
-        const id = row.dataset.id;
-        const date = row.querySelector('.date').textContent;
-        const openTime = row.querySelector('.open-time').textContent;
-        const closeTime = row.querySelector('.close-time').textContent;
-        const message = row.querySelector('.message').textContent;
-        const status = row.querySelector('.status').textContent.includes('Open') ? 'open' : 'close';
-
-        // Convert date to YYYY-MM-DD format
-        const formattedDate = new Date(date.split('.').reverse().join('-')).toISOString().split('T')[0];
-
-        document.getElementById('editScheduleId').value = id;
-        document.getElementById('editScheduleDate').value = formattedDate;
-        document.getElementById('editOpenTime').value = openTime !== 'N/A' ? openTime : '';
-        document.getElementById('editCloseTime').value = closeTime !== 'N/A' ? closeTime : '';
-        document.getElementById('editScheduleMessage').value = message !== 'No message' ? message : '';
-        document.getElementById('editScheduleStatus').value = status;
-
-        const editScheduleModal = new bootstrap.Modal(document.getElementById('editScheduleModal'));
-        editScheduleModal.show();
-    }
-});
 
 function showToast(message) {
     const toastElement = document.getElementById('successToast');
