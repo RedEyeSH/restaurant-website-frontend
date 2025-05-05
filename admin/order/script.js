@@ -1,6 +1,6 @@
 async function fetchUserName(userId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/users/${userId}`, {
+        const response = await fetch(`https://10.120.32.59/app/api/v1/users/${userId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -21,7 +21,7 @@ async function fetchUserName(userId) {
 
 async function fetchOrders() {
     try {
-        const response = await fetch('http://localhost:3000/api/v1/orders/', {
+        const response = await fetch('https://10.120.32.59/app/api/v1/orders/', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -85,7 +85,7 @@ async function fetchOrders() {
 // Make viewOrderDetails globally accessible
 async function viewOrderDetails(orderId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/orders/${orderId}`, {
+        const response = await fetch(`https://10.120.32.59/app/api/v1/orders/${orderId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -259,7 +259,7 @@ document.getElementById('editItems').addEventListener('input', calculateAndPopul
 
 // Function to fetch items or meals based on the type and populate the select dropdown
 async function fetchOptions(type) {
-    const url = type === 'item' ? 'http://localhost:3000/api/v1/items/' : 'http://localhost:3000/api/v1/meals/';
+    const url = type === 'item' ? 'https://10.120.32.59/app/api/v1/items/' : 'https://10.120.32.59/app/api/v1/meals/';
     try {
         const response = await fetch(url, {
             method: 'GET',
@@ -371,7 +371,7 @@ function updateDisabledOptions() {
 
 async function populateEditOrderModal(orderId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/orders/${orderId}`, {
+        const response = await fetch(`https://10.120.32.59/app/api/v1/orders/${orderId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -469,7 +469,7 @@ document.getElementById('editOrderForm').addEventListener('submit', async functi
     };
 
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/orders/${orderId}`, {
+        const response = await fetch(`https://10.120.32.59/app/api/v1/orders/${orderId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
