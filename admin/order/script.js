@@ -56,6 +56,10 @@ async function fetchOrders() {
             row.innerHTML = `
                 <td>${order.order_id}</td>
                 <td>${statusBadge}</td>
+                <td>
+                    <button class="btn btn-primary view-order" onclick="viewOrderDetails(${order.order_id})" data-bs-toggle="modal" data-bs-target="#orderModal">View</button>
+                    <button class="btn btn-secondary edit-order" onclick="populateEditOrderModal(${order.order_id})" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit</button>
+                </td>
                 <td>${order.user_id ? await fetchUserName(order.user_id) : 'Null'}</td>
                 <td>${order.customer_name}</td>
                 <td>${order.customer_phone}</td>
@@ -67,10 +71,6 @@ async function fetchOrders() {
                 <td>${new Date(order.created_at).toLocaleString('fi')}</td>
                 <td>${new Date(order.updated_at).toLocaleString('fi')}</td>
                 <td>${order.updated_by ? await fetchUserName(order.updated_by) : 'Not yet updated'}</td>
-                <td>
-                    <button class="btn btn-primary view-order" onclick="viewOrderDetails(${order.order_id})" data-bs-toggle="modal" data-bs-target="#orderModal">View</button>
-                    <button class="btn btn-secondary edit-order" onclick="populateEditOrderModal(${order.order_id})" data-bs-toggle="modal" data-bs-target="#editOrderModal">Edit</button>
-                </td>
             `;
             tbody.appendChild(row);
         }
