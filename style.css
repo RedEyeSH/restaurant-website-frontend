@@ -1692,6 +1692,7 @@ iframe.skiptranslate,
 
 .information-footer-add {
     color: white;
+    border: none;
     cursor: pointer;
     width: 100%;
     display: flex;
@@ -1710,7 +1711,7 @@ iframe.skiptranslate,
 
 .information-footer-add:disabled {
     background-color: #E0A92B;
-    opacity: 0.9;
+    opacity: 0.5;
 }
 
 .information-container table {

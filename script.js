@@ -119,15 +119,17 @@ navbar_login.addEventListener('click', () => {
 
 const navbarMobileLink = document.querySelector(".navbar-mobile-link");
 navbarMobileLink.addEventListener("click", () => {
-    closeShoppingCart();
+    closeShoppingCart(); // Close the shopping cart if it's open
     const mobileSidebar = document.querySelector(".mobile-sidebar");
-    mobileSidebar.classList.toggle("open");
+    mobileSidebar.classList.toggle("open"); // Toggle the mobile sidebar
 
     const googleTranslateElement = document.getElementById("google_translate_element");
     if (mobileSidebar.classList.contains("open")) {
-        mobileSidebar.querySelector(".sidebar-link").appendChild(googleTranslateElement);
+        // Move Google Translate widget to the mobile sidebar
+        mobileSidebar.querySelector(".sidebar-link").prepend(googleTranslateElement);
     } else {
-        document.querySelector(".navbar-actions").appendChild(googleTranslateElement);
+        // Move Google Translate widget back to the navbar
+        document.querySelector(".google-translate").appendChild(googleTranslateElement);
     }
 });
 
@@ -274,7 +276,10 @@ const xCloseCart = document.getElementById("x-close-cart");
 xCloseCart.addEventListener("click", closeShoppingCart);
 
 const xCloseMobileSidebar = document.getElementById("x-close-sidebar");
-xCloseMobileSidebar.addEventListener("click", closeMobileSidebar);
+xCloseMobileSidebar.addEventListener("click", () => {
+    closeMobileSidebar();
+    navbarActions.querySelector(".google-translate").appendChild(googleTranslateElement); // Move the widget back
+});
 
 // Handling for closing forms
 function closeForms() {
@@ -356,10 +361,22 @@ function renderRestaurantCards(category = 'All') {
                 </div>
                 <div class="restaurant-card-price">
                     <h2>${item.price}€</h2>
-                    ${isAdmin ? (item.visible === 'yes' 
-                    ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
-                    : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
-                    : ''}
+                    ${isAdmin ? (
+                        `
+                          ${item.visible === 'yes' 
+                            ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
+                            : item.visible === 'no' 
+                              ? '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>' 
+                              : ''
+                          }
+                      
+                          ${item.created_at 
+                            ? `<span style="margin-left: 10px;">Created At: ${new Date(item.created_at).toLocaleString()}</span>` 
+                            : ''
+                          }
+                        `
+                      ) : ''}
+                      
                 </div>
             `;
 
@@ -482,7 +499,9 @@ async function renderMeals() {
             </div>
         `;
 
-        mealCard.addEventListener("click", () => {
+        mealCard.addEventListener("click", (event) => {
+            if (event.target.closest('.favorite-icon')) return;
+            
             displayRestaurantModal(meal.id, "meal");
         });
 
@@ -1276,6 +1295,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function addToCart(data, amount, type) {
+    console.log(data);
+    if (data.stock === "no") {
+        showToast(`${data.name} is out of stock and cannot be added to the cart.`, 'error');
+        return;
+    }
     const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
     const existingItem = cart.find(item => item.id === data.id && item.type === type);
 
