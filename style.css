@@ -1691,6 +1691,7 @@ iframe.skiptranslate,
 }
 
 .information-footer-add {
+    color: white;
     cursor: pointer;
     width: 100%;
     display: flex;
@@ -1705,6 +1706,11 @@ iframe.skiptranslate,
 
 .information-footer-add:hover {
     background-color: #FFC94B;
+}
+
+.information-footer-add:disabled {
+    background-color: #E0A92B;
+    opacity: 0.9;
 }
 
 .information-container table {
@@ -1839,6 +1845,10 @@ iframe.skiptranslate,
 
 .footer-payment i {
     font-size: 46px;
+}
+
+.footer-title h1 {
+    font-size: 1.25rem;
 }
 
 .footer-content p {

@@ -950,18 +950,18 @@ const displayRestaurantModal = async (id, type) => {
             </div>
             <div class="information-footer">
                 <div class="information-footer-amount">
-                    <button id="information-amount-btn-decrease" ${amount == 1 ? "disabled" : ""}>
+                    <button id="information-amount-btn-decrease" ${amount === 1 ? "disabled" : ""}>
                         <i class="fa-solid fa-minus"></i>
                     </button>
                     <p id="information-amount-display">${amount}</p>
-                    <button id="information-amount-btn-increase">
+                    <button id="information-amount-btn-increase" style="${data.stock === "no" ? "cursor: not-allowed" : ""}" ${data.stock === "no" ? "disabled" : ""}>
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
-                <div class="information-footer-add">
+                <button class="information-footer-add" style="${data.stock === "no" ? "cursor: not-allowed" : ""}" ${data.stock === "no" ? "disabled" : ""}>
                     <p>Add to Cart</p>
                     <p id="information-total-price">${(data.price * amount).toFixed(2)}€</p>
-                </div>
+                </button>
             </div>
         `;
 
@@ -1049,10 +1049,10 @@ function setupCartItemButtons(cartItem, item) {
                 const quantityDisplay = card.querySelector(".item-quantity");
                 if (quantity > 0) {
                     if (!quantityDisplay) {
-                        quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"> ${quantity}`;
+                        quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> ${quantity}`;
                         card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
                     } else {
-                        quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"> ${quantity}`;
+                        quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> ${quantity}`;
                     }
                 } else if (quantityDisplay) {
                     quantityDisplay.remove();
