@@ -1,11 +1,10 @@
 "use strict";
 import { fetchData } from './lib/fetchData.js';
-/*
 import {fetchRoutes, directionsTo, getRouteSummaries} from './lib/hslReittiopas.js';
 
 // Simple call to fetchRoutes
 fetchRoutes().then(data => console.log('Fetched routes:', data));
-directionsTo().then(data => console.log('Directions:', data));*/
+directionsTo().then(data => console.log('Directions:', data));
 
 // Smooth scrolling for navbar links
 document.querySelectorAll('a').forEach(link => {
@@ -123,6 +122,13 @@ navbarMobileLink.addEventListener("click", () => {
     closeShoppingCart();
     const mobileSidebar = document.querySelector(".mobile-sidebar");
     mobileSidebar.classList.toggle("open");
+
+    const googleTranslateElement = document.getElementById("google_translate_element");
+    if (mobileSidebar.classList.contains("open")) {
+        mobileSidebar.querySelector(".sidebar-link").appendChild(googleTranslateElement);
+    } else {
+        document.querySelector(".navbar-actions").appendChild(googleTranslateElement);
+    }
 });
 
 const loginForgotPassword = document.getElementById("login-forgot-password");
@@ -828,7 +834,7 @@ const displayRestaurantModal = async (id, type) => {
                 </div>
                 <div class="information-footer">
                     <div class="information-footer-amount">
-                        <button id="meal-amount-btn-decrease" ${amount === 1 ? 'disabled' : ''}>
+                        <button id="meal-amount-btn-decrease" ${amount === 1 ? "disabled" : ""}>
                             <i class="fa-solid fa-minus"></i>
                         </button>
                         <p id="meal-amount-display">${amount}</p>
@@ -836,10 +842,10 @@ const displayRestaurantModal = async (id, type) => {
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
-                    <div class="information-footer-add">
+                    <button class="information-footer-add" ${data.stock === "no" ? "disabled" : ""}>
                         <p>Add to Cart</p>
                         <p id="meal-total-price">${(data.price * amount).toFixed(2)}€</p>
-                    </div>
+                    </button>
                 </div>
             </div>
         `;
@@ -1026,7 +1032,6 @@ const displayRestaurantModal = async (id, type) => {
     }
     const informationOverlay = document.getElementById("information-overlay");
     informationOverlay.classList.toggle("show-information-overlay");
-    console.log("information overlay activated!");
 } 
 
 function setupCartItemButtons(cartItem, item) {
@@ -1676,3 +1681,151 @@ searchItemInput.addEventListener("input", async (event) => {
         console.error("Error fetching search results:", error);
     }
 });
+
+// Initialize the Leaflet map
+let map; // Declare map in a higher scope
+
+function initMap() {
+    const location = [60.22487539389367, 25.07793846566476];
+    map = L.map('map-container').setView(location, 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+    drawStopsOnMap(map)
+}
+
+async function drawStopsOnMap(map) {
+    try {
+        const stops = await fetchRoutes(); // Get stops from hslReittiopas.js
+
+        stops.forEach(({ lat, lon, name }) => {
+            const circle = L.circle([lat, lon], {
+                color: 'green',
+                fillColor: '#32CD32',
+                fillOpacity: 0.5,
+                radius: 50,
+            }).addTo(map);
+
+            circle.bindTooltip(`<b>${name}</b>`, {
+                permanent: false, // Tooltip only shows on hover
+                direction: 'top', // Tooltip appears above the circle
+                offset: [0, -10], // Adjust the position of the tooltip
+            });
+
+            // Add click event to get directions
+            circle.on('click', () => {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const fromLat = position.coords.latitude;
+                    const fromLon = position.coords.longitude;
+                    const toLat = lat;
+                    const toLon = lon;
+
+                    try {
+                        const itineraries = await directionsTo(fromLat, fromLon, toLat, toLon);
+                        console.log('Itineraries:', itineraries);
+                        console.log(decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon));
+                    } catch (error) {
+                        console.error('Error fetching directions:', error);
+                    }
+                });
+            });
+            circle.on("click", async () => {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const fromLat = position.coords.latitude;
+                    const fromLon = position.coords.longitude;
+                    const toLat = lat;
+                    const toLon = lon;
+
+                    try {
+                        const summaries = await getRouteSummaries(fromLat, fromLon, toLat, toLon);
+
+                        // Populate the modal with the summaries
+                        const modal = document.getElementById("route-modal");
+                        const summariesContainer = document.getElementById("route-summaries");
+                        summariesContainer.innerHTML = summaries.map(summary => `<p>${summary}</p>`).join("");
+
+                        // Show the modal
+                        modal.style.display = "block";
+
+                        // Close the modal when the close button is clicked
+                        const closeButton = document.querySelector(".close-button");
+                        closeButton.onclick = () => {
+                            modal.style.display = "none";
+                        };
+
+                        // Close the modal when clicking outside the modal content
+                        window.onclick = (event) => {
+                            if (event.target === modal) {
+                                modal.style.display = "none";
+                            }
+                        };
+                    } catch (error) {
+                        console.error("Error displaying route summaries:", error);
+                    }
+                });
+            });
+
+            //
+            const marker = L.marker([60.22378791379731, 25.0792582351028]).addTo(map);
+
+            marker.bindTooltip("Burger Company", {
+                permanent: false, // Tooltip only shows on hover
+                direction: 'top'
+            });
+        });
+    } catch (error) {
+        console.error('Error drawing stops on map:', error);
+    }
+}
+
+initMap();
+// console.log(map)
+// Users current location
+navigator.geolocation.getCurrentPosition((position) => {
+    const { latitude, longitude } = position.coords;
+});
+
+let currentPolyline = null; // Store the currently drawn polyline
+
+async function decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon) {
+    try {
+        const data = await directionsTo(fromLat, fromLon, toLat, toLon);
+        const edges = data?.data?.planConnection?.edges;
+
+        if (edges && edges.length > 0) {
+            // Find the shortest connection based on duration
+            const shortestConnection = edges.reduce((shortest, current) => {
+                return current.node.duration < shortest.node.duration ? current : shortest;
+            });
+
+            console.log('Shortest Connection:', shortestConnection);
+
+            // Remove the previously drawn polyline if it exists
+            if (currentPolyline) {
+                map.removeLayer(currentPolyline);
+            }
+
+            // Decode and draw the polyline for the shortest connection
+            const decodedPoints = shortestConnection.node.legs.flatMap((leg) => {
+                return leg.legGeometry && leg.legGeometry.points
+                    ? polyline.decode(leg.legGeometry.points)
+                    : [];
+            });
+
+            if (decodedPoints.length > 0) {
+                currentPolyline = L.polyline(decodedPoints, {
+                    color: 'blue', // Set the color of the line
+                    weight: 4,     // Set the thickness of the line
+                    opacity: 0.7   // Set the opacity of the line
+                }).addTo(map);
+            } else {
+                console.log('No valid geometry found for the shortest connection.');
+            }
+        } else {
+            console.error('No connections found in the response.');
+        }
+    } catch (error) {
+        console.error('Error decoding polyline:', error);
+    }
+}
