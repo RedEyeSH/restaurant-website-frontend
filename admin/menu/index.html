@@ -450,7 +450,7 @@
                 <form id="editItemForm" enctype="multipart/form-data">
                     <input type="hidden" id="editItemId">
                     <div class="mb-3">
-                        <label for="editCategory" class="form-label">Category:</label>
+                        <label for="editCategory" class="form-label">Category <span style="color:red;font-size:20px;">*</span></label>
                         <select id="editCategory" name="category" class="form-select" required>
                             <option value="hamburger">Hamburger</option>
                             <option value="wrap">Wrap</option>
@@ -464,17 +464,17 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="editName" class="form-label">Item Name:</label>
+                        <label for="editName" class="form-label">Item Name <span style="color:red;font-size:20px;">*</span></label>
                         <input type="text" id="editName" name="name" class="form-control" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="editDescription" class="form-label">Description:</label>
+                        <label for="editDescription" class="form-label">Description <span style="color:red;font-size:20px;">*</span></label>
                         <textarea id="editDescription" name="description" class="form-control"></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label for="editIngredients" class="form-label">Ingredients:</label>
+                        <label for="editIngredients" class="form-label">Ingredients <span style="color:red;font-size:20px;">*</span></label>
                         <textarea id="editIngredients" name="ingredients" class="form-control"></textarea>
                     </div>
 
@@ -520,7 +520,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="editSize" class="form-label">Size:</label>
+                        <label for="editSize" class="form-label">Size</label>
                         <select id="editSize" name="size" class="form-select">
                             <option value="">None</option>
                             <option value="small">Small</option>
@@ -529,13 +529,13 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="editPrice" class="form-label">Price:</label>
+                        <label for="editPrice" class="form-label">Price <span style="color:red;font-size:20px;">*</span></label>
                         <input type="number" id="editPrice" name="price" class="form-control" step="0.01" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="editImage" class="form-label">Image URL:</label>
-                        <input type="file" id="editImage" name="image" accept="image/*" class="form-control">
+                        <label for="editImage" class="form-label">Image <span style="color:red;font-size:20px;">*</span></label>
+                        <input type="file" id="editImage" name="image" accept="image/*" class="form-control" required>
                         <div class="mt-3" id="editImagePreviewContainer" style="display: none;">
                             <h5 id="editImageHeading">Image Preview:</h5>
                             <img id="editImagePreview" src="" alt="Image Preview" class="img-fluid" style="max-height: 300px;">
@@ -544,16 +544,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="editStock" class="form-label">Stock:</label>
-                        <select id="editStock" name="stock" class="form-select">
+                        <label for="editStock" class="form-label">Stock <span style="color:red;font-size:20px;">*</span></label>
+                        <select id="editStock" name="stock" class="form-select" required>
                             <option value="yes">Yes</option>
                             <option value="no">No</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
-                        <label for="editVisible" class="form-label">Visible:</label>
-                        <select id="editVisible" name="visible" class="form-select">
+                        <label for="editVisible" class="form-label">Visible <span style="color:red;font-size:20px;">*</span></label>
+                        <select id="editVisible" name="visible" class="form-select" required>
                             <option value="yes">Yes</option>
                             <option value="no">No</option>
                         </select>
@@ -581,12 +581,12 @@
             <div class="modal-body">
                 <form id="editMealForm" enctype="multipart/form-data">
                     <div class="mb-3">
-                        <label for="editMealName" class="form-label">Meal Name:</label>
+                        <label for="editMealName" class="form-label">Meal Name <span style="color:red;font-size:20px;">*</span></label>
                         <input type="text" id="editMealName" class="form-control" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="editMealDescription" class="form-label">Description:</label>
+                        <label for="editMealDescription" class="form-label">Description <span style="color:red;font-size:20px;">*</span></label>
                         <textarea id="editMealDescription" class="form-control"></textarea>
                     </div>
 
@@ -633,13 +633,13 @@
 
 
                     <div class="mb-3">
-                        <label for="editMealPrice" class="form-label">Price:</label>
+                        <label for="editMealPrice" class="form-label">Price <span style="color:red;font-size:20px;">*</span></label>
                         <input type="number" id="editMealPrice" class="form-control" step="0.01" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="editMealImage" class="form-label">Image:</label>
-                        <input type="file" id="editMealImage" name="image" accept="image/*" class="form-control">
+                        <label for="editMealImage" class="form-label">Image <span style="color:red;font-size:20px;">*</span></label>
+                        <input type="file" id="editMealImage" name="image" accept="image/*" class="form-control" required>
                         <div class="mt-3" id="editMealImagePreviewContainer" style="display: none;">
                             <h5 id="editMealImageHeading">Image Preview:</h5>
                             <img id="editMealImagePreview" src="" alt="Meal Image" class="img-fluid" style="max-height: 300px;">
@@ -648,8 +648,8 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="editMealVisible" class="form-label">Visible:</label>
-                        <select id="editMealVisible" name="visible" class="form-select">
+                        <label for="editMealVisible" class="form-label">Visible <span style="color:red;font-size:20px;">*</span></label>
+                        <select id="editMealVisible" name="visible" class="form-select" required>
                             <option value="yes">Yes</option>
                             <option value="no">No</option>
                         </select>
