@@ -99,29 +99,30 @@
                 <div class="modal-body">
                     <form id="addAnnouncementForm">
                         <div class="mb-3">
-                            <label for="addAnnouncementTitle" class="form-label">Title</label>
+                            <label for="addAnnouncementTitle" class="form-label">Title <span style="color:red;font-size:20px;">*</span></label>
                             <input type="text" class="form-control" id="addAnnouncementTitle" required>
                         </div>
                         <div class="mb-3">
-                            <label for="addAnnouncementContent" class="form-label">Content</label>
+                            <label for="addAnnouncementContent" class="form-label">Content <span style="color:red;font-size:20px;">*</span></label>
                             <textarea class="form-control" id="addAnnouncementContent"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="image" class="form-label">Image URL:</label>
-                            <input type="file" id="imageAnnouncement" name="image" accept="image/*" class="form-control">
+                            <label for="image" class="form-label">Thumbnail Image <span style="color:red;font-size:20px;">*</span></label>
+                            <input type="file" id="imageAnnouncement" name="image" accept="image/*" class="form-control" required>
                             <div class="mt-3" id="imagePreviewContainerAnnouncement" style="display: none;">
                                 <h5>Image Preview:</h5>
                                 <img id="imagePreviewAnnouncement" src="" alt="Image Preview" class="img-fluid" style="max-height: 300px;">
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="addAnnouncementVisible" class="form-label">Visible:</label>
-                            <select id="addAnnouncementVisible" name="addAnnouncementVisible" class="form-select">
+                            <label for="addAnnouncementVisible" class="form-label">Visible <span style="color:red;font-size:20px;">*</span></label>
+                            <select id="addAnnouncementVisible" name="addAnnouncementVisible" class="form-select" required>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Announcement <span id="addLoading" class="spinner-border spinner-border-sm text-light" style="display: none;"></span></button>
+                        <div id="annoucementAlert" class="mt-3" style="display: none;"></div>
                     </form>
                 </div>
             </div>
@@ -139,16 +140,16 @@
                 <div class="modal-body">
                     <form id="editAnnouncementForm">
                         <div class="mb-3">
-                            <label for="editAnnouncementTitle" class="form-label">Title</label>
+                            <label for="editAnnouncementTitle" class="form-label">Title <span style="color:red;font-size:20px;">*</span></label>
                             <input type="text" class="form-control" id="editAnnouncementTitle" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editAnnouncementContent" class="form-label">Content</label>
+                            <label for="editAnnouncementContent" class="form-label">Content <span style="color:red;font-size:20px;">*</span></label>
                             <textarea class="form-control" id="editAnnouncementContent"></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="editAnnouncementImage" class="form-label">Image:</label>
-                            <input type="file" id="editAnnouncementImage" name="image" accept="image/*" class="form-control">
+                            <label for="editAnnouncementImage" class="form-label">Image <span style="color:red;font-size:20px;">*</span></label>
+                            <input type="file" id="editAnnouncementImage" name="image" accept="image/*" class="form-control" required>
                             <div class="mt-3" id="editAnnouncementImagePreviewContainer" style="display: none;">
                                 <h5 id="editAnnouncementImageHeading">Image Preview:</h5>
                                 <img id="editAnnouncementImagePreview" src="" alt="Announcement Image" class="img-fluid" style="max-height: 300px;">
@@ -156,13 +157,14 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="editAnnouncementVisible" class="form-label">Visible:</label>
-                            <select id="editAnnouncementVisible" name="editAnnouncementVisible" class="form-select">
+                            <label for="editAnnouncementVisible" class="form-label">Visible <span style="color:red;font-size:20px;">*</span></label>
+                            <select id="editAnnouncementVisible" name="editAnnouncementVisible" class="form-select" required>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Save Changes <span id="editLoading" class="spinner-border spinner-border-sm text-light" style="display: none;"></span></button>
+                        <div id="annoucementeditAlert" class="mt-3" style="display: none;"></div>
                     </form>
                 </div>
             </div>

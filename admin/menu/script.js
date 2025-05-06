@@ -65,6 +65,17 @@ document.getElementById('itemForm').addEventListener('submit', async function (e
     submitButton.disabled = true;
     loadingSpinner.style.display = 'inline-block';
 
+
+    // if ingredients is empty then show error message
+    if (tinymce.get('ingredients').getContent() === '') {
+        itemAlert.className = "alert alert-danger mt-3";
+        itemAlert.textContent = 'Please enter ingredients.';
+        itemAlert.style.display = 'block';
+        submitButton.disabled = false;
+        loadingSpinner.style.display = 'none';
+        return;
+    }
+
     // Send the request to the server
     const response = await fetch('https://10.120.32.59/app/api/v1/items', {
         method: 'POST',
@@ -663,6 +674,14 @@ async function editItem(id) {
             const editIngredientsEditor = tinymce.get('editIngredients');
             if (!editIngredientsEditor) {
                 console.error('TinyMCE editor for editIngredients is not initialized.');
+                return;
+            }
+
+            // If editIngredientsEditor is empty the we show error message
+            if (editIngredientsEditor.getContent() === '') {
+                editItemAlert.className = "alert alert-danger mt-3";
+                editItemAlert.textContent = 'Please enter ingredients.';
+                editItemAlert.style.display = 'block';
                 return;
             }
 

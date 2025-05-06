@@ -46,7 +46,7 @@ async function fetchAnnouncements() {
                 <td>${announcement.id}</td>
                 <td><a href="https://users.metropolia.fi/~quangth/restaurant/annoucement/index.html?id=${announcement.id}" target="blank">${announcement.title}</td>
                 <td><img src="https://10.120.32.59/app${announcement.image_url}" alt="Image" style="width: 50px; height: 50px;"></td>
-                <td><span class="badge ${announcement.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${announcement.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}</span></td>
+                <td><span class="badge ${announcement.visible === 'yes' ? 'bg-success' : 'bg-danger'}">${announcement.visible === 'yes' ? 'Visible' : 'Not Visible'}</span></td>
                 <td>${new Date(announcement.created_at).toLocaleString('fi')}</td>
                 <td>${new Date(announcement.updated_at).toLocaleString('fi')}</td>
                 <td>${announcement.added_by ? await fetchUserName(announcement.added_by) : 'Null'}</td>
@@ -95,8 +95,8 @@ async function viewAnnouncementDetails(announcementId) {
               <p><i class="bi bi-hash me-2"></i><strong>ID:</strong> ${announcement.id}</p>
               <p>
                 <i class="bi bi-eye me-2"></i><strong>Visibility:</strong>
-                <span class="badge ${announcement.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">
-                  ${announcement.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}
+                <span class="badge ${announcement.visible === 'yes' ? 'bg-success' : 'bg-danger'}">
+                  ${announcement.visible === 'yes' ? 'Visible' : 'Not Visible'}
                 </span>
               </p>
             </div>
@@ -255,6 +255,12 @@ const editAnnouncementForm = document.getElementById('editAnnouncementForm');
 editAnnouncementForm.addEventListener('submit', async function (event) {
     event.preventDefault();
     document.getElementById('editLoading').style.display = 'inline-block'; // Show loading spinner
+    
+    const annoucementAlert = document.getElementById('annoucementeditAlert');
+    
+    annoucementAlert.style.display = 'none'; // Hide alert initially
+    annoucementAlert.className = ""; // Reset class name
+
 
     const announcementId = this.dataset.announcementId;
     const formData = new FormData();
@@ -267,6 +273,15 @@ editAnnouncementForm.addEventListener('submit', async function (event) {
         formData.append('image', newImage);
     } else {
         formData.append('image', originalImageUrl);
+    }
+
+    // if ingredients is empty then show error message
+    if (tinymce.get('editAnnouncementContent').getContent() === '') {
+        annoucementAlert.className = "alert alert-danger mt-3";
+        annoucementAlert.textContent = 'Please enter content.';
+        annoucementAlert.style.display = 'block';
+        document.getElementById('editLoading').style.display = 'none';
+        return;
     }
 
     try {

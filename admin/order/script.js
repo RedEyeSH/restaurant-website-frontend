@@ -273,7 +273,7 @@ async function fetchOptions(type) {
         }
 
         const data = await response.json();
-        return data.map(item => ({ id: item.id, name: item.name, price: item.price  }));
+        return data.map(item => ({ id: item.id, name: item.name, price: item.price, stock: item.stock }));
     } catch (error) {
         console.error(error);
         return [];
@@ -293,7 +293,10 @@ async function addItemRow(item = { id: '', quantity: 1, price: 0.00, type: 'item
     const selectedIds = Array.from(document.querySelectorAll('#editItems .item-id')).map(select => select.value);
 
     const itemSelectOptions = itemOptions.map(option => 
-        `<option value="${option.id}" data-price="${option.price}" ${option.id === item.id ? 'selected' : ''} ${selectedIds.includes(option.id.toString()) && option.id !== item.id ? 'disabled' : ''}>${option.name}</option>`
+        `<option value="${option.id}" data-price="${option.price}" ${option.id === item.id ? 'selected' : ''} 
+        ${selectedIds.includes(option.id.toString()) && option.id !== item.id ? 'disabled' : ''} 
+        ${option.stock === 'no' && option.id !== item.id ? 'disabled' : ''}>
+        ${option.name}${option.stock === 'no' ? ' (Out of Stock)' : ''}${item.id === option.id ? ' (In Order)' : ''}</option>`
     ).join('');
 
     // Ensure item.price is a valid number before calling toFixed
@@ -340,7 +343,9 @@ async function addItemRow(item = { id: '', quantity: 1, price: 0.00, type: 'item
         const selectedIds = Array.from(document.querySelectorAll('#editItems .item-id')).map(select => select.value);
         itemSelect.innerHTML = `<option value="">Select ${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)}</option>`;
         newItemOptions.forEach(option => {
-            itemSelect.innerHTML += `<option value="${option.id}" data-price="${option.price}" ${selectedIds.includes(option.id.toString()) ? 'disabled' : ''}>${option.name}</option>`;
+            itemSelect.innerHTML += `<option value="${option.id}" data-price="${option.price}" 
+            ${selectedIds.includes(option.id.toString()) ? 'disabled' : ''} 
+            ${option.stock === 'no' ? 'disabled' : ''}>${option.name}${option.stock === 'no' ? ' (Out of Stock)' : ''}</option>`;
         });
     });
 
