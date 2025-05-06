@@ -903,9 +903,8 @@ async function fetchItemsForEditMeal(meal) {
             const categoryData = categories[item.category];
             if (categoryData) {
                 const isSelected = meal.item_ids[categoryData.key] === item.id ? 'selected' : '';
-                const isDisabled = item.stock === 'no' ? 'disabled' : '';
                 const badge = item.stock === 'no' ? ' (No Stock)' : '';
-                const option = `<option value="${item.id}" ${isSelected} ${isDisabled}>${item.name}${badge}</option>`;
+                const option = `<option value="${item.id}" ${isSelected}>${item.name}${badge}</option>`;
                 categoryData.select.innerHTML += option;
             }
         });
