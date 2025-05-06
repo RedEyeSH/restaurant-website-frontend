@@ -58,6 +58,7 @@ async function fetchSchedule() {
             `;
             tbody.appendChild(row);
         };
+        initializeTable('#ScheduleTable', 5);
     } catch (error) {
         console.error('Error fetching schedule:', error);
     }

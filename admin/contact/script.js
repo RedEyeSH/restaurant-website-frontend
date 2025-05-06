@@ -67,6 +67,7 @@ async function fetchContacts() {
             `;
             tbody.appendChild(row);
         }
+        initializeTable('#ContactsTable', 5);
     } catch (error) {
         console.error('Error fetching contacts:', error);
     }

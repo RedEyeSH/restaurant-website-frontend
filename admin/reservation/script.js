@@ -49,10 +49,8 @@ async function fetchReservations() {
                     <td>${reservation.guest_count}</td>
                     <td>${formattedDate}</td>
                     <td>${reservation.time}</td>
-                    <td>${reservation.notes || ''}</td>
                     <td>${reservation.allocated_tables}</td>
                     <td>${new Date(reservation.created_at).toLocaleString('fi')}</td>
-                    <td>${new Date(reservation.updated_at).toLocaleString('fi')}</td>
                     <td>${reservation.updated_by ? await fetchUserName(reservation.updated_by) : 'Not yet updated'}</td>
                     <td>
                         <button class="btn btn-primary view-reservation" onclick="viewReservationDetails(${reservation.reservation_id})" data-bs-toggle="modal" data-bs-target="#reservationModal">View</button>
@@ -439,17 +437,6 @@ function showDeleteConfirmationModalTable(tableId) {
 
 
 
-
-async function initializeTable(tableId, pageSize) {
-    $(tableId).bootstrapTable({
-        search: true,
-        pagination: true,
-        pageSize: pageSize,
-        sortable: true,
-        filterControl: true
-    });
-}
-
 async function fetchAvailableDays() {
     try {
         const response = await fetch('https://10.120.32.59/app/api/v1/reservations/available-days', {
@@ -470,11 +457,14 @@ async function fetchAvailableDays() {
         data.forEach(day => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${day.date}</td>
-                <td>${day.remainingChairs}</td>
-                <td>${day.allocatedTables}</td>
-                <td>${day.status}</td>
+            <td>${day.date}</td>
+            <td>${day.remainingChairs}</td>
+            <td>${day.allocatedTables}</td>
+            <td><span class="badge ${day.status === 'full' ? 'bg-danger' : day.status === 'available' ? 'bg-success' : 'bg-secondary'}">
+                ${day.status.charAt(0).toUpperCase() + day.status.slice(1)}
+            </span></td>
             `;
+        
             tbody.appendChild(row);
         });
 

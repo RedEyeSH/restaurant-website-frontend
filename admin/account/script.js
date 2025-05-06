@@ -48,8 +48,6 @@ async function fetchUsers() {
                 <td>${user.verified == '1' ? '<span class="badge bg-success">Verified</span>' : '<span class="badge bg-danger">Not verified</span>'}</td>
                 <td>${new Date(user.last_login).toLocaleString('fi')}</td>
                 <td>${new Date(user.created_at).toLocaleString('fi')}</td>
-                <td>${new Date(user.updated_at).toLocaleString('fi')}</td>
-                <td>${user.updated_by ? await fetchUserName(user.updated_by) : 'Not yet updated'}</td>
                 <td>
                     <button class="btn btn-primary view-user" onclick="viewUserDetails(${user.id})" data-bs-toggle="modal" data-bs-target="#userModal">View</button>
                     <button class="btn btn-secondary edit-user" onclick="populateEditUserModal(${user.id})" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
@@ -58,6 +56,7 @@ async function fetchUsers() {
             `;
             tbody.appendChild(row);
         }
+        initializeTable('#UsersTable', 5);
     } catch (error) {
         console.error('Error fetching users:', error);
     }

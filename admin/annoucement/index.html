@@ -55,11 +55,40 @@
 
      <script>
         fetch('../navbar.html')
-          .then(response => response.text())
-          .then(data => {
-            document.getElementById('navbar-container').innerHTML = data;
-          });
-      </script>
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navbar-container').innerHTML = data;
+        
+                // Initialize the toggle button state after the sidebar is loaded
+                const toggleButton = document.getElementById('navbar-toggle');
+                const sidebar = document.querySelector('nav.nav');
+        
+                if (!sidebar.classList.contains('d-none')) {
+                    toggleButton.innerHTML = '<i class="bi bi-arrow-left"></i>'; // Set to arrow icon if sidebar is visible
+                } else {
+                    toggleButton.innerHTML = '<i class="bi bi-list"></i>'; // Set to list icon if sidebar is hidden
+                }
+        
+                toggleButton.addEventListener('click', () => {
+                    const mainContent = document.querySelector('.flex-grow-1');
+                    if (sidebar.classList.contains('d-none')) {
+                        sidebar.classList.remove('d-none', 'slide-out');
+                        sidebar.classList.add('slide-in');
+                        toggleButton.innerHTML = '<i class="bi bi-arrow-left"></i>'; // Change to arrow icon
+                        mainContent.classList.remove('full-width');
+                    } else {
+                        sidebar.classList.remove('slide-in');
+                        sidebar.classList.add('slide-out');
+                        setTimeout(() => sidebar.classList.add('d-none'), 300); // Wait for animation to finish
+                        toggleButton.innerHTML = '<i class="bi bi-list"></i>'; // Change back to list icon
+                        mainContent.classList.add('full-width');
+                    }
+        
+                    toggleButton.style.position = sidebar.classList.contains('d-none') ? 'absolute' : 'fixed';
+                    toggleButton.style.top = '15px';
+                });
+            });
+              </script>
 
 <!-- Main Content -->
 <div class="flex-grow-1 p-4">
@@ -70,14 +99,14 @@
             <table class="table table-striped table-bordered" id="AnnouncementsTable">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Title</th>
+                        <th data-field="id" data-sortable="true" data-filter-control="input">ID</th>
+                        <th data-field="title" data-sortable="true" data-filter-control="input">Title</th>
                         <th>Image</th>
-                        <th>Visible</th>
-                        <th>Created At</th>
-                        <th>Updated At</th>
-                        <th>Added By</th>
-                        <th>Updated By</th>
+                        <th data-field="visible" data-sortable="true" data-filter-control="select">Visible</th>
+                        <th data-field="created_at" data-sortable="true" data-filter-control="input">Created At</th>
+                        <th data-field="updated_at" data-sortable="true" data-filter-control="input">Updated At</th>
+                        <th data-field="added_by" data-sortable="true" data-filter-control="select">Added By</th>
+                        <th data-field="updated_by" data-sortable="true" data-filter-control="select">Updated By</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -88,6 +117,29 @@
         </div>
     </div>
 
+    <script>
+        async function initializeTable(tableId, pageSize) {
+            $(tableId).bootstrapTable({
+                search: true,       // Enable search
+                pagination: true,   // Enable pagination
+                pageSize: pageSize, // Set number of items per page
+                sortable: true,     // Enable sorting
+                filterControl: true, // Enable filter control
+                showColumns: true,
+                showMultiSort: true,
+                sortPriority: [
+                    {
+                    sortName: 'github.count.forks',
+                    sortOrder: 'desc'
+                    },
+                    {
+                    sortName: 'github.count.stargazers',
+                    sortOrder: 'desc'
+                    }
+                ],
+            });
+        }
+    </script>
     <!-- Add Announcement Modal -->
     <div class="modal fade" id="addAnnouncementModal" tabindex="-1" aria-labelledby="addAnnouncementModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
