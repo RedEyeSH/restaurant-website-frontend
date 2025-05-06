@@ -331,7 +331,7 @@ const displayFavourites = async () => {
             <a href="/?${item.type === "item" ? "item" : "meal"}Id=${item.id}" style="text-decoration: none" class="favourite-item-box">
                 <div class="favourite-header">
                     <div class="favourite-image">
-                        <img src="../images/burgerfrommenu.png" alt="${item.name}">
+                        <img src="https://10.120.32.59/app${item.image_url}" alt="${item.name}">
                     </div>
                     <div class="favourite-info">
                         <p>${item.name}</p>
@@ -491,7 +491,7 @@ const orderHistoryPopup = async (item, data) => {
                     <div class="order-popup-box">
                         <div class="order-popup-box-header">
                             <div class="order-popup-box-image">
-                                <img src="../images/burgerfrommenu.png" alt="${item.details.name}">
+                                <img src="https://10.120.32.59/app${item.image_url}" alt="${item.details.name}">
                                 <p class="order-popup-box-quantity">${item.quantity}</p>
                             </div>
                             <div class="order-popup-box-name">

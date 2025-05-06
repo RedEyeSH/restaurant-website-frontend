@@ -280,6 +280,9 @@ const displayShoppingCart = async () => {
 
     const orderContainer = document.querySelector(".order-table");
 
+    // Clear the existing table (if any)
+    orderContainer.innerHTML = "";
+
     const table = document.createElement("table");
     table.className = "order-table";
     table.innerHTML = `
@@ -323,10 +326,32 @@ const displayShoppingCart = async () => {
                             </div>
                         </td>
                         <td>${data.price}€</td>
-                        <td>${quantity}</td>
+                        <td>
+                            <button class="decrease-btn" data-id="${item.id}" ${item.stock === "no" ? "disabled" : ""}>
+                            <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <span class="quantity">${quantity}</span>
+                            <button class="increase-btn"  data-id="${item.id}" ${item.stock === "no" ? "disabled" : ""}>
+                            <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button class="delete-btn" data-id="${item.id}">
+                            <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
                         <td>${itemTotalPrice.toFixed(2)}€</td>
                     `;
                     tableBody.appendChild(row);
+
+                    // Add event listener for the delete button
+                    const deleteButton = row.querySelector(".delete-btn");
+                    deleteButton.addEventListener("click", () => deleteItem(item.id));
+
+                    // Add event listeners for the increase and decrease buttons
+                    const increaseButton = row.querySelector(".increase-btn");
+                    const decreaseButton = row.querySelector(".decrease-btn");
+
+                    increaseButton.addEventListener("click", () => updateQuantity(item.id, 1));
+                    decreaseButton.addEventListener("click", () => updateQuantity(item.id, -1));
                 } else {
                     console.error(`Failed to fetch item with ID ${item.id}: ${response.status}`);
                 }
@@ -339,13 +364,66 @@ const displayShoppingCart = async () => {
     const totalRow = document.createElement("tr");
     totalRow.className = "order-total-row";
     totalRow.innerHTML = `
-        <td colspan="3" style="text-align: right; font-weight: bold;">Total Price:</td>
-        <td style="font-weight: bold;">${totalPrice.toFixed(2)}€</td>
+        <td colspan="4" style="text-align: right; font-weight: bold;">Total Price: ${totalPrice.toFixed(2)}€</td>
     `;
+    // <td style="font-weight: bold;">${totalPrice.toFixed(2)}€</td>
     tableBody.appendChild(totalRow);
 
     orderContainer.appendChild(table);
 };
+
+
+// Function to update the quantity of an item in the shopping cart
+const updateQuantity = (itemId, change) => {
+    let shoppingCart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+
+    // Find the item in the cart and update its quantity
+    const item = shoppingCart.find(item => item.id === itemId);
+    if (item) {
+        // Ensure the quantity does not go below 1
+        item.quantity = Math.max(1, item.quantity + change);
+
+        // Update the shoppingCart in localStorage
+        localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+
+        // Re-render the shopping cart after updating the quantity
+        displayShoppingCart();
+    }
+};
+
+
+// Function to delete an item from the shopping cart and update localStorage
+const deleteItem = (itemId) => {
+    let shoppingCart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
+
+    // Filter out the item to delete by matching the item id
+    shoppingCart = shoppingCart.filter(item => item.id !== itemId);
+
+    // Update the shoppingCart in localStorage
+    localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
+
+    // Re-render the shopping cart after deletion
+    displayShoppingCart();
+
+    // Get the order form and container elements
+    const orderForm = document.getElementById("order-form");
+    const orderContainer = document.querySelector(".order-container");
+    const orderTable = document.querySelector(".order-table");
+    // If the shopping cart is empty, hide the order form and show an empty cart message
+    if (shoppingCart.length === 0) {
+        orderForm.style.display = "none";
+        orderTab.style.display = "none";
+        // Check if the empty cart message is already added, if not, create and add it
+        const existingEmptyMessage = orderContainer.querySelector(".empty-cart-message");
+        if (!existingEmptyMessage) {
+            const emptyCartMessage = document.createElement("p");
+            emptyCartMessage.textContent = "Your shopping cart is empty. Please add items to your cart before placing an order.";
+            emptyCartMessage.className = "empty-cart-message"; // Add a class to easily find and remove later
+            orderContainer.appendChild(emptyCartMessage);
+        }
+    }
+};
+
 
 const toggleAddressInputs = () => {
     const methodSelect = document.getElementById("method");

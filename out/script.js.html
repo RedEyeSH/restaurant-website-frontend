@@ -1,4 +1,32 @@
-"use strict";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: script.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: script.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
 import { fetchData } from './lib/fetchData.js';
 import {fetchRoutes, directionsTo, getRouteSummaries} from './lib/hslReittiopas.js';
 
@@ -44,7 +72,7 @@ let isAdmin;
  * Displays the user's name and role (if admin) in the navbar.
  *
  * @async
- * @returns {Promise<void>} A promise that resolves when the user's logged-in state is verified and the navbar is updated.
+ * @returns {Promise&lt;void>} A promise that resolves when the user's logged-in state is verified and the navbar is updated.
  */
 const loggedIn = async () => {
     const token = localStorage.getItem("authToken");
@@ -69,7 +97,7 @@ const loggedIn = async () => {
         navbarLoggedIn.setAttribute("id", "navbar-logged-in");
 
         navbarLoggedIn.innerHTML = `
-            <a href="/profile/profile.html">${userData.name} ${isAdmin ? '<i class="fa fa-shield" style="margin-left: 6px; color: gold;"></i>' : ''}</a>
+            &lt;a href="/profile/profile.html">${userData.name} ${isAdmin ? '&lt;i class="fa fa-shield" style="margin-left: 6px; color: gold;">&lt;/i>' : ''}&lt;/a>
         `;
 
         navbarLogin.remove();
@@ -202,7 +230,7 @@ const shoppingCartLink = document.getElementById("navbar-shopping-cart");
  * Updates the total price and handles empty cart scenarios.
  *
  * @async
- * @returns {Promise<void>} A promise that resolves when the shopping cart is updated and displayed.
+ * @returns {Promise&lt;void>} A promise that resolves when the shopping cart is updated and displayed.
  */
 shoppingCartLink.addEventListener("click", async () => {
     closeMobileSidebar();
@@ -241,28 +269,28 @@ shoppingCartLink.addEventListener("click", async () => {
                     shoppingCartItem.className = "shopping-cart-item";
                     shoppingCartItem.setAttribute("data-item-id", item.id);
                     shoppingCartItem.innerHTML = `
-                    <div class="shopping-cart-header">
-                        <div class="shopping-cart-img">
-                            <img src="https://10.120.32.59/app/${item.image_url}" alt="${item.name}">
-                        </div>
-                        <div class="shopping-cart-info">
-                            <h4>${item.name}</h4>
-                            <p id="shopping-cart-price">${(cartItem.quantity * item.price).toFixed(2)}€</p>
-                            ${item.stock === "no" ? '<p style="color: red;">Out of Stock</p>' : ''}
-                        </div>
-                    </div>
-                    <div class="shopping-cart-options">
-                        <button id="cart-btn-decrease" ${item.stock === "no" ? "disabled" : ""}>
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <p id="shopping-cart-amount">${cartItem.quantity}</p>
-                        <button id="cart-btn-increase" ${item.stock === "no" ? "disabled" : ""}>
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                        <button id="cart-btn-trash">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
+                    &lt;div class="shopping-cart-header">
+                        &lt;div class="shopping-cart-img">
+                            &lt;img src="https://10.120.32.59/app/${item.image_url}" alt="${item.name}">
+                        &lt;/div>
+                        &lt;div class="shopping-cart-info">
+                            &lt;h4>${item.name}&lt;/h4>
+                            &lt;p id="shopping-cart-price">${(cartItem.quantity * item.price).toFixed(2)}€&lt;/p>
+                            ${item.stock === "no" ? '&lt;p style="color: red;">Out of Stock&lt;/p>' : ''}
+                        &lt;/div>
+                    &lt;/div>
+                    &lt;div class="shopping-cart-options">
+                        &lt;button id="cart-btn-decrease" ${item.stock === "no" ? "disabled" : ""}>
+                            &lt;i class="fa-solid fa-minus">&lt;/i>
+                        &lt;/button>
+                        &lt;p id="shopping-cart-amount">${cartItem.quantity}&lt;/p>
+                        &lt;button id="cart-btn-increase" ${item.stock === "no" ? "disabled" : ""}>
+                            &lt;i class="fa-solid fa-plus">&lt;/i>
+                        &lt;/button>
+                        &lt;button id="cart-btn-trash">
+                            &lt;i class="fa-solid fa-trash-can">&lt;/i>
+                        &lt;/button>
+                    &lt;/div>
                 `;
 
                     shoppingCartList.appendChild(shoppingCartItem);
@@ -425,36 +453,35 @@ function renderRestaurantCards(category = 'All') {
             // console.log(item.image_url);
 
             restaurantCard.innerHTML = `
-                <div class="restaurant-card-image">
-                    <img src="https://10.120.32.59/app${item.image_url}" alt="${item.name}" draggable="false">
-                    ${quantity > 0 ? `<p class="item-quantity"><i class="fa-solid fa-cart-shopping"></i> ${quantity}</p>` : ''}
-                </div>
-                <div class="restaurant-card-header">
-                    <h2>${item.name}</h2>
-                </div>
-                <div class="restaurant-card-description">
-                    <p>${item.description}</p>
-                </div>
-                <div class="restaurant-card-price">
-                    <h2>${item.price}€</h2>
-                    <p style="color:red;">${item.stock === "no" ? "Out of stock" : ""}</p>
+                &lt;div class="restaurant-card-image">
+                    &lt;img src="https://10.120.32.59/app${item.image_url}" alt="${item.name}" draggable="false">
+                    ${quantity > 0 ? `&lt;p class="item-quantity">&lt;i class="fa-solid fa-cart-shopping">&lt;/i> ${quantity}&lt;/p>` : ''}
+                &lt;/div>
+                &lt;div class="restaurant-card-header">
+                    &lt;h2>${item.name}&lt;/h2>
+                &lt;/div>
+                &lt;div class="restaurant-card-description">
+                    &lt;p>${item.description}&lt;/p>
+                &lt;/div>
+                &lt;div class="restaurant-card-price">
+                    &lt;h2>${item.price}€&lt;/h2>
                     ${isAdmin ? (
                         `
                           ${item.visible === 'yes' 
-                            ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
+                            ? '&lt;i class="fa fa-eye" style="margin-left: 6px; color: gold;">&lt;/i>' 
                             : item.visible === 'no' 
-                              ? '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>' 
+                              ? '&lt;i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;">&lt;/i>' 
                               : ''
                           }
                       
                           ${item.created_at 
-                            ? `<span style="margin-left: 10px;">Created At: ${new Date(item.created_at).toLocaleString()}</span>` 
+                            ? `&lt;span style="margin-left: 10px;">Created At: ${new Date(item.created_at).toLocaleString()}&lt;/span>` 
                             : ''
                           }
                         `
                       ) : ''}
                       
-                </div>
+                &lt;/div>
             `;
 
             restaurantMenuSection.appendChild(restaurantCard);
@@ -476,7 +503,7 @@ function renderRestaurantCards(category = 'All') {
  * Also includes an "All" button to display all items.
  *
  * @async
- * @returns {Promise<void>} A promise that resolves when the category menu is populated.
+ * @returns {Promise&lt;void>} A promise that resolves when the category menu is populated.
  */
 async function populateCategories() {
     const data = await fetchData(`${apiUrl}/items`);
@@ -521,7 +548,7 @@ async function populateCategories() {
  * Handles click events to open a modal with detailed meal information.
  *
  * @async
- * @returns {Promise<void>} A promise that resolves when the meals are successfully rendered.
+ * @returns {Promise&lt;void>} A promise that resolves when the meals are successfully rendered.
  */
 async function renderMeals() {
     const [meals, items] = await Promise.all([
@@ -563,7 +590,7 @@ async function renderMeals() {
             }
         }
 
-        const cartItem = cart.find(cartItem => cartItem.id === meal.id && cartItem.type === 'meal');
+        const cartItem = cart.find(cartItem => cartItem.id === meal.id &amp;&amp; cartItem.type === 'meal');
         const quantity = cartItem ? cartItem.quantity : 0;
 
         const mealCard = document.createElement("div");
@@ -571,24 +598,23 @@ async function renderMeals() {
         mealCard.setAttribute('data-item-id', meal.id);
         mealCard.setAttribute('data-item-type', 'meal');
         mealCard.innerHTML = `
-            <div class="restaurant-card-image">
-                <img src="https://10.120.32.59/app${meal.image_url}" alt="${meal.name}" draggable="false">
-                ${quantity > 0 ? `<p class="item-quantity"><i class="fa-solid fa-cart-shopping"></i> ${quantity}</p>` : ""}
-            </div>
-            <div class="restaurant-card-header">
-                <h2>${meal.name}</h2>
-            </div>
-            <div class="restaurant-card-description">
-                <p>${meal.description}</p>
-            </div>
-            <div class="restaurant-card-price">
-                <h2>${meal.price}€</h2>
-                <p style="color:red;">${meal.stock === "no" ? "Out of stock" : ""}</p>
+            &lt;div class="restaurant-card-image">
+                &lt;img src="https://10.120.32.59/app${meal.image_url}" alt="${meal.name}" draggable="false">
+                ${quantity > 0 ? `&lt;p class="item-quantity">&lt;i class="fa-solid fa-cart-shopping">&lt;/i> ${quantity}&lt;/p>` : ""}
+            &lt;/div>
+            &lt;div class="restaurant-card-header">
+                &lt;h2>${meal.name}&lt;/h2>
+            &lt;/div>
+            &lt;div class="restaurant-card-description">
+                &lt;p>${meal.description}&lt;/p>
+            &lt;/div>
+            &lt;div class="restaurant-card-price">
+                &lt;h2>${meal.price}€&lt;/h2>
                 ${isAdmin ? (meal.visible === 'yes' 
-                ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
-                : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
+                ? '&lt;i class="fa fa-eye" style="margin-left: 6px; color: gold;">&lt;/i>' 
+                : '&lt;i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;">&lt;/i>') 
                 : ''}
-            </div>
+            &lt;/div>
         `;
 
         mealCard.addEventListener("click", (event) => {
@@ -635,7 +661,7 @@ const loginForm = document.querySelector(".login-form form");
  *
  * @async
  * @param {Event} event - The form submission event.
- * @returns {Promise<void>} A promise that resolves when the login process is complete.
+ * @returns {Promise&lt;void>} A promise that resolves when the login process is complete.
  */
 loginForm.addEventListener('submit', async function(event) {
     event.preventDefault();  // Prevent the default form submission
@@ -699,7 +725,7 @@ const signupForm = document.querySelector(".signup-form form");
  *
  * @async
  * @param {Event} event - The form submission event.
- * @returns {Promise<void>} A promise that resolves when the signup process is complete.
+ * @returns {Promise&lt;void>} A promise that resolves when the signup process is complete.
  */
 signupForm.addEventListener('submit', async function(event) {
     event.preventDefault();  // Prevent the default form submission
@@ -758,7 +784,7 @@ const forgotPasswordForm = document.querySelector(".forgot-password-form form");
  *
  * @async
  * @param {Event} event - The form submission event.
- * @returns {Promise<void>} A promise that resolves when the forgot password process is complete.
+ * @returns {Promise&lt;void>} A promise that resolves when the forgot password process is complete.
  */
 forgotPasswordForm.addEventListener("submit", async function(event) {
     event.preventDefault();  // Prevent the default form submission
@@ -798,7 +824,7 @@ forgotPasswordForm.addEventListener("submit", async function(event) {
 /**
  * Fetches menu items from the API.
  * @async
- * @returns {Promise<Object[]>} A promise that resolves to an array of menu items.
+ * @returns {Promise&lt;Object[]>} A promise that resolves to an array of menu items.
  */
 const fetchMenuItems = async () => {
     const data = await fetchData(`${apiUrl}/items`, {
@@ -815,7 +841,7 @@ const fetchMenuItems = async () => {
  * Fetches a specific menu item by its ID.
  * @async
  * @param {number|string} id - The ID of the menu item to fetch.
- * @returns {Promise<Object>} A promise that resolves to the menu item data.
+ * @returns {Promise&lt;Object>} A promise that resolves to the menu item data.
  */
 const fetchMenuItemsById = async (id) => {
     const data = await fetchData(`${apiUrl}/items/${id}`, {
@@ -834,7 +860,7 @@ const fetchMenuItemsById = async (id) => {
  *
  * @async
  * @param {number|string} id - The ID of the menu meal to fetch.
- * @returns {Promise<Object>} A promise that resolves to the menu meal data.
+ * @returns {Promise&lt;Object>} A promise that resolves to the menu meal data.
  * @throws {Error} Throws an error if the fetch request fails.
  */
 const fetchMenuMealsById = async (id) => {
@@ -854,7 +880,7 @@ const fetchMenuMealsById = async (id) => {
  *
  * @async
  * @param {string} token - The authentication token used to identify the user.
- * @returns {Promise<Object>} A promise that resolves to the user's data object.
+ * @returns {Promise&lt;Object>} A promise that resolves to the user's data object.
  * @throws {Error} Throws an error if the fetch request fails.
  */
 const getUserByToken = async (token) => {
@@ -873,7 +899,7 @@ const getUserByToken = async (token) => {
  * Fetches the corresponding item or meal data from the API and displays it in a modal.
  *
  * @async
- * @returns {Promise<void>} A promise that resolves when the item or meal data is fetched and displayed.
+ * @returns {Promise&lt;void>} A promise that resolves when the item or meal data is fetched and displayed.
  */
 async function handleItemIdFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -960,7 +986,7 @@ function removeItemIdFromURL(type) {
  * @async
  * @param {number|string} id - The ID of the item or meal to display.
  * @param {string} type - The type of the item (e.g., 'item' or 'meal').
- * @returns {Promise<void>} A promise that resolves when the modal is displayed and populated.
+ * @returns {Promise&lt;void>} A promise that resolves when the modal is displayed and populated.
  */
 const displayRestaurantModal = async (id, type) => {
     let data;
@@ -1006,47 +1032,46 @@ const displayRestaurantModal = async (id, type) => {
         }
 
         const mealDetailsHTML = `
-            <div class="information-container">
+            &lt;div class="information-container">
                         ${isAdmin ? (data.visible === 'yes' 
-            ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
-            : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
+            ? '&lt;i class="fa fa-eye" style="margin-left: 6px; color: gold;">&lt;/i>' 
+            : '&lt;i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;">&lt;/i>') 
             : ''}
-                <div class="information-image">
-                    <img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}" draggable="false">
-                </div>
-                <div class="information-content">
-                    <div class="information-content-top">
-                        <h1>${data.name}</h1>
-                        <p>${data.price}€</p>
-                    </div>
-                    <div class="information-content-description">
-                        <p>${data.description}</p>
-                        <p style="color:red;font-weight:bold">${data.stock === "no" ? "(Out of stock)" : ""}</p>
-                    </div>
-                    <hr style="border-color: #949494">
-                    <div class="information-content-meal-items">
-                        <h3>Meal Includes:</h3>
-                        <ul>
-                            ${associatedItems.map(item => `<li class="meal-items"><strong>${item.name} (${formatCategoryText(item.category)}):</strong> ${item.description} <p style="color:red;font-weight:bold">${item.stock === "no" ? "(Out of stock)" : ""}</p></li>`).join('')}
-                        </ul>
-                    </div>
-                </div>
-                <div class="information-footer">
-                    <div class="information-footer-amount">
-                        <button id="meal-amount-btn-decrease" ${amount === 1 ? "disabled" : ""}>
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <p id="meal-amount-display">${amount}</p>
-                        <button id="meal-amount-btn-increase">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                    <button class="information-footer-add" ${data.stock === "no" ? "disabled" : ""}>
-                        <p>Add to Cart</p>
-                        <p id="meal-total-price">${(data.price * amount).toFixed(2)}€</p>
-                    </button>
-                </div>
-            </div>
+                &lt;div class="information-image">
+                    &lt;img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}" draggable="false">
+                &lt;/div>
+                &lt;div class="information-content">
+                    &lt;div class="information-content-top">
+                        &lt;h1>${data.name}&lt;/h1>
+                        &lt;p>${data.price}€&lt;/p>
+                    &lt;/div>
+                    &lt;div class="information-content-description">
+                        &lt;p>${data.description}&lt;/p>
+                    &lt;/div>
+                    &lt;hr style="border-color: #949494">
+                    &lt;div class="information-content-meal-items">
+                        &lt;h3>Meal Includes:&lt;/h3>
+                        &lt;ul>
+                            ${associatedItems.map(item => `&lt;li class="meal-items">&lt;strong>${item.name} (${formatCategoryText(item.category)}):&lt;/strong> ${item.description}&lt;/li>`).join('')}
+                        &lt;/ul>
+                    &lt;/div>
+                &lt;/div>
+                &lt;div class="information-footer">
+                    &lt;div class="information-footer-amount">
+                        &lt;button id="meal-amount-btn-decrease" ${amount === 1 ? "disabled" : ""}>
+                            &lt;i class="fa-solid fa-minus">&lt;/i>
+                        &lt;/button>
+                        &lt;p id="meal-amount-display">${amount}&lt;/p>
+                        &lt;button id="meal-amount-btn-increase">
+                            &lt;i class="fa-solid fa-plus">&lt;/i>
+                        &lt;/button>
+                    &lt;/div>
+                    &lt;button class="information-footer-add" ${data.stock === "no" ? "disabled" : ""}>
+                        &lt;p>Add to Cart&lt;/p>
+                        &lt;p id="meal-total-price">${(data.price * amount).toFixed(2)}€&lt;/p>
+                    &lt;/button>
+                &lt;/div>
+            &lt;/div>
         `;
 
         information.innerHTML = mealDetailsHTML;
@@ -1112,57 +1137,56 @@ const displayRestaurantModal = async (id, type) => {
         let amount = 1;
 
         const allergens = data.allergens ? data.allergens.split(',') : null;
-        const allergensHTML = allergens ? allergens.map(allergen => `<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${allergen.trim()}</span>`).join('') : 'None';
+        const allergensHTML = allergens ? allergens.map(allergen => `&lt;span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${allergen.trim()}&lt;/span>`).join('') : 'None';
 
-        const sizeHTML = data.size ? `<div class="information-content-size">
-            <p>Size -<span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${capitalize(data.size)}</span></p>
-        </div>` : '';
+        const sizeHTML = data.size ? `&lt;div class="information-content-size">
+            &lt;p>Size -&lt;span style="background-color: #FFC94B; color: black; margin-right: 5px; padding: 2px 5px; border-radius: 3px;">${capitalize(data.size)}&lt;/span>&lt;/p>
+        &lt;/div>` : '';
 
         const informationContainer = document.createElement("div");
         informationContainer.className = "information-container";
         informationContainer.innerHTML = `
             ${isAdmin ? (data.visible === 'yes' 
-            ? '<i class="fa fa-eye" style="margin-left: 6px; color: gold;"></i>' 
-            : '<i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;"></i>') 
+            ? '&lt;i class="fa fa-eye" style="margin-left: 6px; color: gold;">&lt;/i>' 
+            : '&lt;i class="fa fa-eye-slash" style="margin-left: 6px; color: gray;">&lt;/i>') 
             : ''}
-            <div class="information-image">
-                <img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}" draggable="false">
-            </div>
-            <div class="information-content">
-                <div class="information-content-top">
-                    <h1>${data.name}</h1>
-                    <p>${data.price}€</p>
-                </div>
-                <div class="information-content-description">
-                    <p>${data.description}</p>
-                    <p style="color:red;font-weight:bold">${data.stock === "no" ? "(Out of stock)" : ""}</p>
-                </div>
-                <hr style="border-color: #949494">
-                <div class="information-content-ingredients">
-                    <h3>Ingredients:</h3>
-                    <p><span>${data.ingredients}</span></p>
-                </div>
-                <div class="information-content-allergens">
-                    <h3>Allergens: </h3>
-                    <p style="margin-top: 10px">${allergensHTML}</p>
-                </div>
+            &lt;div class="information-image">
+                &lt;img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}" draggable="false">
+            &lt;/div>
+            &lt;div class="information-content">
+                &lt;div class="information-content-top">
+                    &lt;h1>${data.name}&lt;/h1>
+                    &lt;p>${data.price}€&lt;/p>
+                &lt;/div>
+                &lt;div class="information-content-description">
+                    &lt;p>${data.description}&lt;/p>
+                &lt;/div>
+                &lt;hr style="border-color: #949494">
+                &lt;div class="information-content-ingredients">
+                    &lt;h3>Ingredients:&lt;/h3>
+                    &lt;p>&lt;span>${data.ingredients}&lt;/span>&lt;/p>
+                &lt;/div>
+                &lt;div class="information-content-allergens">
+                    &lt;h3>Allergens: &lt;/h3>
+                    &lt;p style="margin-top: 10px">${allergensHTML}&lt;/p>
+                &lt;/div>
                 ${sizeHTML}
-            </div>
-            <div class="information-footer">
-                <div class="information-footer-amount">
-                    <button id="information-amount-btn-decrease" ${amount === 1 ? "disabled" : ""}>
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
-                    <p id="information-amount-display">${amount}</p>
-                    <button id="information-amount-btn-increase" style="${data.stock === "no" ? "cursor: not-allowed" : ""}" ${data.stock === "no" ? "disabled" : ""}>
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                </div>
-                <button class="information-footer-add" style="${data.stock === "no" ? "cursor: not-allowed" : ""}" ${data.stock === "no" ? "disabled" : ""}>
-                    <p>Add to Cart</p>
-                    <p id="information-total-price">${(data.price * amount).toFixed(2)}€</p>
-                </button>
-            </div>
+            &lt;/div>
+            &lt;div class="information-footer">
+                &lt;div class="information-footer-amount">
+                    &lt;button id="information-amount-btn-decrease" ${amount === 1 ? "disabled" : ""}>
+                        &lt;i class="fa-solid fa-minus">&lt;/i>
+                    &lt;/button>
+                    &lt;p id="information-amount-display">${amount}&lt;/p>
+                    &lt;button id="information-amount-btn-increase" style="${data.stock === "no" ? "cursor: not-allowed" : ""}" ${data.stock === "no" ? "disabled" : ""}>
+                        &lt;i class="fa-solid fa-plus">&lt;/i>
+                    &lt;/button>
+                &lt;/div>
+                &lt;button class="information-footer-add" style="${data.stock === "no" ? "cursor: not-allowed" : ""}" ${data.stock === "no" ? "disabled" : ""}>
+                    &lt;p>Add to Cart&lt;/p>
+                    &lt;p id="information-total-price">${(data.price * amount).toFixed(2)}€&lt;/p>
+                &lt;/button>
+            &lt;/div>
         `;
 
         information.appendChild(informationContainer);
@@ -1259,14 +1283,14 @@ function setupCartItemButtons(cartItem, item) {
         const restaurantCards = document.querySelectorAll(".restaurant-card");
         restaurantCards.forEach(card => {
             const cardName = card.querySelector(".restaurant-card-header h2").textContent;
-            if (cardName === item.name && item.type === type) {
+            if (cardName === item.name &amp;&amp; item.type === type) {
                 const quantityDisplay = card.querySelector(".item-quantity");
                 if (quantity > 0) {
                     if (!quantityDisplay) {
-                        quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> ${quantity}`;
+                        quantityDisplay.innerHTML = `&lt;i class="fa-solid fa-cart-shopping">&lt;/i> ${quantity}`;
                         card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
                     } else {
-                        quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> ${quantity}`;
+                        quantityDisplay.innerHTML = `&lt;i class="fa-solid fa-cart-shopping">&lt;/i> ${quantity}`;
                     }
                 } else if (quantityDisplay) {
                     quantityDisplay.remove();
@@ -1449,28 +1473,28 @@ document.addEventListener("DOMContentLoaded", () => {
                     shoppingCartItem.className = "shopping-cart-item";
                     shoppingCartItem.setAttribute("data-item-id", item.id);
                     shoppingCartItem.innerHTML = `
-                    <div class="shopping-cart-header">
-                        <div class="shopping-cart-img">
-                            <img src="https://10.120.32.59/app/${item.image_url}" alt="${item.name}">
-                        </div>
-                        <div class="shopping-cart-info">
-                            <h4>${item.name}</h4>
-                            <p id="shopping-cart-price">${(cartItem.quantity * item.price).toFixed(2)}€</p>
-                            ${item.stock === "no" ? '<p style="color: red;">Out of Stock</p>' : ''}
-                        </div>
-                    </div>
-                    <div class="shopping-cart-options">
-                        <button id="cart-btn-decrease" ${item.stock === "no" ? "disabled" : ""}>
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <p id="shopping-cart-amount">${cartItem.quantity}</p>
-                        <button id="cart-btn-increase" ${item.stock === "no" ? "disabled" : ""}>
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                        <button id="cart-btn-trash">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
+                    &lt;div class="shopping-cart-header">
+                        &lt;div class="shopping-cart-img">
+                            &lt;img src="https://10.120.32.59/app/${item.image_url}" alt="${item.name}">
+                        &lt;/div>
+                        &lt;div class="shopping-cart-info">
+                            &lt;h4>${item.name}&lt;/h4>
+                            &lt;p id="shopping-cart-price">${(cartItem.quantity * item.price).toFixed(2)}€&lt;/p>
+                            ${item.stock === "no" ? '&lt;p style="color: red;">Out of Stock&lt;/p>' : ''}
+                        &lt;/div>
+                    &lt;/div>
+                    &lt;div class="shopping-cart-options">
+                        &lt;button id="cart-btn-decrease" ${item.stock === "no" ? "disabled" : ""}>
+                            &lt;i class="fa-solid fa-minus">&lt;/i>
+                        &lt;/button>
+                        &lt;p id="shopping-cart-amount">${cartItem.quantity}&lt;/p>
+                        &lt;button id="cart-btn-increase" ${item.stock === "no" ? "disabled" : ""}>
+                            &lt;i class="fa-solid fa-plus">&lt;/i>
+                        &lt;/button>
+                        &lt;button id="cart-btn-trash">
+                            &lt;i class="fa-solid fa-trash-can">&lt;/i>
+                        &lt;/button>
+                    &lt;/div>
                 `;
 
                     shoppingCartList.appendChild(shoppingCartItem);
@@ -1509,7 +1533,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const cardName = card.querySelector(".restaurant-card-header h2").textContent;
         const cartItem = cart.find(item => item.name === cardName);
 
-        if (cartItem && cartItem.quantity > 0) {
+        if (cartItem &amp;&amp; cartItem.quantity > 0) {
             let quantityDisplay = card.querySelector(".item-quantity");
 
             if (!quantityDisplay) {
@@ -1518,7 +1542,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
             }
 
-            quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"> ${cartItem.quantity}`;
+            quantityDisplay.innerHTML = `&lt;i class="fa-solid fa-cart-shopping"> ${cartItem.quantity}`;
         }
     });
 });
@@ -1536,7 +1560,7 @@ function addToCart(data, amount, type) {
         return;
     }
     const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
-    const existingItem = cart.find(item => item.id === data.id && item.type === type);
+    const existingItem = cart.find(item => item.id === data.id &amp;&amp; item.type === type);
 
     if (existingItem) {
         existingItem.quantity += amount;
@@ -1563,27 +1587,27 @@ function addToCart(data, amount, type) {
         shoppingCartItem.className = "shopping-cart-item";
         shoppingCartItem.setAttribute("data-item-id", data.id);
         shoppingCartItem.innerHTML = `
-            <div class="shopping-cart-header">
-                <div class="shopping-cart-img">
-                    <img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}">
-                </div>
-                <div class="shopping-cart-info">
-                    <h4>${data.name}</h4>
-                    <p id="shopping-cart-price">${(amount * data.price).toFixed(2)}€</p>
-                </div>
-            </div>
-            <div class="shopping-cart-options">
-                <button id="cart-btn-decrease">
-                    <i class="fa-solid fa-minus"></i>
-                </button>
-                <p id="shopping-cart-amount">${amount}</p>
-                <button id="cart-btn-increase">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <button id="cart-btn-trash">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </div>
+            &lt;div class="shopping-cart-header">
+                &lt;div class="shopping-cart-img">
+                    &lt;img src="https://10.120.32.59/app${data.image_url}" alt="${data.name}">
+                &lt;/div>
+                &lt;div class="shopping-cart-info">
+                    &lt;h4>${data.name}&lt;/h4>
+                    &lt;p id="shopping-cart-price">${(amount * data.price).toFixed(2)}€&lt;/p>
+                &lt;/div>
+            &lt;/div>
+            &lt;div class="shopping-cart-options">
+                &lt;button id="cart-btn-decrease">
+                    &lt;i class="fa-solid fa-minus">&lt;/i>
+                &lt;/button>
+                &lt;p id="shopping-cart-amount">${amount}&lt;/p>
+                &lt;button id="cart-btn-increase">
+                    &lt;i class="fa-solid fa-plus">&lt;/i>
+                &lt;/button>
+                &lt;button id="cart-btn-trash">
+                    &lt;i class="fa-solid fa-trash-can">&lt;/i>
+                &lt;/button>
+            &lt;/div>
         `;
 
         shoppingCartList.appendChild(shoppingCartItem);
@@ -1606,8 +1630,8 @@ function addToCart(data, amount, type) {
                 card.querySelector(".restaurant-card-image").appendChild(quantityDisplay);
             }
 
-            const cartItem = cart.find(item => item.id === data.id && item.type === type);
-            quantityDisplay.innerHTML = `<i class="fa-solid fa-cart-shopping"></i> ${cartItem.quantity}`;
+            const cartItem = cart.find(item => item.id === data.id &amp;&amp; item.type === type);
+            quantityDisplay.innerHTML = `&lt;i class="fa-solid fa-cart-shopping">&lt;/i> ${cartItem.quantity}`;
         }
     });
 
@@ -1632,7 +1656,7 @@ function showToast(message, type = 'success') {
   
     const msg = document.createElement('div');
     msg.classList.add('message');
-    msg.innerHTML = `<div class="text text-1">${message}</div>`;
+    msg.innerHTML = `&lt;div class="text text-1">${message}&lt;/div>`;
   
     const closeButton = document.createElement('i');
     closeButton.classList.add('fa-solid', 'fa-xmark', 'close');
@@ -1690,7 +1714,7 @@ function showToast(message, type = 'success') {
  * and updates their favorite icon to indicate they are marked as favorites.
  *
  * @async
- * @returns {Promise<void>} A promise that resolves when the favorites are successfully fetched and displayed.
+ * @returns {Promise&lt;void>} A promise that resolves when the favorites are successfully fetched and displayed.
  */
 const setupFavoriteIcons = async () => {
     const restaurantCards = document.querySelectorAll('.restaurant-card');
@@ -1709,7 +1733,7 @@ const setupFavoriteIcons = async () => {
         favoriteIcon.addEventListener('click', async () => {
             // Prevent the click event from propagating to the restaurant card
 
-            if (!isAdmin && !localStorage.getItem('authToken')) {
+            if (!isAdmin &amp;&amp; !localStorage.getItem('authToken')) {
                 showToast('Please log in to use the favorite feature.', 'error');
                 return;
             }
@@ -1780,7 +1804,7 @@ const setupFavoriteIcons = async () => {
  * and updates their favorite icon to indicate they are marked as favorites.
  *
  * @async
- * @returns {Promise<void>} A promise that resolves when the favorites are successfully fetched and displayed.
+ * @returns {Promise&lt;void>} A promise that resolves when the favorites are successfully fetched and displayed.
  */
 async function fetchAndDisplayFavorites() {
     const token = localStorage.getItem("authToken");
@@ -1817,7 +1841,7 @@ async function fetchAndDisplayFavorites() {
                     const favoriteIcon = card.querySelector(".favorite-icon");
 
                     // Match the favorite with the card
-                    if (itemId === String(favorite.item_id) && type === favorite.type) {
+                    if (itemId === String(favorite.item_id) &amp;&amp; type === favorite.type) {
                         favoriteIcon.style.color = "red"; // Mark as favorite
                         favoriteIcon.setAttribute("data-favorite-id", favorite.id); // Store the favorite ID
                     }
@@ -1868,12 +1892,12 @@ function updateSearchResults(data) {
     const mealsSection = document.getElementById("search-meals");
 
     // Clear previous results
-    announcementsSection.innerHTML = "<h3>Announcements</h3>";
-    itemsSection.innerHTML = "<h3>Items</h3>";
-    mealsSection.innerHTML = "<h3>Meals</h3>";
+    announcementsSection.innerHTML = "&lt;h3>Announcements&lt;/h3>";
+    itemsSection.innerHTML = "&lt;h3>Items&lt;/h3>";
+    mealsSection.innerHTML = "&lt;h3>Meals&lt;/h3>";
 
     // Populate announcements
-    if (data.announcements && data.announcements.length > 0) {
+    if (data.announcements &amp;&amp; data.announcements.length > 0) {
         data.announcements.forEach(announcement => {
             const link = document.createElement("a");
             link.href = `/annoucement/index.html?id=${announcement.id}`;
@@ -1894,7 +1918,7 @@ function updateSearchResults(data) {
     }
 
     // Populate items
-    if (data.items && data.items.length > 0) {
+    if (data.items &amp;&amp; data.items.length > 0) {
         data.items.forEach(item => {
             const link = document.createElement("a");
             link.href = `index.html?itemId=${item.id}#menu`;
@@ -1914,7 +1938,7 @@ function updateSearchResults(data) {
     }
 
     // Populate meals
-    if (data.meals && data.meals.length > 0) {
+    if (data.meals &amp;&amp; data.meals.length > 0) {
         data.meals.forEach(meal => {
             const link = document.createElement("a");
             link.href = `index.html?mealId=${meal.id}#menu`;
@@ -1945,7 +1969,7 @@ const searchItemInput = document.getElementById("search-item");
  *
  * @async
  * @param {Event} event - The input event triggered by the user typing in the search bar.
- * @returns {Promise<void>} A promise that resolves when the search results are fetched and displayed.
+ * @returns {Promise&lt;void>} A promise that resolves when the search results are fetched and displayed.
  */
 searchItemInput.addEventListener("input", async (event) => {
     const query = event.target.value;
@@ -1991,7 +2015,7 @@ function initMap() {
     map = L.map('map-container').setView(location, 14);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: '&amp;copy; &lt;a href="https://www.openstreetmap.org/copyright">OpenStreetMap&lt;/a> contributors',
     }).addTo(map);
     drawStopsOnMap(map)
 }
@@ -2008,7 +2032,7 @@ async function drawStopsOnMap(map) {
                 radius: 50,
             }).addTo(map);
 
-            circle.bindTooltip(`<b>${name}</b>`, {
+            circle.bindTooltip(`&lt;b>${name}&lt;/b>`, {
                 permanent: false, // Tooltip only shows on hover
                 direction: 'top', // Tooltip appears above the circle
                 offset: [0, -10], // Adjust the position of the tooltip
@@ -2044,7 +2068,7 @@ async function drawStopsOnMap(map) {
                         // Populate the modal with the summaries
                         const modal = document.getElementById("route-modal");
                         const summariesContainer = document.getElementById("route-summaries");
-                        summariesContainer.innerHTML = summaries.map(summary => `<p>${summary}</p>`).join("");
+                        summariesContainer.innerHTML = summaries.map(summary => `&lt;p>${summary}&lt;/p>`).join("");
 
                         // Show the modal
                         modal.style.display = "block";
@@ -2099,17 +2123,17 @@ let currentPolyline = null; // Store the currently drawn polyline
  * @param {number} fromLon - The longitude of the starting location.
  * @param {number} toLat - The latitude of the destination location.
  * @param {number} toLon - The longitude of the destination location.
- * @returns {Promise<void>} A promise that resolves when the polyline is successfully drawn on the map.
+ * @returns {Promise&lt;void>} A promise that resolves when the polyline is successfully drawn on the map.
  */
 async function decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon) {
     try {
         const data = await directionsTo(fromLat, fromLon, toLat, toLon);
         const edges = data?.data?.planConnection?.edges;
 
-        if (edges && edges.length > 0) {
+        if (edges &amp;&amp; edges.length > 0) {
             // Find the shortest connection based on duration
             const shortestConnection = edges.reduce((shortest, current) => {
-                return current.node.duration < shortest.node.duration ? current : shortest;
+                return current.node.duration &lt; shortest.node.duration ? current : shortest;
             });
 
             console.log('Shortest Connection:', shortestConnection);
@@ -2121,7 +2145,7 @@ async function decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon) {
 
             // Decode and draw the polyline for the shortest connection
             const decodedPoints = shortestConnection.node.legs.flatMap((leg) => {
-                return leg.legGeometry && leg.legGeometry.points
+                return leg.legGeometry &amp;&amp; leg.legGeometry.points
                     ? polyline.decode(leg.legGeometry.points)
                     : [];
             });
@@ -2141,4 +2165,26 @@ async function decodePolylineFromItineraries(fromLat, fromLon, toLat, toLon) {
     } catch (error) {
         console.error('Error decoding polyline:', error);
     }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addToCart">addToCart</a></li><li><a href="global.html#closeForms">closeForms</a></li><li><a href="global.html#closeMobileSidebar">closeMobileSidebar</a></li><li><a href="global.html#closeShoppingCart">closeShoppingCart</a></li><li><a href="global.html#decodePolylineFromItineraries">decodePolylineFromItineraries</a></li><li><a href="global.html#displayRestaurantModal">displayRestaurantModal</a></li><li><a href="global.html#fetchAndDisplayFavorites">fetchAndDisplayFavorites</a></li><li><a href="global.html#fetchMenuItems">fetchMenuItems</a></li><li><a href="global.html#fetchMenuItemsById">fetchMenuItemsById</a></li><li><a href="global.html#fetchMenuMealsById">fetchMenuMealsById</a></li><li><a href="global.html#formatCategoryText">formatCategoryText</a></li><li><a href="global.html#getUserByToken">getUserByToken</a></li><li><a href="global.html#handleItemIdFromURL">handleItemIdFromURL</a></li><li><a href="global.html#initMap">initMap</a></li><li><a href="global.html#loggedIn">loggedIn</a></li><li><a href="global.html#loginForgotBack">loginForgotBack</a></li><li><a href="global.html#loginForgotPassword">loginForgotPassword</a></li><li><a href="global.html#loginLink">loginLink</a></li><li><a href="global.html#navbarMobileLink">navbarMobileLink</a></li><li><a href="global.html#navbar_login">navbar_login</a></li><li><a href="global.html#populateCategories">populateCategories</a></li><li><a href="global.html#removeInformationClasses">removeInformationClasses</a></li><li><a href="global.html#removeItemIdFromURL">removeItemIdFromURL</a></li><li><a href="global.html#removeSearchClasses">removeSearchClasses</a></li><li><a href="global.html#renderMeals">renderMeals</a></li><li><a href="global.html#renderRestaurantCards">renderRestaurantCards</a></li><li><a href="global.html#setupCartItemButtons">setupCartItemButtons</a></li><li><a href="global.html#setupFavoriteIcons">setupFavoriteIcons</a></li><li><a href="global.html#showToast">showToast</a></li><li><a href="global.html#signupLink">signupLink</a></li><li><a href="global.html#toggleProceedButton">toggleProceedButton</a></li><li><a href="global.html#updateCartTotal">updateCartTotal</a></li><li><a href="global.html#updateItemIdInURL">updateItemIdInURL</a></li><li><a href="global.html#updateSearchResults">updateSearchResults</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Tue May 06 2025 23:50:32 GMT+0300 (Itä-Euroopan kesäaika)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
