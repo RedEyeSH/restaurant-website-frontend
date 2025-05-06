@@ -210,9 +210,8 @@ async function fetchItemsForMeals() {
         Object.values(selects).forEach(select => select.innerHTML = '<option value="">None</option>');
 
         items.forEach(item => {
-            const isDisabled = item.stock === 'no' ? 'disabled' : '';
             const badge = item.stock === 'no' ? ' (No Stock)' : '';
-            const option = `<option value="${item.id}" ${isDisabled}>${item.name}${badge}</option>`;
+            const option = `<option value="${item.id}">${item.name}${badge}</option>`;
 
             if (selects[item.category]) {
                 selects[item.category].innerHTML += option;
