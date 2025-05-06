@@ -239,6 +239,11 @@ async function fetchItems() {
             let row = document.createElement('tr');
             row.innerHTML = `
                 <td>${item.id}</td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="viewItemDetails(${item.id})">View</button>
+                    <button class="btn btn-warning btn-sm" onclick="editItem(${item.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDeleteItem(${item.id})">Delete</button>
+                </td>
                 <td><span class="badge ${item.stock.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${item.stock.toLowerCase() === 'yes' ? 'In Stock' : 'Out of Stock'}</span></td>
                 <td><span class="badge ${item.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${item.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}</span></td>
                 <td><a href="https://users.metropolia.fi/~quangth/restaurant/index.html?itemId=${item.id}#menu" target="blank">${item.name}</a></td>
@@ -250,11 +255,6 @@ async function fetchItems() {
                 <td>${new Date(item.updated_at).toLocaleString('fi')}</td>
                 <td>${item.added_by ? await fetchUserName(item.added_by) : 'Null'}</td>
                 <td>${item.updated_by ? await fetchUserName(item.updated_by) : 'Not yet updated'}</td>
-                <td>
-                    <button class="btn btn-info btn-sm" onclick="viewItemDetails(${item.id})">View</button>
-                    <button class="btn btn-warning btn-sm" onclick="editItem(${item.id})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="confirmDeleteItem(${item.id})">Delete</button>
-                </td>
             `;
             tableBody.appendChild(row);
         };
@@ -278,6 +278,11 @@ async function fetchMeals() {
             let row = document.createElement('tr');
             row.innerHTML = `
                 <td>${meal.id}</td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="viewMealDetails(${meal.id})">View</button>
+                    <button class="btn btn-warning btn-sm" onclick="editMeal(${meal.id})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDeleteMeal(${meal.id})">Delete</button>
+                </td>
                 <td><span class="badge ${meal.stock.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${meal.stock.toLowerCase() === 'yes' ? 'In Stock' : 'Out of Stock'}</span></td>
                 <td><span class="badge ${meal.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${meal.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}</span></td>
                 <td><a href="https://users.metropolia.fi/~quangth/restaurant/index.html?mealId=${meal.id}#menu" target="blank">${meal.name}</a></td>
@@ -287,11 +292,6 @@ async function fetchMeals() {
                 <td>${new Date(meal.updated_at).toLocaleString('fi')}</td>
                 <td>${meal.added_by ? await fetchUserName(meal.added_by) : 'Null'}</td>
                 <td>${meal.updated_by ? await fetchUserName(meal.updated_by) : 'Not yet updated'}</td>
-                <td>
-                    <button class="btn btn-info btn-sm" onclick="viewMealDetails(${meal.id})">View</button>
-                    <button class="btn btn-warning btn-sm" onclick="editMeal(${meal.id})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="confirmDeleteMeal(${meal.id})">Delete</button>
-                </td>
             `;
             tableBody.appendChild(row);
         };
@@ -583,6 +583,7 @@ async function editItem(id) {
         document.getElementById('editPrice').value = item.price;
         document.getElementById('editStock').value = item.stock;
         document.getElementById('editVisible').value = item.visible;
+        console.log(item.visible);
 
         // Set the allergens checkboxes based on the data
         ['Gluten', 'Dairy', 'Peanuts', 'Soy', 'Egg'].forEach(allergen => {
