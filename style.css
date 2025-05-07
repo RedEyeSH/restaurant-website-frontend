@@ -699,6 +699,8 @@ iframe.skiptranslate,
 }
 
 .forgot-password-submit input {
+    color: white;
+    border: none;
     background-color: #191919;
     cursor: pointer;
     transition: 0.25s;
