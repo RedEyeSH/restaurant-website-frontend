@@ -282,7 +282,7 @@ shoppingCartLink.addEventListener("click", async () => {
         // Update the total price
         const shoppingCartOrderTotal = document.querySelector("#shopping-cart-total");
         if (shoppingCartOrderTotal) {
-            shoppingCartOrderTotal.textContent = `$${totalPrice.toFixed(2)}`;
+            shoppingCartOrderTotal.textContent = `${totalPrice.toFixed(2)}€`;
         }
 
         // Update the navbar shopping cart total
