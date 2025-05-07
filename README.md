@@ -11,6 +11,8 @@
 
 [Link to JSDoc](https://users.metropolia.fi/~quangth/restaurant/out/)
 
+[Link to Backend](https://github.com/SRedRider/restaurant-website-backend)
+
 ## App Idea and Target Audience
 
 ### App Idea
