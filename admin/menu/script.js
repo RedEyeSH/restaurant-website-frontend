@@ -245,7 +245,7 @@ async function fetchItems() {
                 </td>
                 <td><span class="badge ${item.stock.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${item.stock.toLowerCase() === 'yes' ? 'In Stock' : 'Out of Stock'}</span></td>
                 <td><span class="badge ${item.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${item.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}</span></td>
-                <td><a href="https://users.metropolia.fi/~quangth/restaurant/index.html?itemId=${item.id}#menu" target="blank">${item.name}</a></td>
+                <td><a href="https://10.120.32.59:8000/index.html?itemId=${item.id}#menu" target="blank">${item.name}</a></td>
                 <td>${item.category}</td>
                 <td>${item.size}</td>
                 <td><img src="https://10.120.32.59/app${item.image_url}" alt="${item.name}" style="width: 50px; height: 50px;"></td>
@@ -284,7 +284,7 @@ async function fetchMeals() {
                 </td>
                 <td><span class="badge ${meal.stock.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${meal.stock.toLowerCase() === 'yes' ? 'In Stock' : 'Out of Stock'}</span></td>
                 <td><span class="badge ${meal.visible.toLowerCase() === 'yes' ? 'bg-success' : 'bg-danger'}">${meal.visible.toLowerCase() === 'yes' ? 'Visible' : 'Not Visible'}</span></td>
-                <td><a href="https://users.metropolia.fi/~quangth/restaurant/index.html?mealId=${meal.id}#menu" target="blank">${meal.name}</a></td>
+                <td><a href="https://10.120.32.59:8000/index.html?mealId=${meal.id}#menu" target="blank">${meal.name}</a></td>
                 <td><img src="https://10.120.32.59/app${meal.image_url}" alt="${meal.name}" style="width: 50px; height: 50px;"></td>
                 <td>${meal.price}€</td>
                 <td>${new Date(meal.created_at).toLocaleString('fi')}</td>
