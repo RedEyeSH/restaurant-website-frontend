@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <img src="https://10.120.32.59/app/${announcement.image_url}" alt="${announcement.title}" class="announcements-image">
                 <h2>${announcement.title}</h2>
                 <div class="footer">
-                <p class="date">${new Date(announcement.created_at).toLocaleDateString('fi-FI')} ${new Date(announcement.created_at).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' })}</p>
+                <p class="date">${new Date(announcement.created_at).toLocaleString('fi-FI')}</p>
                 <a href="index.html?id=${announcement.id}">Read More</a>
                 </div>
             `;
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 document.getElementById("header-h1").innerText = announcement.title;
                 announcementsContainer.innerHTML = `
                     <div class="announcement">
-                        <p class="date">${new Date(announcement.created_at).toLocaleDateString('fi-FI')} ${new Date(announcement.created_at).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p class="date">${new Date(announcement.created_at).toLocaleString('fi-FI')}</p>
                         <p class="reading-time">${readingTime}</p>
                     <img src="https://10.120.32.59/app/${announcement.image_url}" alt="${announcement.title}" class="announcement-image">
                         <div>${announcement.content}</div>
