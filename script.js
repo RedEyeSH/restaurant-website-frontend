@@ -1376,8 +1376,6 @@ function updateCartTotal() {
         emptyCartMessage.remove();
     }
 
-    console.log(cartItems.length);
-
     // Check if the cart is empty
     if (cartItems.length === 0) {
         const message = document.createElement("p");
@@ -1431,6 +1429,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const cart = JSON.parse(localStorage.getItem("shoppingCart")) || [];
 
         shoppingCartList.innerHTML = ""; // Clear existing items
+
+        if (cart.length === 0) {
+            const message = document.createElement("p");
+            message.className = "empty-cart-message";
+            message.textContent = "Your shopping cart is empty.";
+            shoppingCartList.appendChild(message);
+        }
 
         let totalPrice = 0;
         for (const cartItem of cart) {
