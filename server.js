@@ -24,8 +24,8 @@ app.get('/config', (req, res) => {
 
 // Load SSL certificate and key
 const options = {
-    key: fs.readFileSync('path/to/private.key'), // Replace with the path to your private.key
-    cert: fs.readFileSync('path/to/certificate.crt'), // Replace with the path to your certificate.crt
+    key: fs.readFileSync('/etc/pki/tls/private/ca.key'), // Replace with the path to your private.key
+    cert: fs.readFileSync('/etc/pki/tls/certs/ca.crt'), // Replace with the path to your certificate.crt
 };
 
 // Start HTTPS server
