@@ -1,5 +1,15 @@
 # Burger Company
-![Burger Company](./images/logo_trimmed.png)
+
+<div align="center">
+  <img src="./images/logo_trimmed.png" alt="Burger Company" width="200">
+</div>
+
+---
+[Link to our website](http://10.120.32.59:8000/)
+
+[Link to JSDoc](http://10.120.32.59/app/)
+
+[Link to apiDoc](https://users.metropolia.fi/~quangth/restaurant/out/)
 
 ## App Idea and Target Audience
 
