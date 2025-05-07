@@ -1376,6 +1376,8 @@ function updateCartTotal() {
         emptyCartMessage.remove();
     }
 
+    console.log(cartItems.length);
+
     // Check if the cart is empty
     if (cartItems.length === 0) {
         const message = document.createElement("p");
