@@ -112,5 +112,10 @@ Follow the steps below to run the project locally on your machine:
 2. **Navigate to the project directory**:
    ```bash
     cd restaurant-website-frontend
-3. ****
+3. **Set Up Metropolia VPN (if required)**
+    * If the backend API is hosted on Metropolia's internal network, you need to connect to the Metropolia VPN to access it.
+    
+4. **Open the `index.html` file in your browser**:
+    * Use a live server (e.g., VS Code Live Server extension).
+    * Alternatively, open the file directly in your browser
 

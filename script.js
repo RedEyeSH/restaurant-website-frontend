@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fetch datas
 const apiUrl = "https://10.120.32.59/app/api/v1";
-console.log(apiUrl);
+// console.log(apiUrl);
 
 // Login form handling
 const loginForm = document.querySelector(".login-form form");
@@ -973,7 +973,7 @@ const displayRestaurantModal = async (id, type) => {
         throw new Error(`Unsupported type: ${type}`);
     }
 
-    console.log(data);
+    // console.log(data);
 
     updateItemIdInURL(data.id, data.type);
 

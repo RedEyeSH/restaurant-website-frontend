@@ -304,7 +304,7 @@ section {
 }
 
 /* Form styles */
-form {
+#order-form {
     background-color: #191919;
     padding: 20px;
     border-radius: 10px;
@@ -312,18 +312,18 @@ form {
     margin: 20px 0;
 }
 
-form .form-group {
+#order-form .form-group {
     margin-bottom: 15px;
 }
 
-form label {
+#order-form label {
     display: block;
     font-weight: bold;
     margin-bottom: 5px;
     color: #F7B41A;
 }
 
-form input, form select, form textarea {
+#order-form input, #order-form select, #order-form textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #F7B41A;
@@ -333,13 +333,13 @@ form input, form select, form textarea {
     font-size: 16px;
 }
 
-form input:focus, form select:focus, form textarea:focus {
+#order-form input:focus, #order-form select:focus, #order-form textarea:focus {
     outline: none;
     border-color: #FFC94B;
     box-shadow: 0 0 5px #FFC94B;
 }
 
-form button {
+#order-form button {
     background-color: #F7B41A;
     font-weight: bold;
     padding: 10px 20px;
@@ -350,7 +350,7 @@ form button {
     font-size: 16px;
 }
 
-form button:hover {
+#order-form button:hover {
     background-color: #FFC94B;
     color: #0D0D0D;
 }
@@ -453,41 +453,6 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 
     .navbar-logged-in a {
         border-radius: 5px;
-    }
-
-    .order-table {
-        width: 100%; /* Ensure it takes full width */
-    }
-
-    .order-table thead {
-        display: none; /* Hide the table header */
-    }
-
-    .order-table tr {
-        display: block; /* Make each row a block */
-        margin-bottom: 15px; /* Add spacing between rows */
-    }
-
-    .order-table td {
-        display: flex; /* Use flexbox for each cell */
-        justify-content: space-between; /* Align content */
-        align-items: center;
-        padding: 10px;
-        border: 1px solid #F7B41A;
-    }
-
-    .order-table td::before {
-        content: attr(data-label); /* Use the `data-label` attribute for labels */
-        font-weight: bold;
-        color: #F7B41A;
-        margin-right: 10px;
-    }
-
-    .order-total-row td {
-        font-size: 18px;
-        font-weight: bold;
-        background-color: #F7B41A;
-        color: #0D0D0D;
     }
 }
 /* Responsive design ends here */

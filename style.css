@@ -1412,6 +1412,7 @@ iframe.skiptranslate,
 }
 
 .restaurant-card-image {
+    height: 340px; 
     position: relative;
     margin: 0 auto;
     overflow: hidden;
