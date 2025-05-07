@@ -175,6 +175,167 @@ forgotPasswordForm.addEventListener("submit", async function(event) {
     }
 });
 
+function removeSearchClasses() {
+    const searchResultsContainer = document.getElementById("search-results");
+    searchResultsContainer.classList.remove("active");
+
+    const searchOverlay = document.querySelector(".search-overlay");
+    searchOverlay.classList.remove("active");
+
+    document.body.style.overflow = "";
+}
+
+const searchBtn = document.getElementById("navbar-search-icon");
+/**
+ * Toggles the visibility of the search results container and overlay.
+ * Handles the click event for the search button in the navbar.
+ * Disables page scrolling when the search overlay is active.
+ */
+searchBtn.addEventListener("click", () => {
+    const searchResultsContainer = document.getElementById("search-results");
+    searchResultsContainer.classList.add("active");
+
+    const searchOverlay = document.querySelector(".search-overlay");
+    searchOverlay.classList.toggle("active");
+
+    if (searchOverlay.classList.contains("active")) {
+        document.body.style.overflowY = "hidden";
+    } else {
+        document.body.style.overflowY = ""; // Reset to default
+    }
+});
+
+/**
+ * Updates the search results container with fetched data.
+ * Populates announcements, items, and meals sections with the provided data.
+ *
+ * @param {Object} data - The data containing search results.
+ * @param {Array} [data.announcements] - An array of announcement objects.
+ * @param {Array} [data.items] - An array of item objects.
+ * @param {Array} [data.meals] - An array of meal objects.
+ */
+function updateSearchResults(data) {
+    const searchResultsContainer = document.getElementById("search-results");
+    const announcementsSection = document.getElementById("search-announcements");
+    const itemsSection = document.getElementById("search-items");
+    const mealsSection = document.getElementById("search-meals");
+
+    // Clear previous results
+    announcementsSection.innerHTML = "<h3>Announcements</h3>";
+    itemsSection.innerHTML = "<h3>Items</h3>";
+    mealsSection.innerHTML = "<h3>Meals</h3>";
+
+    // Populate announcements
+    if (data.announcements && data.announcements.length > 0) {
+        data.announcements.forEach(announcement => {
+            const link = document.createElement("a");
+            link.href = `/annoucement/index.html?id=${announcement.id}`;
+        
+            const announcementItem = document.createElement("div");
+            announcementItem.className = "search-results-item";
+            announcementItem.textContent = announcement.title || "Announcement";
+        
+            link.appendChild(announcementItem);
+            announcementsSection.appendChild(link);
+        });
+        
+    } else {
+        const noAnnouncements = document.createElement("div");
+        noAnnouncements.className = "search-results-empty";
+        noAnnouncements.textContent = "No announcements found.";
+        announcementsSection.appendChild(noAnnouncements);
+    }
+
+    // Populate items
+    if (data.items && data.items.length > 0) {
+        data.items.forEach(item => {
+            const link = document.createElement("a");
+            link.href = `../index.html?itemId=${item.id}#menu`;
+            
+            const itemElement = document.createElement("div");
+            itemElement.className = "search-results-item";
+            itemElement.textContent = `${item.name} - ${item.price}€`;
+            
+            link.appendChild(itemElement);
+            itemsSection.appendChild(link);            
+        });
+    } else {
+        const noItems = document.createElement("div");
+        noItems.className = "search-results-empty";
+        noItems.textContent = "No items found.";
+        itemsSection.appendChild(noItems);
+    }
+
+    // Populate meals
+    if (data.meals && data.meals.length > 0) {
+        data.meals.forEach(meal => {
+            const link = document.createElement("a");
+            link.href = `../index.html?mealId=${meal.id}#menu`;
+
+            const mealElement = document.createElement("div");
+            mealElement.className = "search-results-item";
+            mealElement.textContent = `${meal.name} - ${meal.price}€`;
+            
+            link.appendChild(mealElement);
+            mealsSection.appendChild(link);            
+        });
+    } else {
+        const noMeals = document.createElement("div");
+        noMeals.className = "search-results-empty";
+        noMeals.textContent = "No meals found.";
+        mealsSection.appendChild(noMeals);
+    }
+
+    // Show the search results container
+    searchResultsContainer.classList.add("active");
+}
+
+// Modify the event listener for the search input
+const searchItemInput = document.getElementById("search-item");
+/**
+ * Handles the input event for the search bar.
+ * Sends the user's query to the backend to fetch search results and updates the search results container.
+ *
+ * @async
+ * @param {Event} event - The input event triggered by the user typing in the search bar.
+ * @returns {Promise<void>} A promise that resolves when the search results are fetched and displayed.
+ */
+searchItemInput.addEventListener("input", async (event) => {
+    const query = event.target.value;
+
+    console.log(query);
+
+    try {
+        const response = await fetch(`${apiUrl}/search/?query=${encodeURIComponent(query)}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+            },
+        });
+
+        if (response.ok) {
+            const searchResults = await response.json();
+            const searchResultsBox = document.querySelector(".search-results-box");
+
+            if (query === "") {
+                searchResultsBox.style.display = "none";
+            } else {
+                searchResultsBox.style.display = "block";
+                updateSearchResults(searchResults);
+            }
+        } else {
+            console.error("Failed to fetch search results.");
+        }
+    } catch (error) {
+        console.error("Error fetching search results:", error);
+    }
+});
+
+
+const closeSearchOverlay = document.querySelector(".search-overlay");
+closeSearchOverlay.addEventListener("click", removeSearchClasses)
+
 const close_form = document.querySelectorAll(".x-close-form");
 close_form.forEach((button) => {
     button.addEventListener("click", closeForms);

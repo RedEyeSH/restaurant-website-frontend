@@ -7,9 +7,9 @@
 ---
 [Link to our website](http://10.120.32.59:8000/)
 
-[Link to JSDoc](http://10.120.32.59/app/)
+[Link to apiDoc](http://10.120.32.59/app/)
 
-[Link to apiDoc](https://users.metropolia.fi/~quangth/restaurant/out/)
+[Link to JSDoc](https://users.metropolia.fi/~quangth/restaurant/out/)
 
 ## App Idea and Target Audience
 

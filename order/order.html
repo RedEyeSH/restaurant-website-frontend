@@ -25,16 +25,60 @@
         <div class="navbar-actions">
             <div class="navbar-icons">
                 <div class="navbar-search">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="fa-solid fa-magnifying-glass" id="navbar-search-icon"></i>
                 </div>
             </div>
             <div class="navbar-login" id="navbar-login">
                 <i class="fa-solid fa-arrow-right-to-bracket"></i>
                 <p>Login</p>
             </div>
-
         </div>
     </nav>
+
+        <!-- sidebar for mobile -->
+    <div class="mobile-sidebar">
+        <div class="mobile-sidebar-container">
+            <div class="mobile-sidebar-header">
+                <i class="fa-solid fa-xmark" id="x-close-sidebar"></i>
+            </div>
+            <div class="sidebar-link">
+                <!-- <div id="google_translate_element"></div> -->
+                <a href="#home">Home</a>
+                <a href="#menu">Menu</a>
+                <a href="#about">About Us</a>
+                <a href="#reservation">Reservation</a>
+                <a href="/annoucement/index.html">Announcements</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search layout starts here -->
+    <div class="search-results-container" id="search-results">
+        <div class="search-input">
+            <input type="text" id="search-item" placeholder="Search...">
+        </div>
+        <div class="search-results-box">
+            <div class="search-results-header">
+                <h2>Search Results</h2>
+            </div>
+            <!-- Sections for announcements, items, and meals -->
+            <div class="search-results-section" id="search-announcements">
+                <h3>Announcements</h3>
+                <!-- <div class="search-results-empty">No announcements found.</div> -->
+            </div>
+            <div class="search-results-section" id="search-items">
+                <h3>Items</h3>
+                <!-- <div class="search-results-empty">No items found.</div> -->
+            </div>
+            <div class="search-results-section" id="search-meals">
+                <h3>Meals</h3>
+                <!-- <div class="search-results-empty">No meals found.</div> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="search-overlay"></div>
+    <!-- Search layout ends here -->
 
     <section class="account" id="account">
         <div class="account-container" id="account-container">
