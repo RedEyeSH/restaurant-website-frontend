@@ -44,7 +44,7 @@ async function fetchAnnouncements() {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${announcement.id}</td>
-                <td><a href="https://10.120.32.59:8000/index.html?id=${announcement.id}" target="blank">${announcement.title}</td>
+                <td><a href="https://10.120.32.59:8000/annoucement/index.html?id=${announcement.id}" target="blank">${announcement.title}</td>
                 <td><img src="https://10.120.32.59/app${announcement.image_url}" alt="Image" style="width: 50px; height: 50px;"></td>
                 <td><span class="badge ${announcement.visible === 'yes' ? 'bg-success' : 'bg-danger'}">${announcement.visible === 'yes' ? 'Visible' : 'Not Visible'}</span></td>
                 <td>${new Date(announcement.created_at).toLocaleString('fi')}</td>
