@@ -2081,11 +2081,6 @@ async function drawStopsOnMap(map) {
 }
 
 initMap();
-// console.log(map)
-// Users current location
-navigator.geolocation.getCurrentPosition((position) => {
-    const { latitude, longitude } = position.coords;
-});
 
 let currentPolyline = null; // Store the currently drawn polyline
 

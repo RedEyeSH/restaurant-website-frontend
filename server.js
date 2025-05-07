@@ -1,26 +1,35 @@
+const https = require('https');
+const fs = require('fs');
 const cors = require('cors');
 const express = require('express');
 const path = require('path');
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+require('dotenv').config();
 
 const app = express();
-require('dotenv').config();
-// Configure CORS to allow all origins
+
+// Configure CORS
 app.use(cors({
-    origin: '*', // Allow all origins
-    methods: ['GET', 'POST'], // Allow specific HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+    origin: '*',
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use(express.json()); // Parse JSON request bodies
-
-// Serve static files from the "public" directory
+app.use(express.json());
 app.use(express.static(path.join(__dirname, '')));
 
-// Make .env file usable.
+// Serve config
 app.get('/config', (req, res) => {
     res.json({ apiKey: process.env.HSL_KEY });
 });
 
-// Start the server
-app.listen(8000, '0.0.0.0', () => console.log('Server running on http://localhost:8000'));
+// Load SSL certificate and key
+const options = {
+    key: fs.readFileSync('path/to/private.key'), // Replace with the path to your private.key
+    cert: fs.readFileSync('path/to/certificate.crt'), // Replace with the path to your certificate.crt
+};
+
+// Start HTTPS server
+https.createServer(options, app).listen(8000,'0.0.0.0', () => {
+    console.log('HTTPS server running on https://0.0.0.0:8000');
+});
+
